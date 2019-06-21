@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using lib.Models;
 
 namespace lib.Solvers.RandomWalk
@@ -17,20 +15,21 @@ namespace lib.Solvers.RandomWalk
         {
             return 1;
         }
-        
+
         private readonly int depth;
         private readonly IEstimator estimator;
         private readonly Random random;
         private readonly int tryCount;
-        private readonly List<ActionBase>[] rotates =
+
+        private readonly ActionBase[] availableActions =
         {
-            new List<ActionBase>(),
-            new List<ActionBase> {new Rotate(true)},
-            new List<ActionBase> {new Rotate(true), new Rotate(true)},
-            new List<ActionBase> {new Rotate(false)},
-            new List<ActionBase> {new Rotate(false), new Rotate(false)}
+            new Rotate(true), 
+            new Rotate(false), 
+            new Move("0,1"), 
+            new Move("0,-1"), 
+            new Move("1,0"), 
+            new Move("-1,0")
         };
-        private readonly V[] shifts = {"0,1", "1,0", "0,-1", "-1,0"};
 
         public RandomWalkSolver(int depth, IEstimator estimator, Random random, int tryCount)
         {
@@ -50,14 +49,14 @@ namespace lib.Solvers.RandomWalk
                 solution.AddRange(part);
                 state.Apply(part);
             }
-            
+
             return solution;
         }
 
         public List<ActionBase> SolvePart(State state)
         {
             //Console.Out.WriteLine("START PART");
-            
+
             var bestEstimation = double.MinValue;
             List<ActionBase> bestSolution = null;
 
@@ -73,6 +72,7 @@ namespace lib.Solvers.RandomWalk
                     bestSolution = solution;
                     //Console.Out.WriteLine(" -- better");
                 }
+
                 // else
                 //     Console.Out.WriteLine();
             }
@@ -83,37 +83,18 @@ namespace lib.Solvers.RandomWalk
         private List<ActionBase> SolveStep(State state)
         {
             var actions = new List<ActionBase>();
-            V shift = null;
             while (actions.Count < depth && state.UnwrappedLeft > 0)
             {
-                while (actions.Count < depth && state.UnwrappedLeft > 0)
+                var action = availableActions[random.Next(availableActions.Length)];
+                if (action is Move moveAction)
                 {
-                    var nextShift = shifts[random.Next(shifts.Length)];
-                    if (nextShift == shift)
-                        continue;
-
-                    var nextRotate = rotates[random.Next(rotates.Length)];
-                    foreach (var r in nextRotate)
-                    {
-                        actions.Add(r);
-                        state.Apply(r);
-                        if (actions.Count >= depth)
-                            return actions;
-                    }
-                    shift = nextShift;
-                    break;
-                }
-
-                while (actions.Count < depth && state.UnwrappedLeft > 0)
-                {
-                    var nextPosition = state.Worker.Position + shift;
+                    var nextPosition = state.Worker.Position + moveAction.Shift;
                     if (!nextPosition.Inside(state.Map) || state.Map[nextPosition] == CellState.Obstacle)
-                        break;
-
-                    var action = new Move(shift);
-                    actions.Add(action);
-                    state.Apply(action);
+                        continue;
                 }
+
+                state.Apply(action);
+                actions.Add(action);
             }
 
             return actions;

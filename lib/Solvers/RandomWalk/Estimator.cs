@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
 
@@ -11,7 +12,7 @@ namespace lib.Solvers.RandomWalk
             if (state.UnwrappedLeft == 0)
                 return 1_000_000_000 - state.Time;
 
-            var distScore = GetDistanceToClosestVoid(state.Map, state.Worker.Position);
+            var distScore = DistanceToVoid(state.Map, state.Worker.Position);
             
             if (state.UnwrappedLeft == prevState.UnwrappedLeft)
                 return -distScore;
@@ -27,6 +28,35 @@ namespace lib.Solvers.RandomWalk
         }
 
         private readonly V[] shifts = {"0,1", "1,0", "0,-1", "-1,0"};
+
+        private int DistanceToVoid(Map map, V start)
+        {
+            var queue = new Queue<V>();
+            queue.Enqueue(start);
+
+            var distance = new Map<int>(map.SizeX, map.SizeY);
+            var parent = new Map<V>(map.SizeX, map.SizeY);
+
+            while (queue.Any())
+            {
+                var v = queue.Dequeue();
+
+                for (var direction = 0; direction < 4; direction++)
+                {
+                    var u = v.Shift(direction);
+                    if (!u.Inside(map) || parent[u] != null || map[u] == CellState.Obstacle)
+                        continue;
+
+                    parent[u] = v;
+                    distance[u] = distance[v] + 1;
+                    if (map[u] == CellState.Void)
+                        return distance[u];
+                    
+                    queue.Enqueue(u);
+                }
+            }
+            throw new InvalidOperationException();
+        }
 
         private List<List<V>> GetComponents(Map map)
         {
@@ -64,30 +94,6 @@ namespace lib.Solvers.RandomWalk
             }
 
             return result;
-        }
-
-        private int GetDistanceToClosestVoid(Map map, V start)
-        {
-            //Bfs
-            var queue = new Queue<(V, int)>();
-            queue.Enqueue((start, 0));
-
-            var used = new HashSet<V>();
-            used.Add(start);
-            while (queue.Any())
-            {
-                var (v, dist) = queue.Dequeue();
-                for (var direction = 0; direction < 4; direction++)
-                {
-                    var u = v.Shift(direction);
-                    if (!u.Inside(map) || used.Contains(u) || map[u] == CellState.Obstacle)
-                        continue;
-                    if (map[u] == CellState.Void) return dist + 1;
-                    used.Add(u);
-                    queue.Enqueue((u, dist+1));
-                }
-            }
-            return int.MaxValue;
         }
     }
 }
