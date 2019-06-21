@@ -65,6 +65,7 @@ let intervalId = null;
 let pause = true;
 let currentTick = 0;
 let robotTrack = [];
+let ticks = [];
 
 function playPause(e) {
     e.preventDefault();
@@ -75,13 +76,15 @@ function playPause(e) {
         intervalId = setInterval(() => {
             currentTick++;
             nextTick();
-        }, 30)
+        }, 20)
     } else {
         stop();
     }
 }
 
 function nextTick(e) {
+    saveImage();
+
     if (e) {
         e.preventDefault();
         currentTick++;
@@ -114,18 +117,12 @@ function prevTick(e) {
         e.preventDefault();
     }
 
-    robotTrack = [];
-
-    W().Pf.h(e);
-
-    setTimeout(() => {
-        for (let i = 0; i < currentTick; i++) {
-            nextTick();
-        }
-    }, 50);
-
-
     currentTick--;
+
+    const ctx = em(W());
+    const image = ticks[currentTick - 1];
+    ctx.putImageData(image, 0, 0)
+
 }
 
 function prevFiveTick(e) {
@@ -145,6 +142,7 @@ function reset(e) {
     W().Hi = true;
     currentTick = 0;
     robotTrack = [];
+    ticks = [];
 }
 
 function stop() {
@@ -199,7 +197,6 @@ function useProblem(number) {
     }, 55);
 }
 
-
 function submitForm(e) {
     e.preventDefault();
     const selectedTask = document.getElementById('taskNumber').value;
@@ -207,3 +204,9 @@ function submitForm(e) {
     useProblem(selectedTask);
 }
 
+function saveImage() {
+    const canvas = fm(W());
+    const ctx = em(W());
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    ticks.push(imageData);
+}
