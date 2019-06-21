@@ -1,5 +1,6 @@
 ﻿using System;
 using lib.Models;
+using Microsoft.Extensions.CommandLineUtils;
 using pipeline;
 
 namespace console_runner
@@ -8,21 +9,29 @@ namespace console_runner
     {
         public static void Main(string[] args)
         {
-            if (args.Length == 0)
-            {
-                throw new Exception("Invalid argument: empty");
-            }
+            var app = new CommandLineApplication();
+            app.Name = "console-runner";
+            app.HelpOption("-?|-h|--help");
             
-            switch (args[0])
+            app.OnExecute(() =>
             {
-                case "add-dummy-meta":
+                Console.WriteLine("Invalid argument: empty");
+                return 1;
+            });
+            
+            app.Command("add-dummy-meta", (command) =>
+            {
+                command.Description = "Add an example non-checked solution to DB";
+                command.HelpOption("-?|-h|--help");
+
+                command.OnExecute(() =>
                 {
                     const string problemPack = ProblemReader.PART_1_EXAMPLE;
                     const int problemId = 1;
-            
+                    
                     var reader = new ProblemReader(problemPack);
                     var solutionBlob = reader.ReadSolutionBlob(problemId);
-            
+                    
                     var meta = new SolutionMeta(
                         problemPack,
                         problemId,
@@ -33,24 +42,36 @@ namespace console_runner
                         0.876
                     );
                     meta.SaveToDb();
-                    
-                    break;
-                }
+
+                    return 0;
+                });
+            });
+
+            app.Command("check-unchecked", (command) =>
+            {
+                command.Description = "Check all unchecked solution with official checker";
+                command.HelpOption("-?|-h|--help");
                 
-                case "check-unchecked":
+                var geckodriverOption = command.Option("-g|--geckodriver",
+                    "Override geckodriver exec name",
+                    CommandOptionType.SingleValue);
+
+                command.OnExecute(() =>
                 {
+                    var geckodriverExecName = "geckodriver";
+                    if (geckodriverOption.HasValue())
+                    {
+                        geckodriverExecName = geckodriverOption.Value();
+                    }
                     Storage
                         .EnumerateUnchecked()
-                        .ForEach(solution => solution.CheckOnline());
-                    
-                    break;
-                }
+                        .ForEach(solution => solution.CheckOnline(geckodriverExecName));
 
-                default:
-                {
-                    throw new Exception($"Invalid argument: {args[0]}");
-                }
-            }
+                    return 0;
+                });
+            });
+            
+            app.Execute(args);
         }
     }
 }

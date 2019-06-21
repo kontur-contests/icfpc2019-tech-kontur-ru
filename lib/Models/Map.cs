@@ -8,7 +8,12 @@ namespace lib.Models
             : base(sizeX, sizeY)
         {
         }
-        
+
+        protected Map(int sizeX, int sizeY, CellState[,] cells)
+            : base(sizeX, sizeY, cells)
+        {
+        }
+
         public override string ToString()
         {
             var enumerable = Enumerable
@@ -23,6 +28,11 @@ namespace lib.Models
                         return string.Join("", strings);
                     });
             return string.Join("\n", enumerable);
+        }
+        
+        public Map Clone()
+        {
+            return new Map(SizeX, SizeY, (CellState[,])cells.Clone());
         }
     }
 }

@@ -13,15 +13,15 @@ namespace pipeline
 {
     public static class Extensions
     {
-        public static void CheckOnline(this SolutionMeta meta)
+        public static void CheckOnline(this SolutionMeta meta, string geckodriverExecName)
         {
-            meta.OnlineTime = GetOnlineTime(meta);
+            meta.OnlineTime = GetOnlineTime(meta, geckodriverExecName);
             meta.IsOnlineCorrect = meta.OnlineTime == meta.OurTime;
             meta.IsOnlineChecked = true;
             meta.SaveToDb();
         }
 
-        private static int GetOnlineTime(this SolutionMeta meta)
+        private static int GetOnlineTime(this SolutionMeta meta, string geckodriverExecName)
         {
             var reader = new ProblemReader(meta.ProblemPack);
             var problemPath = reader.GetProblemPath(meta.ProblemId);
@@ -30,7 +30,7 @@ namespace pipeline
             using (var writer = new StringWriter())
             {
                 var driverDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-                var service = FirefoxDriverService.CreateDefaultService(driverDirectory, "geckodriver");
+                var service = FirefoxDriverService.CreateDefaultService(driverDirectory, geckodriverExecName);
                 var options = new FirefoxOptions { LogLevel = FirefoxDriverLogLevel.Error };
                 options.AddArgument("-headless");
                 var driver = new FirefoxDriver(service, options);

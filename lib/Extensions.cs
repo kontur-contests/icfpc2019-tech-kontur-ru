@@ -11,6 +11,16 @@ namespace lib
             return 0 <= v.X && v.X < map.SizeX && 0 <= v.Y && v.Y < map.SizeY;
         }
 
+        public static IEnumerable<(V, CellState)> EnumerateCells(this Map map)
+        {
+            for (int x = 0; x < map.SizeX; x++)
+            for (int y = 0; y < map.SizeY; y++)
+            {
+                var p = new V(x, y);
+                yield return (p, map[p]);
+            }
+        }
+
         public static V Shift(this V v, int direction)
         {
             return v + V.GetShift(direction);
