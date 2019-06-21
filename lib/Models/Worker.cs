@@ -37,5 +37,9 @@ namespace lib.Models
         {
             throw new NotImplementedException();
         }
+
+        public void NextTurn()
+        {
+        }
     }
 }

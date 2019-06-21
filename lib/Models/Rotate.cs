@@ -13,5 +13,10 @@ namespace lib.Models
         {
             return Clockwise ? "E" : "Q";
         }
+
+        public override void Apply(State state)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

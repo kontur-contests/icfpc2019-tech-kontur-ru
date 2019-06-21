@@ -1,8 +1,14 @@
-using System.Collections.Generic;
 using System.Linq;
 
 namespace lib.Models
 {
+    public enum CellState
+    {
+        Obstacle,
+        Void,
+        Wrapped
+    }
+
     public class Map
     {
         protected bool Equals(Map other)
@@ -35,22 +41,22 @@ namespace lib.Models
                 int result = 0;
                 for (int x = 0; x < SizeX; x++)
                 for (int y = 0; y < SizeY; y++)
-                    result = result * 37 + (cells[x, y] ? 1 : 0);
+                    result = result * 37 + (int)cells[x, y];
 
                 return result;
             }
         }
 
-        private readonly bool[,] cells;
+        private readonly CellState[,] cells;
 
         public Map(int sizeX, int sizeY)
         {
             SizeX = sizeX;
             SizeY = sizeY;
-            cells = new bool[sizeY, sizeX];
+            cells = new CellState[sizeY, sizeX];
         }
 
-        private Map(int sizeX, int sizeY, bool[,] cells)
+        private Map(int sizeX, int sizeY, CellState[,] cells)
         {
             SizeX = sizeX;
             SizeY = sizeY;
@@ -60,7 +66,7 @@ namespace lib.Models
         public int SizeX { get; }
         public int SizeY { get; }
 
-        public bool this[V p]
+        public CellState this[V p]
         {
             get => cells[p.Y, p.X];
             set => cells[p.Y, p.X] = value;
@@ -75,7 +81,9 @@ namespace lib.Models
                     {
                         var strings = Enumerable
                             .Range(0, SizeX)
-                            .Select(x => cells[SizeY - y - 1, x] ? "." : "#")
+                            .Select(x => cells[SizeY - y - 1, x] == CellState.Void ? "."
+                                : cells[SizeY - y - 1, x] == CellState.Obstacle ? "#" 
+                                : "*")
                             .ToArray();
                         return string.Join("", strings);
                     });
@@ -84,7 +92,7 @@ namespace lib.Models
 
         public Map Clone()
         {
-            return new Map(SizeX, SizeY, (bool[,])cells.Clone());
+            return new Map(SizeX, SizeY, (CellState[,])cells.Clone());
         }
     }
 }

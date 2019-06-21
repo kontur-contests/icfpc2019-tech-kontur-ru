@@ -104,7 +104,7 @@ namespace lib.Strategies
         private void Color(WorkerState state)
         {
             state.Mask = state.Mask.Clone();
-            state.Mask[state.Position] = true;
+            state.Mask[state.Position] = CellState.Void;
         }
 
         private class WorkerState

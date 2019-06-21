@@ -45,7 +45,7 @@ namespace lib.Models
                     if (segments.TryGetValue(x, out var segs) && segs.Any(s => s.min <= y && s.max > y))
                         inside = !inside;
 
-                    map[new V(x, y)] = inside;
+                    map[new V(x, y)] = inside ? CellState.Void : CellState.Obstacle;
                 }
             }
             

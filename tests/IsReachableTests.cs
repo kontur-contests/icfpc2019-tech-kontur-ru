@@ -42,8 +42,8 @@ namespace tests
         public void IsReachable(string from, string to, bool expected)
         {
             var map = new Map(4, 4);
-            map["0,0"] = map["1,0"] = map["0,1"] = map["1,1"] = true;
-            map["2,2"] = map["3,2"] = map["2,3"] = map["3,3"] = true;
+            map["0,0"] = map["1,0"] = map["0,1"] = map["1,1"] = CellState.Void;
+            map["2,2"] = map["3,2"] = map["2,3"] = map["3,3"] = CellState.Void;
             map.IsReachable(from, to).Should().Be(expected);
             map.IsReachable(to, from).Should().Be(expected);
         }
@@ -78,7 +78,7 @@ namespace tests
             for (int x = 0; x < map.SizeX; x++)
             for (int y = 0; y < map.SizeY; y++)
             {
-                map[new V(x, y)] = true;
+                map[new V(x, y)] = CellState.Void;
             }
 
             return map;

@@ -14,5 +14,11 @@ namespace lib.Models
         public Worker Worker { get; }
         public Map Map { get; }       
         public List<Booster> Boosters { get; }
+
+        public void Apply(ActionBase action)
+        {
+            action.Apply(this);
+            Worker.NextTurn();
+        }
     }
 }

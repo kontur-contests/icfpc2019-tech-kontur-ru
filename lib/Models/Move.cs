@@ -17,5 +17,12 @@ namespace lib.Models
                 : Delta.X == 1 && Delta.Y == 0 ? "D"
                 : $"INVALID MOVE {Delta}";
         }
+
+        public override void Apply(State state)
+        {
+            state.Worker.Position += Delta;
+            if (state.Worker.FastWheelsTimeLeft > 0)
+                state.Worker.Position += Delta;
+        }
     }
 }

@@ -32,9 +32,9 @@ namespace tests
             var state = new ProblemReader(ProblemReader.PART_1_INITIAL).Read(1).ToState();
             var expectedMap = new Map(8, 3)
             {
-                [new V(0, 0)] = true, [new V(1, 0)] = true, [new V(2, 0)] = true, [new V(3, 0)] = true, [new V(4, 0)] = true, [new V(5, 0)] = true,
-                [new V(0, 1)] = true, [new V(1, 1)] = true, [new V(2, 1)] = true, [new V(3, 1)] = true, [new V(4, 1)] = true, [new V(5, 1)] = true, [new V(6, 1)] = true, [new V(7, 1)] = true,
-                [new V(0, 2)] = true, [new V(1, 2)] = true, [new V(2, 2)] = true, [new V(3, 2)] = true, [new V(4, 2)] = true, [new V(5, 2)] = true,
+                [new V(0, 0)] = CellState.Void, [new V(1, 0)] = CellState.Void, [new V(2, 0)] = CellState.Void, [new V(3, 0)] = CellState.Void, [new V(4, 0)] = CellState.Void, [new V(5, 0)] = CellState.Void, [new V(6, 0)] = CellState.Obstacle, [new V(7, 0)] = CellState.Obstacle,
+                [new V(0, 1)] = CellState.Void, [new V(1, 1)] = CellState.Void, [new V(2, 1)] = CellState.Void, [new V(3, 1)] = CellState.Void, [new V(4, 1)] = CellState.Void, [new V(5, 1)] = CellState.Void, [new V(6, 1)] = CellState.Void, [new V(7, 1)] = CellState.Void,
+                [new V(0, 2)] = CellState.Void, [new V(1, 2)] = CellState.Void, [new V(2, 2)] = CellState.Void, [new V(3, 2)] = CellState.Void, [new V(4, 2)] = CellState.Void, [new V(5, 2)] = CellState.Void, [new V(6, 2)] = CellState.Obstacle, [new V(7, 2)] = CellState.Obstacle,
             };
             state.Should()
                 .BeEquivalentTo(

@@ -61,7 +61,7 @@ namespace lib
                 var iy = (y0 < y1) ? 1 : -1;
                 for (int y = y0 + iy, x = x0 + ix; y != y1; y += iy, x += ix)
                 {
-                    if (!map[new V(x, y)]) return false;
+                    if (map[new V(x, y)] == CellState.Obstacle) return false;
                 }
             }
             else if (Math.Abs(dy) >= Math.Abs(dx))
@@ -71,10 +71,10 @@ namespace lib
                 for (int y = y0 + 1; y < y1; y++)
                 {
                     var x = nx / (2 * dy);
-                    if (nx % (2 * dy) != 0 && !map[new V(x, y)]) return false;
+                    if (nx % (2 * dy) != 0 && map[new V(x, y)] == CellState.Obstacle) return false;
                     nx += 2 * dx;
                     x = nx / (2 * dy);
-                    if (nx % (2*dy) != 0 && !map[new V(x, y)]) return false;
+                    if (nx % (2*dy) != 0 && map[new V(x, y)] == CellState.Obstacle) return false;
                 }
             }
             else
@@ -83,9 +83,9 @@ namespace lib
                 var ny = 2 * dx * y0 + dx + dy;
                 for (int x = x0 + 1; x < x1; x++)
                 {
-                    if (ny % (2 * dx) != 0 && !map[new V(x, ny / (2 * dx))]) return false;
+                    if (ny % (2 * dx) != 0 && map[new V(x, ny / (2 * dx))]== CellState.Obstacle) return false;
                     ny += 2 * dy;
-                    if (ny % (2 * dx) != 0 && !map[new V(x, ny / (2 * dx))]) return false;
+                    if (ny % (2 * dx) != 0 && map[new V(x, ny / (2 * dx))]== CellState.Obstacle) return false;
                 }
             }
             return true;
