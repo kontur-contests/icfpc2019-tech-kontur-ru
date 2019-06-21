@@ -11,6 +11,8 @@ namespace tests.Solvers
         [Test]
         public void SolveOne()
         {
+            //Solved 96 problem in 3881 steps. (stupid)
+            //Solved 96 problem in 3477 steps. (collect manipulators)
             SolveOneProblem(new StupidSolver(), 96);
         }
         

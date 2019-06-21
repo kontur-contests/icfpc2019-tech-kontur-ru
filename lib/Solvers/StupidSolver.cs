@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Schema;
 using lib.Models;
 
 namespace lib.Solvers
 {
     public class StupidSolver : ISolver
     {
+        private List<ActionBase> result;
+
         public string GetName()
         {
             return "stupid";
@@ -18,7 +22,9 @@ namespace lib.Solvers
 
         public List<ActionBase> Solve(State state)
         {
-            var result = new List<ActionBase>();
+            result = new List<ActionBase>();
+
+            CollectManipulators(state);
 
             while (true)
             {
@@ -53,6 +59,37 @@ namespace lib.Solvers
             }
 
             return result;
+        }
+
+        private void CollectManipulators(State state)
+        {
+            var k = 0;
+
+            while (true)
+            {
+                var boosters = state.Boosters.Where(b => b.Type == BoosterType.Extension).ToList();
+
+                if (!boosters.Any())
+                    return;
+
+                var map = state.Map;
+                var me = state.Worker;
+                var pathBuilder = new PathBuilder(map, me.Position);
+
+                var best = boosters.OrderBy(b => pathBuilder.Distance(b.Position)).First();
+
+                var actions = pathBuilder.GetActions(best.Position);
+
+                var y = k / 2 + 2;
+                y = k % 2 == 0 ? -y : y;
+                var add = new UseExtension(new V(1, y));
+                k++;
+
+                actions.Add(add);
+
+                state.Apply(actions);
+                result.AddRange(actions);
+            }
         }
 
         private class PathBuilder
