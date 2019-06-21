@@ -1,10 +1,25 @@
 image: beevee/dotfox:latest
 
 stages:
-    - build
+    - test
+    - deploy
 
-check_unchecked:
-    stage: build
+check_unchecked:scheduled:
+    stage: test
     script:
         - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
+    only:
+        - schedules
+
+check_unchecked:
+    stage: test
+    script:
+        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
+    when: manual
+
+submit:
+    stage: deploy
+    script:
+        - "dotnet run --project console-runner/console-runner.csproj -- submit -z solutions"
+        - "curl -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"
     when: manual

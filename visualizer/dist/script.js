@@ -3,6 +3,14 @@ const actionsWrapper = document.getElementById('main_section');
 const controlCenter = document.createElement('div');
 controlCenter.classList.add('control-center');
 
+const zeroRow = document.createElement('form');
+zeroRow.classList.add('row');
+zeroRow.addEventListener('submit', submitForm);
+
+const input = document.createElement('input');
+input.setAttribute('type', 'number');
+input.id = 'taskNumber';
+
 const firstRow = document.createElement('div');
 firstRow.classList.add('row');
 
@@ -35,6 +43,7 @@ const nextFiveButton = document.createElement('button');
 nextFiveButton.textContent = '>>';
 nextFiveButton.addEventListener('click', nextFiveTick);
 
+zeroRow.appendChild(input);
 
 firstRow.appendChild(prevButton);
 firstRow.appendChild(playButton);
@@ -46,6 +55,7 @@ secondRow.appendChild(nextFiveButton);
 controlCenter.appendChild(firstRow);
 controlCenter.appendChild(secondRow);
 
+actionsWrapper.appendChild(zeroRow);
 actionsWrapper.appendChild(controlCenter);
 actionsWrapper.appendChild(resetButton);
 
@@ -56,15 +66,8 @@ let pause = true;
 let currentTick = 0;
 let robotTrack = [];
 
-
 function playPause(e) {
     e.preventDefault();
-    // const prepare = rm(Tl(), a.Pf);
-    //
-    // debugger;
-    // if (isPause) {
-    //     prepare();
-    // }
 
 
     if (pause) {
@@ -182,3 +185,25 @@ function drawTrack() {
 
 
 }
+
+function useProblem(number) {
+    pause = true;
+    currentTick = 0;
+    robotTrack = [];
+
+    mm(W(), window.files.desc[number].trim());
+    nm(W(), window.files.sol[number].trim());
+    setTimeout(() => {
+        const prepare = rm(Tl(), W().Pf);
+        prepare();
+    }, 55);
+}
+
+
+function submitForm(e) {
+    e.preventDefault();
+    const selectedTask = document.getElementById('taskNumber').value;
+
+    useProblem(selectedTask);
+}
+

@@ -4545,33 +4545,6 @@ var render, validate;
                 }
             }
         }(this));
-        this.Yi = new C(function () {
-            return function () {
-                if (W().jg().files[0] instanceof Blob) {
-                    var a = new FileReader;
-                    a.onloadend = function (a) {
-                        return function () {
-                            return mm(W(), a)
-                        }
-                    }(a);
-                    a.readAsText(W().jg().files[0])
-                } else dm(W()), renderText(W(), W().qg, Gg().Kf), gm(), Vl(W())
-            }
-        }(this));
-        this.Vi = new C(function () {
-            return function () {
-                Ul(W());
-                if (W().hg().files[0] instanceof Blob) {
-                    var a = new FileReader;
-                    a.onloadend = function (a) {
-                        return function () {
-                            return nm(W(), a)
-                        }
-                    }(a);
-                    a.readAsText(W().hg().files[0])
-                } else renderText(W(), W().Jf, Gg().Kf), hm(), Vl(W())
-            }
-        }(this));
         this.ji = new C(function () {
             return function () {
                 Ul(W());
@@ -4748,9 +4721,7 @@ var render, validate;
         renderText(this, this.gh, Gg().vg);
         sm(this);
         Vl(this);
-        this.jg().onchange = rm(Tl(), this.Yi);
-        this.hg().onchange = rm(Tl(), this.Vi);
-        this.nh().onclick = rm(Tl(), this.Pf);
+
         Sg(Tg()).onkeypress = function (evt) {
             a:{
                 W();
@@ -4895,7 +4866,7 @@ var render, validate;
     }
 
     function mm(a, b) {
-        b = za(b.result);
+        b = za(b);
         if (b === W().re) Vl(W()); else return renderText(W(), W().zg, Gg().oj), a = new F(function (a, b) {
             return function () {
                 try {
@@ -4922,7 +4893,7 @@ var render, validate;
     }
 
     function nm(a, b) {
-        b = za(b.result);
+        b = za(b);
         if (b === W().qe) Vl(W()); else return renderText(W(), W().yg, Gg().oj), a = new F(function (a, b) {
             return function () {
                 try {

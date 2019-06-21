@@ -17,7 +17,7 @@ namespace lib
             return 0 <= v.X && v.X < map.SizeX && 0 <= v.Y && v.Y < map.SizeY;
         }
 
-        public static IEnumerable<(V, CellState)> EnumerateCells(this Map map)
+        public static IEnumerable<(V pos, CellState state)> EnumerateCells(this Map map)
         {
             for (int x = 0; x < map.SizeX; x++)
             for (int y = 0; y < map.SizeY; y++)

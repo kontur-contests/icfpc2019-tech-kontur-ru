@@ -37,3 +37,8 @@ msbuild.wrn
 .vs/
 
 prob-*.sol
+
+visualizer/dist/bundle.js
+visualizer/files.js
+node_modules/
+package-lock.json
