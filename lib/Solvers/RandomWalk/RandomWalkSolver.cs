@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using lib.Models;
 
 namespace lib.Solvers.RandomWalk
@@ -92,8 +93,13 @@ namespace lib.Solvers.RandomWalk
                         continue;
 
                     var nextRotate = rotates[random.Next(rotates.Length)];
-                    actions.AddRange(nextRotate);
-                    state.Apply(nextRotate);
+                    foreach (var r in nextRotate)
+                    {
+                        actions.Add(r);
+                        state.Apply(r);
+                        if (actions.Count >= depth)
+                            return actions;
+                    }
                     shift = nextShift;
                     break;
                 }

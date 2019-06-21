@@ -15,7 +15,7 @@ namespace tests.Solvers
             //var seed = Guid.NewGuid().GetHashCode();
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
-            var solver = new RandomWalkSolver(10, new Estimator(), new Random(seed), 100);
+            var solver = new RandomWalkSolver(3, new Estimator(), new Random(seed), 100);
             SolveOneProblem(solver, 2);
         }
         
