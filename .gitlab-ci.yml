@@ -22,7 +22,7 @@ submit:
     stage: build
     script:
         - "dotnet run --project console-runner/console-runner.csproj -- submit -z solutions"
-        - "curl -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"
+        - "curl -s -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"
     when: manual
 
 compare_csv:
