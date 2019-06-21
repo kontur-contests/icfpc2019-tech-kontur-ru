@@ -138,6 +138,26 @@ namespace console_runner
                 });
             });
             
+            app.Command("csv", (command) =>
+            {
+                command.Description = "Generate expected csv that can be compared to organizers csv";
+                command.HelpOption("-?|-h|--help");
+                
+                command.OnExecute(() =>
+                {
+                    Storage
+                        .EnumerateCheckedAndCorrect()
+                        .OrderBy(s => s.ProblemId)
+                        .ToList()
+                        .ForEach(solution =>
+                        {
+                            Console.WriteLine($"{solution.ProblemId}, {solution.OurTime}, Ok");
+                        });
+                    
+                    return 0;
+                });
+            });
+            
             app.Execute(args);
         }
     }
