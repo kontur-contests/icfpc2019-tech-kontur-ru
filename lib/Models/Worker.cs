@@ -29,6 +29,10 @@ namespace lib.Models
 
         public void NextTurn()
         {
+            if (FastWheelsTimeLeft > 0)
+                FastWheelsTimeLeft--;
+            if (DrillTimeLeft > 0)
+                DrillTimeLeft--;
         }
     }
 }
