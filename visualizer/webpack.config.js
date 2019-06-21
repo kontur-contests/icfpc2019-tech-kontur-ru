@@ -4,6 +4,7 @@ module.exports = {
     entry: './files.js',
     output: {
         filename: 'bundle.js',
+        publicPath: 'dist',
     },
     module: {
         rules: [
