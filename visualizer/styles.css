@@ -1,0 +1,19 @@
+.control-center {
+    margin: 30px 0;
+    display: flex;
+
+}
+
+.control-center button {
+    padding: 5px;
+    font-size: 15px;
+}
+
+.reset-button.reset-button {
+    margin-left: 20px;
+    font-size: 25px;
+}
+
+.execSpeed {
+    display: none;
+}

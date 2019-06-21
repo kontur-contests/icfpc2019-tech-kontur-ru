@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+    <title>Visualiser | ICFP Programming Contest 2019</title>
+
+    <script type="application/ld+json">
+        {"@type":"WebPage","headline":"Visualiser","url":"/solution_visualiser/","@context":"http://schema.org"}</script>
+    <!-- End Jekyll SEO tag -->
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="styles.css">
+
+<body>
+<div class="full-wrapper">
+    <main class="page-content" aria-label="Content">
+        <div class="wrapper">
+            <link rel='stylesheet' type='text/css' href='wide.css'/>
+
+            <style>
+                .wrapper {
+                    max-width: -webkit-calc(3000px - (30px * 2));
+                    max-width: calc(3000px - (30px * 2));
+                    margin-right: auto;
+                    margin-left: auto;
+                    padding-right: 30px;
+                    padding-left: 30px; }
+                @media screen and (max-width: 3000px) {
+                    .wrapper {
+                        max-width: -webkit-calc(3000px - (30px));
+                        max-width: calc(3000px - (30px));
+                        padding-right: 15px;
+                        padding-left: 15px; } }
+            </style>
+
+            <center>
+                <script type="text/javascript" src="lambda.js"></script>
+                <table>
+                    <tr>
+                        <td><div><canvas style="display: block" id="canvas" /></div></td>
+                        <td valign="top">
+                            <div id="main_section" valign="top"></div>
+                            <div class="execSpeed">Execution speed: <text id="speed_text"></text></div>
+                        </td>
+                    </tr>
+                </table>
+                <script> render(); </script>
+                <script type="text/javascript" src="script.js" ></script>
+            </center>
+
+
+
+
+        </div>
+    </main>
+</body>
+
+</html>
