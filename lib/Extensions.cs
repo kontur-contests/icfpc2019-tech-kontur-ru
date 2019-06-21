@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using lib.Models;
 
 namespace lib
@@ -47,19 +46,49 @@ namespace lib
             return newValue;
         }
 
-        public static bool IsReachable(this V src, V dest, Map map)
+        public static bool IsReachable(this Map map, V src, V dest)
         {
-            var dx = dest.X - src.X;
-            var dy = dest.Y - src.Y;
-            if (Math.Abs(dx) > Math.Abs(dy))
+            var x0 = src.X;
+            var y0 = src.Y;
+            var x1 = dest.X;
+            var y1 = dest.Y;
+            var dx = x1 - x0;
+            var dy = y1 - y0;
+            if (Math.Abs(dy) == Math.Abs(dx))
             {
-                //var step = Math.Sign(dx);
-                //for (int x = src.X + 1; x < dest.X; x += step)
-                //{
-                //    var y = 
-                //}
+                if (dx == 0) return true;
+                var ix = (x0 < x1) ? 1 : -1;
+                var iy = (y0 < y1) ? 1 : -1;
+                for (int y = y0 + iy, x = x0 + ix; y != y1; y += iy, x += ix)
+                {
+                    if (!map[new V(x, y)]) return false;
+                }
             }
-            throw new NotImplementedException();
+            else if (Math.Abs(dy) >= Math.Abs(dx))
+            {
+                if (dy < 0) return IsReachable(map, dest, src);
+                var nx = 2 * dy * x0 + dx + dy;
+                for (int y = y0 + 1; y < y1; y++)
+                {
+                    var x = nx / (2 * dy);
+                    if (nx % (2 * dy) != 0 && !map[new V(x, y)]) return false;
+                    nx += 2 * dx;
+                    x = nx / (2 * dy);
+                    if (nx % (2*dy) != 0 && !map[new V(x, y)]) return false;
+                }
+            }
+            else
+            {
+                if (dx < 0) return IsReachable(map, dest, src);
+                var ny = 2 * dx * y0 + dx + dy;
+                for (int x = x0 + 1; x < x1; x++)
+                {
+                    if (ny % (2 * dx) != 0 && !map[new V(x, ny / (2 * dx))]) return false;
+                    ny += 2 * dy;
+                    if (ny % (2 * dx) != 0 && !map[new V(x, ny / (2 * dx))]) return false;
+                }
+            }
+            return true;
         }
     }
 }
