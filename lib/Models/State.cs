@@ -35,7 +35,7 @@ namespace lib.Models
             foreach (var manipulator in Worker.Manipulators)
             {
                 var p = Worker.Position + manipulator;
-                if (Map.IsReachable(p, Worker.Position))
+                if (p.Inside(Map) && Map.IsReachable(p, Worker.Position))
                     Map[p] = CellState.Wrapped;
             }
         }

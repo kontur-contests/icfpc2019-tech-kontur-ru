@@ -4,7 +4,7 @@ namespace lib.Models
 {
     public class Map<T>
     {
-        private readonly T[,] cells;
+        protected readonly T[,] cells;
 
         public Map(int sizeX, int sizeY)
         {
