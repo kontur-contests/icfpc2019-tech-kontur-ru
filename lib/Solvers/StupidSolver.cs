@@ -5,15 +5,8 @@ using lib.Models;
 namespace lib.Solvers
 {
     public class StupidSolver : ISolver
-    {
-        private readonly State state;
-
-        public StupidSolver(State state)
-        {
-            this.state = state;
-        }
-
-        public List<ActionBase> Solve()
+    {   
+        public List<ActionBase> Solve(State state)
         {
             var result = new List<ActionBase>();
 

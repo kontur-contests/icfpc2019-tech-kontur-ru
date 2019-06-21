@@ -5,6 +5,6 @@ namespace lib.Solvers
 {
     public interface ISolver
     {
-        List<ActionBase> Solve();
+        List<ActionBase> Solve(State state);
     }
 }

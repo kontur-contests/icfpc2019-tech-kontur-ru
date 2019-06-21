@@ -17,8 +17,8 @@ namespace tests.Solvers
             int id = 50;
 
             var state = ReadFromFile(id);
-            var solver = new StupidSolver(state);
-            var result = solver.Solve();
+            var solver = new StupidSolver();
+            var result = solver.Solve(state);
 
             Save(result, id);
         }
