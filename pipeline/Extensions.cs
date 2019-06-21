@@ -30,7 +30,7 @@ namespace pipeline
             File.WriteAllText(solutionPath, meta.SolutionBlob);
             
             var driverDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-            var service = FirefoxDriverService.CreateDefaultService(driverDirectory, "geckodriver");
+            var service = FirefoxDriverService.CreateDefaultService(driverDirectory, geckodriverExecName);
             var options = new FirefoxOptions { LogLevel = FirefoxDriverLogLevel.Error };
             options.AddArgument("-headless");
             var driver = new FirefoxDriver(service, options);
