@@ -1,11 +1,26 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace lib.Models
 {
+    public static class ProblemConverter
+    {
+        public static State Convert(Problem problem)
+        {
+            return null;
+        }
+    }
+
     public static class ProblemReader
     {
+        public static Problem Read(int problem)
+        {
+            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "part-1-initial", $"prob-{problem:000}.desc");
+            return Read(File.ReadAllText(fileName));
+        }
+
         public static Problem Read(string source)
         {
             var parts = source.Split('#');
@@ -13,8 +28,8 @@ namespace lib.Models
             {
                 Map = ReadMap(parts[0]),
                 Point = ReadPoint(parts[1]),
-                Obstacles = parts[2].Split(';').Select(ReadMap).ToList(),
-                Boosters = parts[3].Split(';').Select(ReadBooster).ToList(),
+                Obstacles = parts[2].Split(new[]{';'}, StringSplitOptions.RemoveEmptyEntries).Select(ReadMap).ToList(),
+                Boosters = parts[3].Split(new[]{';'}, StringSplitOptions.RemoveEmptyEntries).Select(ReadBooster).ToList(),
             };
         }
 
