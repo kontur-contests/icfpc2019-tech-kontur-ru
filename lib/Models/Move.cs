@@ -4,20 +4,20 @@ namespace lib.Models
 {
     public class Move : ActionBase
     {
-        public Move(V delta)
+        public Move(V shift)
         {
-            Delta = delta;
+            Shift = shift;
         }
 
-        public V Delta { get; }
+        public V Shift { get; }
 
         public override string ToString()
         {
-            return Delta.X == 0 && Delta.Y == -1 ? "S"
-                : Delta.X == 0 && Delta.Y == 1 ? "W"
-                : Delta.X == -1 && Delta.Y == 0 ? "A"
-                : Delta.X == 1 && Delta.Y == 0 ? "D"
-                : $"INVALID MOVE {Delta}";
+            return Shift.X == 0 && Shift.Y == -1 ? "S"
+                : Shift.X == 0 && Shift.Y == 1 ? "W"
+                : Shift.X == -1 && Shift.Y == 0 ? "A"
+                : Shift.X == 1 && Shift.Y == 0 ? "D"
+                : $"INVALID MOVE {Shift}";
         }
 
         public override void Apply(State state)
@@ -29,7 +29,7 @@ namespace lib.Models
 
         private void ApplySingleMove(State state, bool ignoreInvalidMove)
         {
-            var newPosition = state.Worker.Position + Delta;
+            var newPosition = state.Worker.Position + Shift;
             if (!newPosition.Inside(state.Map) || state.Map[newPosition] == CellState.Obstacle && state.Worker.DrillTimeLeft == 0)
             {
                 if (ignoreInvalidMove)
@@ -37,7 +37,7 @@ namespace lib.Models
                 throw new InvalidOperationException($"Invalid move from {state.Worker.Position} to obstacle {newPosition}. Action: {this}");
             }
 
-            state.Worker.Position += Delta;
+            state.Worker.Position += Shift;
             state.Wrap();
         }
     }

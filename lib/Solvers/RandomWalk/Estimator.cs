@@ -7,8 +7,8 @@ namespace lib.Solvers.RandomWalk
     {
         public double Estimate(State state)
         {
-            var wrappedCount = state.Map.EnumerateCells().Count(c => c.Item2 == CellState.Void);
-            return wrappedCount;
+            var unwrappedCount = state.Map.EnumerateCells().Count(c => c.Item2 == CellState.Void);
+            return -unwrappedCount;
         }
     }
 }
