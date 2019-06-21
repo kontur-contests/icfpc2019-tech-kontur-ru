@@ -6,6 +6,6 @@ stages:
 check_unchecked:
     stage: build
     script:
-        - "ls -lah"
+        - "sudo chmod a+w /tmp"
         - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
     when: manual
