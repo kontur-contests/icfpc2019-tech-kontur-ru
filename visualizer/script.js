@@ -1,8 +1,10 @@
 const actionsWrapper = document.getElementById('main_section');
 
-
 const controlCenter = document.createElement('div');
 controlCenter.classList.add('control-center');
+
+const firstRow = document.createElement('div');
+firstRow.classList.add('row');
 
 const prevButton = document.createElement('button');
 prevButton.textContent = '<';
@@ -21,14 +23,33 @@ resetButton.classList.add('reset-button');
 resetButton.textContent = '↺';
 resetButton.addEventListener('click', reset);
 
+const secondRow = document.createElement('div');
+secondRow.classList.add('row');
+secondRow.classList.add('second-row');
+
+const prevFiveButton = document.createElement('button');
+prevFiveButton.textContent = '<<';
+prevFiveButton.addEventListener('click', prevFiveTick);
+
+const nextFiveButton = document.createElement('button');
+nextFiveButton.textContent = '>>';
+nextFiveButton.addEventListener('click', nextFiveTick);
 
 
-controlCenter.appendChild(prevButton);
-controlCenter.appendChild(playButton);
-controlCenter.appendChild(nextButton);
-controlCenter.appendChild(resetButton);
+firstRow.appendChild(prevButton);
+firstRow.appendChild(playButton);
+firstRow.appendChild(nextButton);
+
+secondRow.appendChild(prevFiveButton);
+secondRow.appendChild(nextFiveButton);
+
+controlCenter.appendChild(firstRow);
+controlCenter.appendChild(secondRow);
 
 actionsWrapper.appendChild(controlCenter);
+actionsWrapper.appendChild(resetButton);
+
+
 
 let intervalId = null;
 let pause = true;
@@ -73,8 +94,24 @@ function nextTick(e) {
     }
 }
 
+function nextFiveTick(e) {
+    if (e) {
+        e.preventDefault();
+    }
+
+    for (let i = 0; i < 5; i++) {
+        currentTick++;
+        nextTick();
+    }
+}
+
+
+
+
 function prevTick(e) {
-    e.preventDefault();
+    if (e) {
+        e.preventDefault();
+    }
 
     W().Pf.h(e);
 
@@ -86,6 +123,16 @@ function prevTick(e) {
 
 
     currentTick--;
+}
+
+function prevFiveTick(e) {
+    if (e) {
+        e.preventDefault();
+    }
+
+    currentTick = currentTick - 4;
+    currentTick = currentTick < 0 ? 0 : currentTick;
+    prevTick();
 }
 
 function reset(e) {

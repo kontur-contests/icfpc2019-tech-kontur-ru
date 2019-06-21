@@ -1,11 +1,18 @@
+using System;
+
 namespace lib.Models
 {
     public class UseFastWheels : ActionBase
     {
         public override string ToString() => "F";
+
         public override void Apply(State state)
         {
-            throw new System.NotImplementedException();
+            if (state.Worker.FastWheelsCount <= 0)
+                throw new InvalidOperationException("No fast wheels");
+
+            state.Worker.FastWheelsCount--;
+            state.Worker.FastWheelsTimeLeft = Constants.FastWheelsTime;
         }
     }
 }

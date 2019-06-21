@@ -1,19 +1,33 @@
 .control-center {
-    margin: 30px 0;
-    display: flex;
+    margin-top: 15px;
+    display: inline-block;
+    width: 130px;
+}
 
+.row {
+    margin: 15px 0;
+    display: flex;
 }
 
 .control-center button {
     padding: 5px;
     font-size: 15px;
+    box-sizing: border-box;
+    min-width: 43px;
 }
 
 .reset-button.reset-button {
     margin-left: 20px;
     font-size: 25px;
+    vertical-align: top;
+    margin-top: 30px;
 }
 
 .execSpeed {
     display: none;
 }
+
+.second-row {
+    justify-content: space-between;
+}
+
