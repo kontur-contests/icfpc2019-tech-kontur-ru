@@ -5,14 +5,6 @@ using System.Linq;
 
 namespace lib.Models
 {
-    public static class ProblemConverter
-    {
-        public static State Convert(Problem problem)
-        {
-            return null;
-        }
-    }
-
     public class ProblemReader
     {
         public const string PART_1_INITIAL = "part-1-initial";
@@ -38,8 +30,8 @@ namespace lib.Models
             {
                 Map = ReadMap(parts[0]),
                 Point = ReadPoint(parts[1]),
-                Obstacles = parts[2].Split(new[]{';'}, StringSplitOptions.RemoveEmptyEntries).Select(ReadMap).ToList(),
-                Boosters = parts[3].Split(new[]{';'}, StringSplitOptions.RemoveEmptyEntries).Select(ReadBooster).ToList(),
+                Obstacles = parts[2].Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries).Select(ReadMap).ToList(),
+                Boosters = parts[3].Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries).Select(ReadBooster).ToList()
             };
         }
 
@@ -51,7 +43,7 @@ namespace lib.Models
 
         private static List<V> ReadMap(string s)
         {
-            return s.Split(new[]{"),("}, StringSplitOptions.None).Select(ReadPoint).ToList();
+            return s.Split(new[] {"),("}, StringSplitOptions.None).Select(ReadPoint).ToList();
         }
 
         private static Booster ReadBooster(string s)
