@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
-using FluentAssertions.Equivalency;
 using lib;
 using lib.Models;
 using NUnit.Framework;

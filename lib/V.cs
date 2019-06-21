@@ -32,6 +32,12 @@
         public override string ToString() 
             => $"({X},{Y})";
 
+        public static implicit operator V(string s)
+        {
+            var parts = s.TrimStart('(').TrimEnd(')').Split(',');
+            return new V(int.Parse(parts[0]), int.Parse(parts[1]));
+        }
+
         public int X { get; }
         public int Y { get; }
 

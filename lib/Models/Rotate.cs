@@ -8,5 +8,10 @@ namespace lib.Models
         }
 
         public bool Clockwise { get; }
+        
+        public override string ToString()
+        {
+            return Clockwise ? "E" : "Q";
+        }
     }
 }

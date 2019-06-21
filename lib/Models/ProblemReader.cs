@@ -37,8 +37,7 @@ namespace lib.Models
 
         private static V ReadPoint(string s)
         {
-            var parts = s.TrimStart('(').TrimEnd(')').Split(',');
-            return new V(int.Parse(parts[0]), int.Parse(parts[1]));
+            return s;
         }
 
         private static List<V> ReadMap(string s)
