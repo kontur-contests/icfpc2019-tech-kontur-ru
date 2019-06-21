@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using lib.Models;
+using lib.Solvers;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using OpenQA.Selenium;
@@ -28,6 +29,11 @@ namespace pipeline
         public static List<SolutionMeta> EnumerateUnchecked()
         {
             return MetaCollection.FindSync(meta => !meta.IsOnlineChecked).ToList();
+        }
+        
+        public static List<SolutionMeta> EnumerateSolved(ISolver solver)
+        {
+            return MetaCollection.FindSync(x => x.AlgorithmId == solver.GetName() && x.AlgorithmVersion == solver.GetVersion()).ToList();            
         }
         
         public static List<SolutionMeta> EnumerateCheckedAndCorrect()

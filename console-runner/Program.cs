@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Xml;
 using lib;
 using lib.Models;
 using lib.Solvers;
@@ -52,7 +55,7 @@ namespace console_runner
 
             app.Command("solve", (command) =>
             {
-                command.Description = "Solve all problems with a stupid solver";
+                command.Description = "Solve all problems with all solvers";
                 command.HelpOption("-?|-h|--help");
                 
                 var solverOption = command.Option("-s|--solver",
@@ -77,16 +80,56 @@ namespace console_runner
                             .ReadAll()
                             .Where(x => !problemOption.HasValue() || problemOption.HasValue() && x.ProblemId == int.Parse(problemOption.Value()))
                             .ToList()
-                            .ForEach(problemMeta =>
-                            {
-                                Console.Write($"Solving {problemMeta.ProblemId} " +
-                                              $"with {solver.GetName()} v{solver.GetVersion()}... ");
-    
-                                var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
-                                solutionMeta.SaveToDb();
-                        
-                                Console.WriteLine($"Done in {solutionMeta.CalculationTookMs} ms");
-                            });
+                            .ForEach(problemMeta => Solve(solver, problemMeta));
+                    });
+
+                    return 0;
+                });
+            });
+
+            app.Command("solve-unsolved", (command) =>
+            {
+                command.Description = "Create solutions for any nonexistent problem-solver pair";
+                command.HelpOption("-?|-h|--help");
+                
+                var subsetSizeOption = command.Option("-n",
+                    "Random subset size",
+                    CommandOptionType.SingleValue);
+
+                command.OnExecute(() =>
+                {
+                    var solvers = RunnableSolvers
+                        .Enumerate()
+                        .Select(x => x.Invoke())
+                        .ToList();
+
+                    var problems = ProblemReader.ReadAll();
+                    
+                    solvers.ForEach(solver =>
+                    {
+                        var solved = Storage.EnumerateSolved(solver).Select(x => x.ProblemId);
+                        var unsolved = problems
+                            .Select(x => x.ProblemId)
+                            .Except(solved)
+                            .OrderBy(_ => Guid.NewGuid())
+                            .ToList();
+
+                        if (subsetSizeOption.HasValue())
+                        {
+                            var subset = unsolved
+                                .Take(int.Parse(subsetSizeOption.Value()))
+                                .ToList();
+                            
+                            Console.WriteLine($"Unsolved by {solver.GetName()} v{solver.GetVersion()}: {string.Join(", ", subset)}");
+                                
+                            subset.ForEach(x => Solve(solver, problems.Find(y => x == y.ProblemId)));
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Unsolved by {solver.GetName()} v{solver.GetVersion()}: {string.Join(", ", unsolved)}");
+                                
+                            unsolved.ForEach(x => Solve(solver, problems.Find(y => x == y.ProblemId)));
+                        }
                     });
 
                     return 0;
@@ -159,6 +202,19 @@ namespace console_runner
             });
             
             app.Execute(args);
+        }
+
+        private static void Solve(ISolver solver, ProblemMeta problemMeta)
+        {
+            Console.Write(
+                $"Solving {problemMeta.ProblemId} " +
+                $"with {solver.GetName()} v{solver.GetVersion()}... ");
+    
+            var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
+            solutionMeta.SaveToDb();
+                        
+            Console.WriteLine($"Done in {solutionMeta.CalculationTookMs} ms, " +
+                              $"{solutionMeta.OurTime} time units");
         }
     }
 }
