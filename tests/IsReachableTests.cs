@@ -19,7 +19,7 @@ namespace tests
         [TestCase("7,1", "4,0", true)]
         public void IsReachableOnFirstMap(string from, string to, bool expected)
         {
-            var problem = new ProblemReader(ProblemReader.PART_1_INITIAL).Read(1);
+            var problem = new ProblemReader(ProblemReader.ALL_PACK).Read(1);
             problem.ToState().Map.IsReachable(from, to).Should().Be(expected);
         }
 

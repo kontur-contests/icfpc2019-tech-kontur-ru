@@ -2,17 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MongoDB.Driver.Core.Misc;
 
 namespace lib.Models
 {
     public class ProblemReader
     {
-        public const string PART_1_INITIAL = "part-1-initial";
-        public const string PART_1_EXAMPLE = "part-1-examples";
-        public const string PART_2_TELEPORTS = "part-2-teleports";
+        public const string ALL_PACK = "all";
+        public const string EXAMPLES_PACK = "examples";
 
-        public static ProblemReader Current = new ProblemReader(PART_1_INITIAL);
+        public static ProblemReader Current = new ProblemReader(ALL_PACK);
 
         public string Pack { get; }
 

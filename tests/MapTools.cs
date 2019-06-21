@@ -15,8 +15,8 @@ namespace tests
     public class MapTools
     {
         [Test]
-        [Explicit]
-        public void MakeMapImage([Values(ProblemReader.PART_1_INITIAL, ProblemReader.PART_2_TELEPORTS)]string pack)
+        //[Explicit]
+        public void MakeMapImage([Values(ProblemReader.ALL_PACK)]string pack)
         {
             var sb = new StringBuilder();
             var dir = Path.Combine(FileHelper.PatchDirectoryName("problems"), pack, "images");
@@ -24,18 +24,22 @@ namespace tests
             foreach (var problemMeta in problems)
             {
                 var map = problemMeta.Problem.ToState().Map;
-                var bmp = new Image<Rgba32>(map.SizeX, map.SizeY);
+                var bmp = new Image<Rgba32>(Configuration.Default, map.SizeX+2, map.SizeY+2, Rgba32.Black);
                 foreach (var cell in map.EnumerateCells())
                 {
-                    bmp[cell.Item1.X, cell.Item1.Y] = GetColor(cell.Item2);
+                    bmp[cell.Item1.X+1, cell.Item1.Y+1] = GetColor(cell.Item2);
                 }
 
                 foreach (var booster in problemMeta.Problem.Boosters)
                 {
-                    bmp[booster.Position.X, booster.Position.Y] = GetColor(booster.Type);
-
+                    bmp[booster.Position.X+1, booster.Position.Y+1] = GetColor(booster.Type);
                 }
-                bmp.Mutate(x => x.Resize(map.SizeX * 2, map.SizeY * 2, new BoxResampler()));
+
+                var factor = 1;
+                if (map.SizeX < 100) factor *= 2;
+                if (map.SizeX < 20) factor *= 2;
+
+                bmp.Mutate(x => x.Resize(map.SizeX * factor, map.SizeY * factor, new BoxResampler()));
                 bmp.Save(Path.Combine(dir, problemMeta.ProblemId + ".png"));
                 sb.Append($"<img style=\"margin:10px\" src=\"{problemMeta.ProblemId}.png\" alt=\"{problemMeta.ProblemId} title=\"{problemMeta.ProblemId}\"\">");
             }

@@ -30,7 +30,7 @@ namespace console_runner
 
                 command.OnExecute(() =>
                 {
-                    const string problemPack = ProblemReader.PART_1_EXAMPLE;
+                    const string problemPack = ProblemReader.EXAMPLES_PACK;
                     const int problemId = 1;
                     
                     var reader = new ProblemReader(problemPack);

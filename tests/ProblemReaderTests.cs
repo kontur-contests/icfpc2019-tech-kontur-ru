@@ -21,7 +21,7 @@ namespace tests
         [Test]
         public void ReadFromFile([Range(1, 150)] int problem)
         {
-            var reader = new ProblemReader(ProblemReader.PART_1_INITIAL);
+            var reader = new ProblemReader(ProblemReader.ALL_PACK);
             var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), reader.Pack, $"prob-{problem:000}.desc");
             reader.Read(problem).ToString().Should().Be(File.ReadAllText(fileName));
         }
@@ -29,7 +29,7 @@ namespace tests
         [Test]
         public void ToState()
         {
-            var state = new ProblemReader(ProblemReader.PART_1_INITIAL).Read(1).ToState();
+            var state = new ProblemReader(ProblemReader.ALL_PACK).Read(1).ToState();
             var expectedMap = new Map(8, 3)
             {
                 [new V(0, 0)] = CellState.Void, [new V(1, 0)] = CellState.Void, [new V(2, 0)] = CellState.Void, [new V(3, 0)] = CellState.Void, [new V(4, 0)] = CellState.Void, [new V(5, 0)] = CellState.Void, [new V(6, 0)] = CellState.Obstacle, [new V(7, 0)] = CellState.Obstacle,
@@ -60,7 +60,7 @@ namespace tests
         [Test]
         public void ToState2()
         {
-            var problem = new ProblemReader(ProblemReader.PART_1_INITIAL).Read(9);
+            var problem = new ProblemReader(ProblemReader.ALL_PACK).Read(9);
             var state = problem.ToState();
             state.Map.ToString()
                 .Should()

@@ -44,7 +44,7 @@ namespace tests.Solvers
 
         public State ReadFromFile(int id)
         {
-            var reader = new ProblemReader(ProblemReader.PART_1_INITIAL);
+            var reader = new ProblemReader(ProblemReader.ALL_PACK);
             var problem = reader.Read(id);
             return problem.ToState();
         }
@@ -52,10 +52,8 @@ namespace tests.Solvers
         public void Save(List<ActionBase> actions, int id)
         {
             var text = actions.Format();
-            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), ProblemReader.PART_1_INITIAL, $"prob-{id:000}.sol");
+            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), ProblemReader.ALL_PACK, $"prob-{id:000}.sol");
             File.WriteAllText(fileName, text);
         }
-
-        public static int[] AllProblems => Enumerable.Range(1, 150).ToArray();
     }
 }
