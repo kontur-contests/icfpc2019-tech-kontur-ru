@@ -64,8 +64,10 @@ namespace pipeline
 
     internal class MinTimeResult
     {
+#pragma warning disable 649
         public int _id;
         public int time;
+#pragma warning restore 649
     }
     
     public static class StorageExtensions
