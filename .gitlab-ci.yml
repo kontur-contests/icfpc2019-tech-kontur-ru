@@ -1,6 +1,11 @@
 image: microsoft/dotnet:latest
 
-build:
+stages:
+    - build
+
+check_unchecked:
+    stage: build
     script:
+        - "ls -lah"
         - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
     when: manual
