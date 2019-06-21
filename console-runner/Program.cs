@@ -51,12 +51,21 @@ namespace console_runner
             {
                 command.Description = "Check all unchecked solution with official checker";
                 command.HelpOption("-?|-h|--help");
+                
+                var dockerOption = command.Option("-d|--docker",
+                    "Running inside docker container",
+                    CommandOptionType.NoValue);
 
                 command.OnExecute(() =>
                 {
+                    var geckodriverExecName = "geckodriver";
+                    if (dockerOption.HasValue())
+                    {
+                        geckodriverExecName = "geckodriver_docker";
+                    }
                     Storage
                         .EnumerateUnchecked()
-                        .ForEach(solution => solution.CheckOnline());
+                        .ForEach(solution => solution.CheckOnline(geckodriverExecName));
 
                     return 0;
                 });
