@@ -5,6 +5,7 @@
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <RootNamespace>console_runner</RootNamespace>
         <LangVersion>latest</LangVersion>
+        <RunWorkingDirectory>$(MSBuildProjectDirectory)</RunWorkingDirectory>
     </PropertyGroup>
 
     <ItemGroup>
