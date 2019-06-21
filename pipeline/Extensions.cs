@@ -41,7 +41,7 @@ namespace pipeline
             var submitButton = driver.FindElement(By.Id("execute_solution"));
             var outputElement = driver.FindElement(By.Id("output"));
         
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
 
             problemField.SendKeys(problemPath);
             wait.Until(drv => outputElement.Text == "Done uploading task description");
