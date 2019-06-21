@@ -39,6 +39,7 @@ namespace lib.Models
 
             state.Worker.Position += Shift;
             state.Wrap();
+            state.CollectBoosters();
         }
     }
 }

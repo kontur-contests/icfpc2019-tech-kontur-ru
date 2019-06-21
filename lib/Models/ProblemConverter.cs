@@ -18,7 +18,6 @@ namespace lib.Models
                 problem.Boosters,
                 0,
                 null);
-            state.Wrap();
             return state;
         }
 

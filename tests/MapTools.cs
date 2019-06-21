@@ -15,7 +15,7 @@ namespace tests
     public class MapTools
     {
         [Test]
-        //[Explicit]
+        [Explicit]
         public void MakeMapImage([Values(ProblemReader.ALL_PACK)]string pack)
         {
             var sb = new StringBuilder();

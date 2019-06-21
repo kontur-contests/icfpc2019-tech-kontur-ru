@@ -11,6 +11,7 @@ namespace lib.Models
             Map = map;
             Boosters = boosters;
             Time = time;
+            Wrap();
             UnwrappedLeft = unwrappedLeft ?? Map.VoidCount();
         }
 
@@ -55,6 +56,32 @@ namespace lib.Models
         public State Clone()
         {
             return new State(Worker.Clone(), Map.Clone(), Boosters.ToList(), Time, UnwrappedLeft);
+        }
+
+        public void CollectBoosters()
+        {
+            var boostersToCollect = Boosters
+                .Where(b => b.Position == Worker.Position && b.Type != BoosterType.MysteriousPoint)
+                .ToList();
+            foreach (var booster in boostersToCollect)
+            {
+                switch (booster.Type)
+                {
+                    case BoosterType.Extension:
+                        Worker.ExtensionCount++;
+                        break;
+                    case BoosterType.FastWheels:
+                        Worker.FastWheelsCount++;
+                        break;
+                    case BoosterType.Drill:
+                        Worker.DrillCount++;
+                        break;
+                    case BoosterType.Teleport:
+                        Worker.TeleportsCount++;
+                        break;
+                }
+                Boosters.Remove(booster);
+            }
         }
     }
 }
