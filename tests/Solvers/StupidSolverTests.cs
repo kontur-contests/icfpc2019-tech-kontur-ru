@@ -1,42 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using lib;
-using lib.Models;
+using System.Linq;
 using lib.Solvers;
 using NUnit.Framework;
 
 namespace tests.Solvers
 {
     [TestFixture]
-    internal class StupidSolverTests
+    internal class StupidSolverTests : SolverTestsBase
     {
         [Test]
-        public void Test()
+        public void SolveOne()
         {
-            int id = 50;
-
-            var state = ReadFromFile(id);
-            var solver = new StupidSolver();
-            var result = solver.Solve(state);
-
-            Save(result, id);
+            SolveOneProblem(new StupidSolver(), 96);
         }
         
-        public State ReadFromFile(int id)
+        [Test]
+        public void SolveSome()
         {
-            var reader = new ProblemReader(ProblemReader.PART_1_INITIAL);
-            var problem = reader.Read(id);
-            return problem.ToState();
-        }
-
-        public void Save(List<ActionBase> actions, int id)
-        {
-            Console.WriteLine($"Solved in {actions.Count} steps.");
-
-            var text = actions.Format();
-            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), ProblemReader.PART_1_INITIAL, $"prob-{id:000}.sol");
-            File.WriteAllText(fileName, text);
+            SolveSomeProblems(() => new StupidSolver(), 
+                Enumerable.Range(1, 150).Take(30).ToList());
         }
     }
 }
