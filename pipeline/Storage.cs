@@ -30,7 +30,6 @@ namespace pipeline
             return MetaCollection.FindSync(meta => !meta.IsOnlineChecked).ToList();
         }
         
-        // TODO: Fix, now it doesn't check for "checked and correct"
         public static List<SolutionMeta> EnumerateCheckedAndCorrect()
         {
             var metas = new List<SolutionMeta>();
@@ -40,8 +39,8 @@ namespace pipeline
                 new BsonDocument { { "$match", new BsonDocument(new Dictionary<string, string>
                 {
                     { "ProblemPack", "all" },
-                    // { "IsOnlineChecked", "true" },
-                    // { "IsOnlineCorrect", "true" }
+                    { "IsOnlineChecked", "true" },
+                    { "IsOnlineCorrect", "true" }
                 }) } },
                 new BsonDocument { { "$group", new BsonDocument(new Dictionary<string, object>
                 {
