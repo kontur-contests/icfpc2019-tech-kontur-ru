@@ -8,5 +8,7 @@ check_unchecked:
     script:
         - "whoami"
         - "ls -lah /"
+        - "chmod -R 777 /tmp"
+        - "ls -lah /tmp"
         - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
     when: manual
