@@ -31,7 +31,7 @@ namespace lib.Solvers
                 var map = state.Map;
                 var me = state.Worker;
 
-                var pathBuilder = new PathBuilder(map, me.Position);
+                var pathBuilder = new PathBuilder(map, me.Position, true);
 
                 V best = null;
                 var bestDist = int.MaxValue;
@@ -74,7 +74,7 @@ namespace lib.Solvers
 
                 var map = state.Map;
                 var me = state.Worker;
-                var pathBuilder = new PathBuilder(map, me.Position);
+                var pathBuilder = new PathBuilder(map, me.Position, false);
 
                 var best = boosters.OrderBy(b => pathBuilder.Distance(b.Position)).First();
 
@@ -99,7 +99,7 @@ namespace lib.Solvers
             private Map<int> distance;
             private Map<V> parent;
 
-            public PathBuilder(Map map, V start)
+            public PathBuilder(Map map, V start, bool stop)
             {
                 this.start = start;
                 queue = new Queue<V>();
@@ -111,6 +111,8 @@ namespace lib.Solvers
                 while (queue.Any())
                 {
                     var v = queue.Dequeue();
+                    if (map[v] == CellState.Void && stop)
+                        break;
 
                     for (var direction = 0; direction < 4; direction++)
                     {
@@ -125,7 +127,7 @@ namespace lib.Solvers
                 }
             }
 
-            public int Distance(V v) => distance[v];
+            public int Distance(V v) => parent[v] == null ? int.MaxValue : distance[v];
 
             public List<ActionBase> GetActions(V to)
             {
