@@ -26,7 +26,7 @@ namespace lib.Models
 
         private static List<V> ReadMap(string s)
         {
-            return s.Split(',').Select(ReadPoint).ToList();
+            return s.Split(new[]{"),("}, StringSplitOptions.None).Select(ReadPoint).ToList();
         }
 
         private static Booster ReadBooster(string s)
