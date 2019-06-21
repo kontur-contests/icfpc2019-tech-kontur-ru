@@ -7,6 +7,16 @@ namespace lib.Solvers.RandomWalk
 {
     public class RandomWalkSolver : ISolver
     {
+        public string GetName()
+        {
+            return "random-walk";
+        }
+
+        public int GetVersion()
+        {
+            return 1;
+        }
+        
         private readonly int depth;
         private readonly IEstimator estimator;
         private readonly Random random;

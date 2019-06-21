@@ -6,6 +6,12 @@ namespace lib
 {
     public static class Extensions
     {
+        // TODO: Fix, should be wrong when using "fast wheels" boost
+        public static int CalculateTime(this List<ActionBase> actions)
+        {
+            return actions.Count;
+        }
+        
         public static bool Inside(this V v, Map map)
         {
             return 0 <= v.X && v.X < map.SizeX && 0 <= v.Y && v.Y < map.SizeY;

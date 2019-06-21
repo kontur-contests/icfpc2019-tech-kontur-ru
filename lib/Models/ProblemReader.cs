@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MongoDB.Driver.Core.Misc;
 
 namespace lib.Models
 {
@@ -28,6 +29,14 @@ namespace lib.Models
         {
             var fileName = GetProblemPath(problem);
             return Read(File.ReadAllText(fileName));
+        }
+
+        public List<ProblemMeta> ReadAll()
+        {
+            return Enumerable
+                .Range(1, 150)
+                .Select(i => new ProblemMeta(Pack, i, Read(i)))
+                .ToList();
         }
 
         public string GetSolutionPath(int problem)

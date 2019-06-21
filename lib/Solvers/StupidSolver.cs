@@ -5,7 +5,17 @@ using lib.Models;
 namespace lib.Solvers
 {
     public class StupidSolver : ISolver
-    {   
+    {
+        public string GetName()
+        {
+            return "stupid";
+        }
+
+        public int GetVersion()
+        {
+            return 1;
+        }
+
         public List<ActionBase> Solve(State state)
         {
             var result = new List<ActionBase>();

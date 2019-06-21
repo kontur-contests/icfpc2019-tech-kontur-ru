@@ -25,41 +25,40 @@ namespace pipeline
         {
             var reader = new ProblemReader(meta.ProblemPack);
             var problemPath = reader.GetProblemPath(meta.ProblemId);
-            var solutionPath = reader.GetSolutionPath(meta.ProblemId);
-            
-            using (var writer = new StringWriter())
-            {
-                var driverDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-                var service = FirefoxDriverService.CreateDefaultService(driverDirectory, geckodriverExecName);
-                var options = new FirefoxOptions { LogLevel = FirefoxDriverLogLevel.Error };
-                options.AddArgument("-headless");
-                var driver = new FirefoxDriver(service, options);
-                driver.Navigate().GoToUrl("https://icfpcontest2019.github.io/solution_checker/");
 
-                var problemField = driver.FindElement(By.Id("submit_task"));
-                var solutionField = driver.FindElement(By.Id("submit_solution"));
-                var submitButton = driver.FindElement(By.Id("execute_solution"));
-                var outputElement = driver.FindElement(By.Id("output"));
+            var solutionPath = Path.GetTempPath();
+            File.WriteAllText(solutionPath, meta.SolutionBlob);
             
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            var driverDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+            var service = FirefoxDriverService.CreateDefaultService(driverDirectory, "geckodriver");
+            var options = new FirefoxOptions { LogLevel = FirefoxDriverLogLevel.Error };
+            options.AddArgument("-headless");
+            var driver = new FirefoxDriver(service, options);
+            driver.Navigate().GoToUrl("https://icfpcontest2019.github.io/solution_checker/");
 
-                problemField.SendKeys(problemPath);
-                wait.Until(drv => outputElement.Text == "Done uploading task description");
-            
-                solutionField.SendKeys(solutionPath);
-                wait.Until(drv => outputElement.Text == "Done uploading solution");
-            
-                submitButton.Click();
-                wait.Until(drv => outputElement.Text != "Done uploading solution");
+            var problemField = driver.FindElement(By.Id("submit_task"));
+            var solutionField = driver.FindElement(By.Id("submit_solution"));
+            var submitButton = driver.FindElement(By.Id("execute_solution"));
+            var outputElement = driver.FindElement(By.Id("output"));
+        
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
-                var result = outputElement.Text;
-                driver.Quit();
-                
-                var match = Regex.Match(result, "Success! Your solution took (\\d+) time units\\.");
-                var timeUnits = int.Parse(match.Groups[1].Captures[0].Value);
+            problemField.SendKeys(problemPath);
+            wait.Until(drv => outputElement.Text == "Done uploading task description");
+        
+            solutionField.SendKeys(solutionPath);
+            wait.Until(drv => outputElement.Text == "Done uploading solution");
+        
+            submitButton.Click();
+            wait.Until(drv => outputElement.Text != "Done uploading solution");
+
+            var result = outputElement.Text;
+            driver.Quit();
             
-                return timeUnits;
-            }
+            var match = Regex.Match(result, "Success! Your solution took (\\d+) time units\\.");
+            var timeUnits = int.Parse(match.Groups[1].Captures[0].Value);
+        
+            return timeUnits;
         }
     }
 }
