@@ -62,8 +62,8 @@ namespace console_runner
                     "Solver name prefix",
                     CommandOptionType.SingleValue);
                 
-                var problemOption = command.Option("-p|--problem",
-                    "Problem id",
+                var problemsOption = command.Option("-p|--problems",
+                    "Single problem id or problem ids range",
                     CommandOptionType.SingleValue);
 
                 command.OnExecute(() =>
@@ -74,11 +74,26 @@ namespace console_runner
                         .Where(x => !solverOption.HasValue() || solverOption.HasValue() && x.GetName().StartsWith(solverOption.Value()))
                         .ToList();
                     
+                    var problemIds = new List<int>();
+                    if (problemsOption.HasValue())
+                    {
+                        if (int.TryParse(problemsOption.Value(), out var problemId))
+                            problemIds.Add(problemId);
+                        else
+                        {
+                            var parts = problemsOption.Value().Split("..", StringSplitOptions.RemoveEmptyEntries);
+                            var pStart = int.Parse(parts[0]);
+                            var pEnd = int.Parse(parts[1]);
+                            problemIds.AddRange(Enumerable.Range(pStart, pEnd - pStart + 1));
+                            Console.WriteLine($"Will solve problems: {string.Join(", ", problemIds)}");
+                        }
+                    }
+
                     solvers.ForEach(solver =>
                     {
                         ProblemReader
                             .ReadAll()
-                            .Where(x => !problemOption.HasValue() || problemOption.HasValue() && x.ProblemId == int.Parse(problemOption.Value()))
+                            .Where(x => !problemIds.Any() || problemIds.Contains(x.ProblemId))
                             .ToList()
                             .ForEach(problemMeta => Solve(solver, problemMeta));
                     });
