@@ -8,3 +8,9 @@ check_unchecked:
     script:
         - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
     when: manual
+
+submit:
+    stage: build
+    script:
+        - "dotnet run --project console-runner/console-runner.csproj -- submit"
+    when: manual
