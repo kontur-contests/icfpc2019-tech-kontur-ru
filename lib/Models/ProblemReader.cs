@@ -5,49 +5,26 @@ using System.Linq;
 
 namespace lib.Models
 {
-    public class ProblemReader
+    public static class ProblemReader
     {
-        public const string ALL_PACK = "all";
-        public const string EXAMPLES_PACK = "examples";
-
-        public static ProblemReader Current = new ProblemReader(ALL_PACK);
-
-        public string Pack { get; }
-
-        public ProblemReader(string pack)
+        public static string GetProblemPath(int problem)
         {
-            Pack = pack;
+            return Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{problem:000}.desc");
         }
 
-        public string GetProblemPath(int problem)
-        {
-            return Path.Combine(FileHelper.PatchDirectoryName("problems"), Pack, $"prob-{problem:000}.desc");
-        }
-
-        public Problem Read(int problem)
+        public static Problem Read(int problem)
         {
             var fileName = GetProblemPath(problem);
             return Read(File.ReadAllText(fileName));
         }
 
-        public List<ProblemMeta> ReadAll()
+        public static List<ProblemMeta> ReadAll()
         {
             return Enumerable
                 .Range(1, 10000)
                 .Where(i => File.Exists(GetProblemPath(i)))
-                .Select(i => new ProblemMeta(Pack, i, Read(i)))
+                .Select(i => new ProblemMeta(i, Read(i)))
                 .ToList();
-        }
-
-        public string GetSolutionPath(int problem)
-        {
-            return Path.Combine(FileHelper.PatchDirectoryName("problems"), Pack, $"prob-{problem:000}.sol");
-        }
-
-        public string ReadSolutionBlob(int problem)
-        {
-            var fileName = GetSolutionPath(problem);
-            return File.ReadAllText(fileName);
         }
 
         public static Problem Read(string source)

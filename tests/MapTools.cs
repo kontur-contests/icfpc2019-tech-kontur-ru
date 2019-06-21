@@ -16,11 +16,11 @@ namespace tests
     {
         [Test]
         [Explicit]
-        public void MakeMapImage([Values(ProblemReader.ALL_PACK)]string pack)
+        public void MakeMapImage()
         {
             var sb = new StringBuilder();
-            var dir = Path.Combine(FileHelper.PatchDirectoryName("problems"), pack, "images");
-            var problems = new ProblemReader(pack).ReadAll();
+            var dir = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", "images");
+            var problems = ProblemReader.ReadAll();
             foreach (var problemMeta in problems)
             {
                 var map = problemMeta.Problem.ToState().Map;

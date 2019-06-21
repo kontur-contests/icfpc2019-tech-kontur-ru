@@ -25,34 +25,6 @@ namespace console_runner
                 Console.WriteLine("Invalid argument: empty");
                 return 1;
             });
-            
-            app.Command("add-dummy-meta", (command) =>
-            {
-                command.Description = "Add an example non-checked solution to DB";
-                command.HelpOption("-?|-h|--help");
-
-                command.OnExecute(() =>
-                {
-                    const string problemPack = ProblemReader.EXAMPLES_PACK;
-                    const int problemId = 1;
-                    
-                    var reader = new ProblemReader(problemPack);
-                    var solutionBlob = reader.ReadSolutionBlob(problemId);
-                    
-                    var meta = new SolutionMeta(
-                        problemPack,
-                        problemId,
-                        solutionBlob,
-                        -1,
-                        "algo1",
-                        1,
-                        0.876
-                    );
-                    meta.SaveToDb();
-
-                    return 0;
-                });
-            });
 
             app.Command("check-unchecked", (command) =>
             {
@@ -85,12 +57,12 @@ namespace console_runner
 
                 command.OnExecute(() =>
                 {
-                    ProblemReader.Current.ReadAll().ForEach(problemMeta =>
+                    ProblemReader.ReadAll().ForEach(problemMeta =>
                     {
                         var solver = new StupidSolver();
                         var stopwatch = Stopwatch.StartNew();
                         
-                        Console.Write($"Solving {problemMeta.ProblemPack}/{problemMeta.ProblemId} " +
+                        Console.Write($"Solving {problemMeta.ProblemId} " +
                                       $"with {solver.GetName()} v{solver.GetVersion()}... ");
                         
                         var actions = solver.Solve(problemMeta.Problem.ToState());
@@ -100,7 +72,6 @@ namespace console_runner
                         var calculationTime = stopwatch.ElapsedMilliseconds;
                         
                         var solutionMeta = new SolutionMeta(
-                            problemMeta.ProblemPack,
                             problemMeta.ProblemId,
                             solutionBlob,
                             actions.CalculateTime(),

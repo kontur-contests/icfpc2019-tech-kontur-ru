@@ -44,15 +44,14 @@ namespace tests.Solvers
 
         public State ReadFromFile(int id)
         {
-            var reader = new ProblemReader(ProblemReader.ALL_PACK);
-            var problem = reader.Read(id);
+            var problem = ProblemReader.Read(id);
             return problem.ToState();
         }
 
         public void Save(List<ActionBase> actions, int id)
         {
             var text = actions.Format();
-            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), ProblemReader.ALL_PACK, $"prob-{id:000}.sol");
+            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}.sol");
             File.WriteAllText(fileName, text);
         }
     }

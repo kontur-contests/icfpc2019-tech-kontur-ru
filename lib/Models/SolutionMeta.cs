@@ -10,9 +10,8 @@ namespace lib.Models
 {
     public class SolutionMeta
     {
-        public SolutionMeta(string problemPack, int problemId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs)
+        public SolutionMeta(int problemId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs)
         {
-            ProblemPack = problemPack;
             ProblemId = problemId;
             SolutionBlob = solutionBlob;
             OurTime = ourTime;
@@ -22,7 +21,6 @@ namespace lib.Models
         }
 
         public ObjectId Id;
-        public string ProblemPack;
         public int ProblemId;
         public string SolutionBlob;
         public int OurTime;
