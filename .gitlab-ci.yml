@@ -23,6 +23,7 @@ compare_csv:
         - "dotnet run --project console-runner/console-runner.csproj -- csv > our.csv"
         - "curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/$(curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/submissions.txt | tail -1 | cut -d ' ' -f 1)/score.csv > their.csv"
         - "diff our.csv their.csv"
+    allow_failure: false
     when: manual
 
 submit:
