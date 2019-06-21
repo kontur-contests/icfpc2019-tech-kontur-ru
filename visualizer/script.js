@@ -54,6 +54,7 @@ actionsWrapper.appendChild(resetButton);
 let intervalId = null;
 let pause = true;
 let currentTick = 0;
+let robotTrack = [];
 
 
 function playPause(e) {
@@ -105,13 +106,12 @@ function nextFiveTick(e) {
     }
 }
 
-
-
-
 function prevTick(e) {
     if (e) {
         e.preventDefault();
     }
+
+    robotTrack = [];
 
     W().Pf.h(e);
 
@@ -141,6 +141,7 @@ function reset(e) {
     W().Pf.h(e);
     W().Hi = true;
     currentTick = 0;
+    robotTrack = [];
 }
 
 function stop() {
@@ -150,4 +151,34 @@ function stop() {
         clearInterval(intervalId);
         intervalId = null;
     }
+}
+
+function addTrajectoryPoint(x, y) {
+    const lastPoint = robotTrack[robotTrack.length - 1];
+    if (!lastPoint || (lastPoint.x !== x || lastPoint.y !== y)) {
+        robotTrack.push({x, y});
+    }
+
+    if (robotTrack.length > 1) {
+        drawTrack();
+    }
+}
+
+function drawTrack() {
+    const ctx = em(W());
+
+    ctx.strokeStyle = "#0000ff";
+    ctx.setLineDash([10, 10]);
+    ctx.beginPath();
+
+    const startPoint = robotTrack[0];
+    ctx.moveTo(startPoint.x, startPoint.y);
+
+    for (const point of robotTrack) {
+        ctx.lineTo(point.x, point.y);
+    }
+
+    ctx.stroke();
+
+
 }

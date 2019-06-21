@@ -2417,61 +2417,66 @@ var render, validate;
         throw new G(b);
     }
 
-    function Eg(a, b, c) { // рисует бустеры
+    function renderActionPoints(a, b, color) { // рисует бустеры
         var e = a.ac;
-        c = Fg(c);
-        e.fillStyle = c;
+        color = getColorHex(color);
+        e.fillStyle = color;
+
+
         b = new uf(b.k, b.l);
         e = new uf(.5, .5);
         b = Dg(a, new uf(b.k + e.k, b.l + e.l));
+        if (color === '#ff0000') {
+            addTrajectoryPoint(b.k, b.l);
+        }
         a.ac.beginPath();
         a.ac.arc(b.k, b.l, a.$m, 0, 6.283185307179586);
         a.ac.fill();
         b = a.ac;
-        e = Fg(Gg().kj);
+        e = getColorHex(Gg().kj);
         b.fillStyle = e;
         a.ac.stroke();
         a = a.ac;
-        b = Fg(Gg().Hf);
+        b = getColorHex(Gg().Hf);
         a.fillStyle = b
     }
 
-    function renderTile(a, b, c) { // рисует поле и препятствия и каждый квадратик
-        xg(a);
+    function renderTile(ctx, b, color) { // рисует поле и препятствия и каждый квадратик
+        xg(ctx);
         b = b.sa;
         var e = new C(function (a) {
             return function (b) {
                 return Dg(a, new uf(b.k, b.l))
             }
-        }(a)), f = Jf();
+        }(ctx)), f = Jf();
         e = b.Da(e, f.y);
         if (!(3 > e.u())) {
             if (!qg(e)) throw new G(e);
             b = e.Le;
             e = e.cb;
-            f = a.ac;
-            c = Fg(c);
-            f.fillStyle = c;
-            a.ac.beginPath();
-            a.ac.moveTo(b.k, b.l);
-            for (c = e; !c.e();) {
-                b = c.g();
-                if (null !== b) a.ac.lineTo(b.k, b.l); else throw new G(b);
-                c = c.i()
+            f = ctx.ac;
+            color = getColorHex(color);
+            f.fillStyle = color;
+            ctx.ac.beginPath();
+            ctx.ac.moveTo(b.k, b.l);
+            for (color = e; !color.e();) {
+                b = color.g();
+                if (null !== b) ctx.ac.lineTo(b.k, b.l); else throw new G(b);
+                color = color.i()
             }
-            a.ac.closePath();
-            a.ac.fill();
-            a = a.ac;
-            c = Fg(Gg().Hf);
-            a.fillStyle = c
+            ctx.ac.closePath();
+            ctx.ac.fill();
+            ctx = ctx.ac;
+            color = getColorHex(Gg().Hf);
+            ctx.fillStyle = color
         }
     }
 
-    function renderRobot(a, b) { // рисует робота
+    function renderRobot(a, robotTileCoords) { // рисует робота
         var c = Gg().lm;
-        var e = Dg(a, new uf(b.k, b.l)), f = e.k;
+        var e = Dg(a, new uf(robotTileCoords.k, robotTileCoords.l)), f = e.k;
         e = e.l;
-        0 > f || f > a.zp || 0 > e || e > a.Bp || (f = a.ac, e = Fg(c), f.fillStyle = e, renderTile(a, Wc(b), c), a = a.ac, b = Fg(Gg().kj), a.fillStyle = b)
+        0 > f || f > a.zp || 0 > e || e > a.Bp || (f = a.ac, e = getColorHex(c), f.fillStyle = e, renderTile(a, Wc(robotTileCoords), c), a = a.ac, robotTileCoords = getColorHex(Gg().kj), a.fillStyle = robotTileCoords)
     }
 
     zg.prototype.$classData = u({Nq: 0}, !1, "lambda.js.render.JSCanvasPainter", {Nq: 1, b: 1});
@@ -4290,7 +4295,7 @@ var render, validate;
                     var e = Dg(b, new uf(c.k,
                         c.l)), f = e.k;
                     e = e.l;
-                    0 > f || f > b.zp || 0 > e || e > b.Bp || (a = a.oc ? a.Me ? Gg().rm : Gg().Vj : Gg().Hf, f = b.ac, e = Fg(a), f.fillStyle = e, renderTile(b, Wc(c), a), c = b.ac, a = Fg(Gg().kj), c.fillStyle = a)
+                    0 > f || f > b.zp || 0 > e || e > b.Bp || (a = a.oc ? a.Me ? Gg().rm : Gg().Vj : Gg().Hf, f = b.ac, e = getColorHex(a), f.fillStyle = e, renderTile(b, Wc(c), a), c = b.ac, a = getColorHex(Gg().kj), c.fillStyle = a)
                 } else throw new G(a);
             }
         }(a, b)));
@@ -4394,8 +4399,8 @@ var render, validate;
                     a =
                         a.R();
                     var e = a.xe;
-                    if (Vd(e)) e = e.Xa, Eg(b, c, Mg(Gg(), e)); else if (A() !== e) throw new G(e);
-                    a.ye ? Eg(b, c, Mg(Gg(), Cc().$g)) : a.ze && Eg(b, c, Gg().qm)
+                    if (Vd(e)) e = e.Xa, renderActionPoints(b, c, Mg(Gg(), e)); else if (A() !== e) throw new G(e);
+                    a.ye ? renderActionPoints(b, c, Mg(Gg(), Cc().$g)) : a.ze && renderActionPoints(b, c, Gg().qm)
                 } else throw new G(a);
             }
         }(a, b)));
@@ -4405,7 +4410,7 @@ var render, validate;
             }
         }(a))).v(new C(function (a, b) {
             return function (a) {
-                if (null !== a) Eg(b, a.R(), Gg().Zj); else throw new G(a);
+                if (null !== a) renderActionPoints(b, a.R(), Gg().Zj); else throw new G(a);
             }
         }(a, b)));
         renderText(a, a.dh + ": " + m + " rounds", Gg().vg)
@@ -4438,15 +4443,15 @@ var render, validate;
             return function (a) {
                 if (null !== a) {
                     var c = a.X();
-                    Eg(b, a.R(), Mg(Gg(), c))
+                    renderActionPoints(b, a.R(), Mg(Gg(), c))
                 } else throw new G(a);
             }
         }(a, c)));
-        Eg(c, b.Sf, Gg().Zj)
+        renderActionPoints(c, b.Sf, Gg().Zj)
     }
 
     function dm(a) {
-        var b = em(a), c = Fg(Gg().Hf);
+        var b = em(a), c = getColorHex(Gg().Hf);
         b.fillStyle = c;
         em(a).fillRect(0, 0, fm(a).width | 0, (fm(a).height | 0) - a.aj | 0)
     }
@@ -4869,18 +4874,18 @@ var render, validate;
     }
 
     function renderText(a, b, c) {
-        var e = em(a), f = Fg(Gg().Hf);
+        var e = em(a), f = getColorHex(Gg().Hf);
         e.fillStyle = f;
         em(a).fillRect(0, 0, fm(a).width | 0, a.aj);
         em(a).font = "15px sans-serif";
         em(a).textAlign = "center";
         em(a).textBaseline = "middle";
         e = em(a);
-        c = Fg(c);
+        c = getColorHex(c);
         e.fillStyle = c;
         em(a).fillText(b, (fm(a).width | 0) / 2 | 0, 15);
         a = em(a);
-        b = Fg(Gg().Hf);
+        b = getColorHex(Gg().Hf);
         a.fillStyle = b
     }
 
@@ -9102,7 +9107,7 @@ var render, validate;
         return "rgb(" + this.zh + ", " + this.oh + ", " + this.ea + ")"
     };
 
-    function Fg(a) {
+    function getColorHex(a) {
         var b = new pj("#%02x%02x%02x"), c = [a.zh, a.oh, a.ea];
         Io || (Io = new Ho);
         var e = b.d;
@@ -22744,7 +22749,7 @@ var render, validate;
     };
     d.Zm = function (a) {
         a = new sr(a);
-        null === this.Hg ? this.Hg = a : (this.vh.nf = a, a.Eg = this.vh);
+        null === this.Hg ? this.Hg = a : (this.vh.nf = a, a.renderActionPoints = this.vh);
         return this.vh = a
     };
     d.db = function (a) {
