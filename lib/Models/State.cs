@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace lib.Models
 {
@@ -38,6 +39,11 @@ namespace lib.Models
                 if (p.Inside(Map) && Map.IsReachable(p, Worker.Position))
                     Map[p] = CellState.Wrapped;
             }
+        }
+
+        public State Clone()
+        {
+            return new State(Worker.Clone(), Map.Clone(), Boosters.ToList());
         }
     }
 }

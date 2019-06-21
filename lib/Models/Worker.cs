@@ -34,5 +34,12 @@ namespace lib.Models
             if (DrillTimeLeft > 0)
                 DrillTimeLeft--;
         }
+
+        public Worker Clone()
+        {
+            var worker = (Worker)MemberwiseClone();
+            worker.Manipulators = worker.Manipulators.ToList();
+            return worker;
+        }
     }
 }

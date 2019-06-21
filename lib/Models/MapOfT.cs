@@ -13,7 +13,7 @@ namespace lib.Models
             cells = new T[sizeY, sizeX];
         }
 
-        private Map(int sizeX, int sizeY, T[,] cells)
+        protected Map(int sizeX, int sizeY, T[,] cells)
         {
             SizeX = sizeX;
             SizeY = sizeY;
