@@ -23,3 +23,11 @@ submit:
         - "dotnet run --project console-runner/console-runner.csproj -- submit -z solutions"
         - "curl -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"
     when: manual
+
+compare_csv:
+    stage: deploy
+    script:
+        - "dotnet run --project console-runner/console-runner.csproj -- csv > our.csv"
+        - "curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/$(curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/submissions.txt | tail -1 | cut -d ' ' -f 1)/score.csv > their.csv"
+        - "diff our.csv their.csv"
+    when: manual
