@@ -26,7 +26,7 @@ namespace pipeline
             var reader = new ProblemReader(meta.ProblemPack);
             var problemPath = reader.GetProblemPath(meta.ProblemId);
 
-            var solutionPath = Path.GetTempPath();
+            var solutionPath = Path.GetTempFileName();
             File.WriteAllText(solutionPath, meta.SolutionBlob);
             
             var driverDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
