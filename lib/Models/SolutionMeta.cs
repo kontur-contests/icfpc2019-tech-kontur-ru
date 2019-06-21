@@ -17,22 +17,12 @@ namespace lib.Models
             CalculationTookMs = calculationTookMs;
         }
 
-        public void SaveToDb()
-        {
-            var client = new MongoClient("mongodb://icfpc19-mongo1:27017");
-            var database = client.GetDatabase("icfpc");
-            var collection = database.GetCollection<SolutionMeta>("solution_metas");
-
-            SavedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
-            
-            collection.InsertOne(this);
-        }
-
         public string TaskId;
         public string SolutionBlob;
         public int OurTime;
-        // public int OnlineTime;
-        // public bool OnlineCorrectness;
+        public bool IsOnlineChecked;
+        public int? OnlineTime;
+        public bool? IsOnlineCorrect;
         public string AlgorithmId;
         public int AlgorithmVersion;
         public long SavedAt;
