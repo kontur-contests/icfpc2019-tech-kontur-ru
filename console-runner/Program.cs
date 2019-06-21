@@ -123,6 +123,10 @@ namespace console_runner
                 command.Description = "Prepare and submit all solutions";
                 command.HelpOption("-?|-h|--help");
                 
+                var zipfileOption = command.Option("-z|--zipfile",
+                    "Override zip file name",
+                    CommandOptionType.SingleValue);
+                
                 command.OnExecute(() =>
                 {
                     var solutionDirectory = FileHelper.PatchDirectoryName("solutions");
@@ -147,7 +151,12 @@ namespace console_runner
                             File.WriteAllText(Path.Combine(solutionDirectory, fileName), solution.SolutionBlob);
                         });
 
-                    var submissionFile = Path.Combine(submissionsDirectory, DateTimeOffset.Now.ToUnixTimeSeconds() + ".zip");
+                    var zipfileName = DateTimeOffset.Now.ToUnixTimeSeconds() + ".zip";
+                    if (zipfileOption.HasValue())
+                    {
+                        zipfileName = zipfileOption.Value() + ".zip";
+                    }
+                    var submissionFile = Path.Combine(submissionsDirectory, zipfileName);
                     ZipFile.CreateFromDirectory(solutionDirectory, submissionFile);
 
                     return 0;
