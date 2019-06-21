@@ -38,7 +38,6 @@ namespace pipeline
             {
                 new BsonDocument { { "$match", new BsonDocument(new Dictionary<string, object>
                 {
-                    { "ProblemPack", "all" },
                     { "IsOnlineChecked", true },
                     { "IsOnlineCorrect", true }
                 }) } },

@@ -8,6 +8,7 @@ using MongoDB.Driver;
 
 namespace lib.Models
 {
+    [BsonIgnoreExtraElements]
     public class SolutionMeta
     {
         public SolutionMeta(int problemId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs)
