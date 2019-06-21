@@ -31,3 +31,6 @@
     justify-content: space-between;
 }
 
+#main_section p {
+    display: none;
+}

@@ -1,0 +1,19 @@
+{
+  "name": "icfpc2019",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "node createDeps.js && webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.skbkontur.ru/alexkir/icfpc2019.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "raw-loader": "^3.0.0",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.4"
+  }
+}
