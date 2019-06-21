@@ -54,35 +54,39 @@ namespace console_runner
             {
                 command.Description = "Solve all problems with a stupid solver";
                 command.HelpOption("-?|-h|--help");
+                
+                var solverOption = command.Option("-s|--solver",
+                    "Solver name prefix",
+                    CommandOptionType.SingleValue);
+                
+                var problemOption = command.Option("-p|--problem",
+                    "Problem id",
+                    CommandOptionType.SingleValue);
 
                 command.OnExecute(() =>
                 {
-                    ProblemReader.ReadAll().ForEach(problemMeta =>
+                    var solvers = RunnableSolvers
+                        .Enumerate()
+                        .Select(x => x.Invoke())
+                        .Where(x => !solverOption.HasValue() || solverOption.HasValue() && x.GetName().StartsWith(solverOption.Value()))
+                        .ToList();
+                    
+                    solvers.ForEach(solver =>
                     {
-                        var solver = new StupidSolver();
-                        var stopwatch = Stopwatch.StartNew();
+                        ProblemReader
+                            .ReadAll()
+                            .Where(x => !problemOption.HasValue() || problemOption.HasValue() && x.ProblemId == int.Parse(problemOption.Value()))
+                            .ToList()
+                            .ForEach(problemMeta =>
+                            {
+                                Console.Write($"Solving {problemMeta.ProblemId} " +
+                                              $"with {solver.GetName()} v{solver.GetVersion()}... ");
+    
+                                var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
+                                solutionMeta.SaveToDb();
                         
-                        Console.Write($"Solving {problemMeta.ProblemId} " +
-                                      $"with {solver.GetName()} v{solver.GetVersion()}... ");
-                        
-                        var actions = solver.Solve(problemMeta.Problem.ToState());
-                        var solutionBlob = actions.Format();
-
-                        stopwatch.Stop();
-                        var calculationTime = stopwatch.ElapsedMilliseconds;
-                        
-                        var solutionMeta = new SolutionMeta(
-                            problemMeta.ProblemId,
-                            solutionBlob,
-                            actions.CalculateTime(),
-                            solver.GetName(),
-                            solver.GetVersion(),
-                            calculationTime
-                        );
-                        
-                        solutionMeta.SaveToDb();
-                        
-                        Console.WriteLine($"Done in {calculationTime} ms");
+                                Console.WriteLine($"Done in {solutionMeta.CalculationTookMs} ms");
+                            });
                     });
 
                     return 0;

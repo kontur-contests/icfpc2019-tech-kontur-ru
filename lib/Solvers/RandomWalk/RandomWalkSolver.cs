@@ -10,7 +10,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return "random-walk";
+            return $"random-walk-{depth}/{tryCount}";
         }
 
         public int GetVersion()
