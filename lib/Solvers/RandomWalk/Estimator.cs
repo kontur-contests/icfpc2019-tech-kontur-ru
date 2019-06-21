@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using lib.Models;
 
-namespace lib
+namespace lib.Solvers.RandomWalk
 {
-    public class Estimator
+    public class Estimator : IEstimator
     {
         public double Estimate(State state)
         {
