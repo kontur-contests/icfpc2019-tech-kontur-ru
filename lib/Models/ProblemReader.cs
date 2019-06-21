@@ -13,11 +13,21 @@ namespace lib.Models
         }
     }
 
-    public static class ProblemReader
+    public class ProblemReader
     {
-        public static Problem Read(int problem)
+        public const string PART_1_INITIAL = "part-1-initial";
+        public const string PART_1_EXAMPLE = "part-1-example";
+
+        private readonly string pack;
+
+        public ProblemReader(string pack)
         {
-            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "part-1-initial", $"prob-{problem:000}.desc");
+            this.pack = pack;
+        }
+
+        public Problem Read(int problem)
+        {
+            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), pack, $"prob-{problem:000}.desc");
             return Read(File.ReadAllText(fileName));
         }
 

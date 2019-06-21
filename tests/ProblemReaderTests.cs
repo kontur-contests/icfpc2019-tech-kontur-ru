@@ -20,8 +20,9 @@ namespace tests
         [Test]
         public void ReadFromFile([Range(1, 150)] int problem)
         {
-            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "part-1-initial", $"prob-{problem:000}.desc");
-            ProblemReader.Read(problem).ToString().Should().Be(File.ReadAllText(fileName));
+            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), ProblemReader.PART_1_INITIAL, $"prob-{problem:000}.desc");
+            var reader = new ProblemReader(ProblemReader.PART_1_INITIAL);
+            reader.Read(problem).ToString().Should().Be(File.ReadAllText(fileName));
         }
     }
 }
