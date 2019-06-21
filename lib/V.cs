@@ -34,5 +34,16 @@
 
         public int X { get; }
         public int Y { get; }
+
+        private static readonly V[] shifts = {new V(0, 1), new V(1, 0), new V(0, -1), new V(-1, 0)};
+
+        public static V GetShift(int direction)
+        {
+            return shifts[direction];
+        }
+
+        public static V operator + (V a, V b) => new V(a.X + b.X, a.Y + b.Y);
+
+        public static V operator -(V a, V b) => new V(a.X - b.X, a.Y - b.Y);
     }
 }
