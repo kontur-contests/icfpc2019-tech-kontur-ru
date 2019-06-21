@@ -20,7 +20,7 @@ namespace lib.Solvers.RandomWalk
         private readonly int depth;
         private readonly IEstimator estimator;
         private readonly Random random;
-        private readonly TimeSpan timeout;
+        private readonly int tryCount;
         private readonly List<ActionBase>[] rotates =
         {
             new List<ActionBase>(),
@@ -31,42 +31,61 @@ namespace lib.Solvers.RandomWalk
         };
         private readonly V[] shifts = {"0,1", "1,0", "0,-1", "-1,0"};
 
-        public RandomWalkSolver(int depth, IEstimator estimator, Random random, TimeSpan timeout)
+        public RandomWalkSolver(int depth, IEstimator estimator, Random random, int tryCount)
         {
             this.depth = depth;
             this.estimator = estimator;
             this.random = random;
-            this.timeout = timeout;
+            this.tryCount = tryCount;
         }
 
         public List<ActionBase> Solve(State state)
         {
+            var solution = new List<ActionBase>();
+
+            while (state.UnwrappedLeft > 0)
+            {
+                var part = SolvePart(state);
+                solution.AddRange(part);
+                state.Apply(part);
+            }
+            
+            return solution;
+        }
+
+        public List<ActionBase> SolvePart(State state)
+        {
+            //Console.Out.WriteLine("START PART");
+            
             var bestEstimation = double.MinValue;
             List<ActionBase> bestSolution = null;
 
-            var stopwatch = Stopwatch.StartNew();
-            while (stopwatch.Elapsed < timeout)
+            for (int i = 0; i < tryCount; i++)
             {
                 var clone = state.Clone();
-                var solution = SolveOne(clone);
+                var solution = SolveStep(clone);
                 var estimation = estimator.Estimate(clone);
+                //Console.Out.Write($"  {estimation} {solution.Format()}");
                 if (estimation > bestEstimation)
                 {
                     bestEstimation = estimation;
                     bestSolution = solution;
+                    //Console.Out.WriteLine(" -- better");
                 }
+                // else
+                //     Console.Out.WriteLine();
             }
 
             return bestSolution;
         }
 
-        private List<ActionBase> SolveOne(State state)
+        private List<ActionBase> SolveStep(State state)
         {
             var actions = new List<ActionBase>();
             V shift = null;
-            while (actions.Count < depth)
+            while (actions.Count < depth && state.UnwrappedLeft > 0)
             {
-                while (actions.Count < depth)
+                while (actions.Count < depth && state.UnwrappedLeft > 0)
                 {
                     var nextShift = shifts[random.Next(shifts.Length)];
                     if (nextShift == shift)
@@ -79,7 +98,7 @@ namespace lib.Solvers.RandomWalk
                     break;
                 }
 
-                while (actions.Count < depth)
+                while (actions.Count < depth && state.UnwrappedLeft > 0)
                 {
                     var nextPosition = state.Worker.Position + shift;
                     if (!nextPosition.Inside(state.Map) || state.Map[nextPosition] == CellState.Obstacle)

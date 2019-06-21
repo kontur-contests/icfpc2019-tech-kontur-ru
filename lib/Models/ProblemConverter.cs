@@ -16,7 +16,8 @@ namespace lib.Models
                 },
                 ConvertMap(problem.Map, problem.Obstacles),
                 problem.Boosters,
-                0);
+                0,
+                null);
             state.Wrap();
             return state;
         }

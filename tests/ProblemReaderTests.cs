@@ -46,7 +46,8 @@ namespace tests
                         },
                         expectedMap,
                         new List<Booster>(),
-                        0
+                        0,
+                        null
                     ));
             state.Map.ToString()
                 .Should()

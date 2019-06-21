@@ -34,5 +34,18 @@ namespace lib.Models
         {
             return new Map(SizeX, SizeY, (CellState[,])cells.Clone());
         }
+
+        public int VoidCount()
+        {
+            var result = 0;
+            for (int x = 0; x < SizeX; x++)
+            for (int y = 0; y < SizeY; y++)
+            {
+                if (this[new V(x, y)] == CellState.Void)
+                    result++;
+            }
+
+            return result;
+        }
     }
 }
