@@ -4,14 +4,6 @@ using System.Linq;
 
 namespace lib.Models
 {
-    public enum Direction
-    {
-        Right = 0,
-        Down,
-        Left,
-        Up
-    }
-
     public class Worker
     {
         public Direction Direction { get; set; }

@@ -45,5 +45,7 @@
         public static V operator + (V a, V b) => new V(a.X + b.X, a.Y + b.Y);
 
         public static V operator -(V a, V b) => new V(a.X - b.X, a.Y - b.Y);
+
+        public static V Zero => new V(0, 0);
     }
 }
