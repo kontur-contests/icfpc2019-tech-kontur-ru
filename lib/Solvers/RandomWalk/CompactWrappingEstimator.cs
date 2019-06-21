@@ -6,7 +6,7 @@ namespace lib.Solvers.RandomWalk
 {
     public class CompactWrappingEstimator : IEstimator
     {
-        public double Estimate(State state)
+        public double Estimate(State state, State prevState)
         {
             
             
