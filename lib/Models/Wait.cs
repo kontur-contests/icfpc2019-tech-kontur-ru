@@ -1,11 +1,14 @@
+using System;
+
 namespace lib.Models
 {
     public class Wait : ActionBase
     {
         public override string ToString() => "Z";
         
-        public override void Apply(State state)
+        public override Action Apply(State state)
         {
+            return () => {};
         }
     }
 }

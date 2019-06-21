@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,17 +16,24 @@ namespace lib.Models
             UnwrappedLeft = unwrappedLeft ?? Map.VoidCount();
         }
 
-        public Worker Worker { get; }
+        public Worker Worker { get; private set; }
         public Map Map { get; }
         public int UnwrappedLeft { get; set; }
         public List<Booster> Boosters { get; }
         public int Time { get; private set; }
 
-        public void Apply(ActionBase action)
+        public Action Apply(ActionBase action)
         {
-            action.Apply(this);
+            var prevWorker = Worker.Clone();
+            var undo = action.Apply(this);
             Worker.NextTurn();
             Time++;
+            return () =>
+            {
+                Time--;
+                Worker = prevWorker;
+                undo();
+            };
         }
 
         public void Apply(IEnumerable<ActionBase> actions)
@@ -34,8 +42,9 @@ namespace lib.Models
                 Apply(action);
         }
 
-        public void Wrap()
+        public Action Wrap()
         {
+            var res = new List<(V pos, CellState oldState)>();
             WrapPoint(Worker.Position);
 
             foreach (var manipulator in Worker.Manipulators)
@@ -47,10 +56,13 @@ namespace lib.Models
 
             void WrapPoint(V pp)
             {
+                res.Add((pp, Map[pp]));
                 if (Map[pp] == CellState.Void)
                     UnwrappedLeft--;
                 Map[pp] = CellState.Wrapped;
             }
+
+            return () => Unwrap(res);
         }
 
         public State Clone()
@@ -58,7 +70,7 @@ namespace lib.Models
             return new State(Worker.Clone(), Map.Clone(), Boosters.ToList(), Time, UnwrappedLeft);
         }
 
-        public void CollectBoosters()
+        public Action CollectBoosters()
         {
             var boostersToCollect = Boosters
                 .Where(b => b.Position == Worker.Position && b.Type != BoosterType.MysteriousPoint)
@@ -81,6 +93,16 @@ namespace lib.Models
                         break;
                 }
                 Boosters.Remove(booster);
+            }
+            return () => Boosters.AddRange(boostersToCollect);
+        }
+
+        public void Unwrap(List<(V pos, CellState oldState)> wrappedCells)
+        {
+            foreach (var wrappedCell in wrappedCells)
+            {
+                Map[wrappedCell.pos] = wrappedCell.oldState;
+                if (wrappedCell.oldState == CellState.Void) UnwrappedLeft++;
             }
         }
     }

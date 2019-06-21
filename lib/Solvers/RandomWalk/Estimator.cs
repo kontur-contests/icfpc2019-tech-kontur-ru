@@ -11,18 +11,7 @@ namespace lib.Solvers.RandomWalk
             if (state.UnwrappedLeft == 0)
                 return 1_000_000_000 - state.Time;
 
-            var pathBuilder = new PathBuilder(state.Map, state.Worker.Position);
-
-            var voidCells = state.Map
-                .EnumerateCells()
-                .Where(x => x.Item2 == CellState.Void)
-                .ToList();
-
-            var list = voidCells
-                .Select(x => pathBuilder.Distance(x.Item1))
-                .ToList();
-
-            var distScore = list.Min();
+            var distScore = GetDistanceToClosestVoid(state.Map, state.Worker.Position);
             
             if (state.UnwrappedLeft == prevState.UnwrappedLeft)
                 return -distScore;
@@ -75,6 +64,30 @@ namespace lib.Solvers.RandomWalk
             }
 
             return result;
+        }
+
+        private int GetDistanceToClosestVoid(Map map, V start)
+        {
+            //Bfs
+            var queue = new Queue<(V, int)>();
+            queue.Enqueue((start, 0));
+
+            var used = new HashSet<V>();
+            used.Add(start);
+            while (queue.Any())
+            {
+                var (v, dist) = queue.Dequeue();
+                for (var direction = 0; direction < 4; direction++)
+                {
+                    var u = v.Shift(direction);
+                    if (!u.Inside(map) || used.Contains(u) || map[u] == CellState.Obstacle)
+                        continue;
+                    if (map[u] == CellState.Void) return dist + 1;
+                    used.Add(u);
+                    queue.Enqueue((u, dist+1));
+                }
+            }
+            return int.MaxValue;
         }
     }
 }

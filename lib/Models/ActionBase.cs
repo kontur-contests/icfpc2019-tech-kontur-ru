@@ -1,7 +1,9 @@
+using System;
+
 namespace lib.Models
 {
     public abstract class ActionBase
     {
-        public abstract void Apply(State state);
+        public abstract Action Apply(State state);
     }
 }

@@ -17,7 +17,7 @@ namespace lib.Models
             return $"B{Relative}";
         }
 
-        public override void Apply(State state)
+        public override Action Apply(State state)
         {
             if (state.Worker.ExtensionCount <= 0)
                 throw new InvalidOperationException("No extensions");
@@ -34,7 +34,7 @@ namespace lib.Models
             state.Worker.ExtensionCount--;
             state.Worker.Manipulators.Add(Relative);
                 
-            state.Wrap();
+            return state.Wrap();
         }
     }
 }
