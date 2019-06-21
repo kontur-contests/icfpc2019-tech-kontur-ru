@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -28,6 +29,45 @@ namespace pipeline
         {
             return MetaCollection.FindSync(meta => !meta.IsOnlineChecked).ToList();
         }
+        
+        // TODO: Fix, now it doesn't check for "checked and correct"
+        public static List<SolutionMeta> EnumerateCheckedAndCorrect()
+        {
+            var metas = new List<SolutionMeta>();
+            
+            var pipeline = new[] 
+            {
+                new BsonDocument { { "$match", new BsonDocument(new Dictionary<string, string>
+                {
+                    { "ProblemPack", "all" },
+                    // { "IsOnlineChecked", "true" },
+                    // { "IsOnlineCorrect", "true" }
+                }) } },
+                new BsonDocument { { "$group", new BsonDocument(new Dictionary<string, object>
+                {
+                    { "_id", "$ProblemId" },
+                    { "time", new BsonDocument(new Dictionary<string, string>
+                        {
+                            { "$min", "$OurTime" },
+                        })
+                    },
+                }) } }
+            };
+            var minScores = MetaCollection.Aggregate<MinTimeResult>(pipeline).ToList();
+            
+            minScores.ForEach(x =>
+            {
+                metas.Add(MetaCollection.FindSync(y => y.ProblemId == x._id && y.OurTime == x.time).First());
+            });
+
+            return metas;
+        }
+    }
+
+    internal class MinTimeResult
+    {
+        public int _id;
+        public int time;
     }
     
     public static class StorageExtensions

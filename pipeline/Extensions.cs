@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -59,6 +61,18 @@ namespace pipeline
             var timeUnits = int.Parse(match.Groups[1].Captures[0].Value);
         
             return timeUnits;
+        }
+
+        public static void Print(this ExpandoObject dynamicObject)
+        {
+            var dynamicDictionary = dynamicObject as IDictionary<string, object>;
+
+            foreach (var property in dynamicDictionary)
+            {
+                Console.WriteLine("{0}: {1}", property.Key, property.Value.ToString());
+            }
+
+            Console.WriteLine();
         }
     }
 }
