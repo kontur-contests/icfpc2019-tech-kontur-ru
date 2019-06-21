@@ -42,3 +42,5 @@ visualizer/dist/bundle.js
 visualizer/files.js
 node_modules/
 package-lock.json
+
+*.csv
