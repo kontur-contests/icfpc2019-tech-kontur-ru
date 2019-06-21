@@ -1,4 +1,4 @@
-image: microsoft/dotnet:latest
+image: beevee/dotfox:latest
 
 stages:
     - build
