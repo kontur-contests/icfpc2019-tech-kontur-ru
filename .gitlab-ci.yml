@@ -6,5 +6,6 @@ stages:
 check_unchecked:
     stage: build
     script:
-        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker32"
+        - "./geckodriver_docker32"
+        # - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker32"
     when: manual
