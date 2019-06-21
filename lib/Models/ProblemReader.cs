@@ -10,7 +10,8 @@ namespace lib.Models
     {
         public const string PART_1_INITIAL = "part-1-initial";
         public const string PART_1_EXAMPLE = "part-1-examples";
-        
+        public const string PART_2_TELEPORTS = "part-2-teleports";
+
         public static ProblemReader Current = new ProblemReader(PART_1_INITIAL);
 
         public string Pack { get; }
@@ -34,7 +35,8 @@ namespace lib.Models
         public List<ProblemMeta> ReadAll()
         {
             return Enumerable
-                .Range(1, 150)
+                .Range(1, 10000)
+                .Where(i => File.Exists(GetProblemPath(i)))
                 .Select(i => new ProblemMeta(Pack, i, Read(i)))
                 .ToList();
         }
@@ -84,6 +86,8 @@ namespace lib.Models
                     return new Booster(BoosterType.Drill, ReadPoint(s.Substring(1)));
                 case 'X':
                     return new Booster(BoosterType.MysteriousPoint, ReadPoint(s.Substring(1)));
+                case 'R':
+                    return new Booster(BoosterType.Teleport, ReadPoint(s.Substring(1)));
                 default:
                     throw new InvalidOperationException($"Unknown booster '{s}'");
             }

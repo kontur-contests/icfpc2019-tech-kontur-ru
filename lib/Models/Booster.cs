@@ -25,6 +25,8 @@ namespace lib.Models
                     return $"F{Position}";
                 case BoosterType.MysteriousPoint:
                     return $"X{Position}";
+                case BoosterType.Teleport:
+                    return $"R{Position}";
                 default:
                     throw new ArgumentOutOfRangeException();
             }

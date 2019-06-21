@@ -5,6 +5,7 @@ namespace lib.Models
         Extension,
         Drill,
         FastWheels,
-        MysteriousPoint
+        MysteriousPoint,
+        Teleport
     }
 }
