@@ -6,6 +6,7 @@ controlCenter.classList.add('control-center');
 
 const prevButton = document.createElement('button');
 prevButton.textContent = '<';
+prevButton.addEventListener('click', prevTick);
 
 const nextButton = document.createElement('button');
 nextButton.textContent = '>';
@@ -31,6 +32,8 @@ actionsWrapper.appendChild(controlCenter);
 
 let intervalId = null;
 let pause = true;
+let currentTick = 0;
+
 
 function playPause(e) {
     e.preventDefault();
@@ -44,7 +47,10 @@ function playPause(e) {
 
     if (pause) {
         pause = false;
-        intervalId = setInterval(nextTick, 30)
+        intervalId = setInterval(() => {
+            currentTick++;
+            nextTick();
+        }, 30)
     } else {
         stop();
     }
@@ -53,6 +59,7 @@ function playPause(e) {
 function nextTick(e) {
     if (e) {
         e.preventDefault();
+        currentTick++;
     }
 
     const gameObj = W();
@@ -66,12 +73,27 @@ function nextTick(e) {
     }
 }
 
+function prevTick(e) {
+    e.preventDefault();
+
+    W().Pf.h(e);
+
+    setTimeout(() => {
+        for (let i = 0; i < currentTick; i++) {
+            nextTick();
+        }
+    }, 50);
+
+
+    currentTick--;
+}
+
 function reset(e) {
     e.preventDefault();
     stop();
     W().Pf.h(e);
     W().Hi = true;
-
+    currentTick = 0;
 }
 
 function stop() {
