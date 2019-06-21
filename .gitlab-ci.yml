@@ -1,34 +1,33 @@
 image: beevee/dotfox:latest
 
 stages:
-    - test
-    - build
-    - deploy
+    - compare_csv
+    - submit
 
-check_unchecked:scheduled:
-    stage: test
-    script:
-        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
-    only:
-        - schedules
-
-check_unchecked:
-    stage: test
-    script:
-        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
-    when: manual
-
-submit:
-    stage: build
-    script:
-        - "dotnet run --project console-runner/console-runner.csproj -- submit -z solutions"
-        - "curl -s -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"
-    when: manual
+#check_unchecked:scheduled:
+#    stage: test
+#    script:
+#        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
+#    only:
+#        - schedules
+#
+#check_unchecked:
+#    stage: test
+#    script:
+#        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
+#    when: manual
 
 compare_csv:
-    stage: deploy
+    stage: compare_csv
     script:
         - "dotnet run --project console-runner/console-runner.csproj -- csv > our.csv"
         - "curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/$(curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/submissions.txt | tail -1 | cut -d ' ' -f 1)/score.csv > their.csv"
         - "diff our.csv their.csv"
     when: manual
+
+submit:
+    stage: submit
+    script:
+        - "dotnet run --project console-runner/console-runner.csproj -- submit -z solutions"
+        - "curl -s -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"
+    when: on_failure
