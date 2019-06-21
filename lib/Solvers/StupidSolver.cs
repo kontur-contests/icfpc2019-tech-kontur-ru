@@ -2,13 +2,13 @@
 using System.Linq;
 using lib.Models;
 
-namespace lib.Strategies
+namespace lib.Solvers
 {
-    internal class Stupid
+    public class StupidSolver : ISolver
     {
         private readonly State state;
 
-        public Stupid(State state)
+        public StupidSolver(State state)
         {
             this.state = state;
         }
