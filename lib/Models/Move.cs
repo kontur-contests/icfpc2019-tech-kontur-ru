@@ -1,3 +1,5 @@
+using System;
+
 namespace lib.Models
 {
     public class Move : ActionBase
@@ -20,9 +22,23 @@ namespace lib.Models
 
         public override void Apply(State state)
         {
-            state.Worker.Position += Delta;
+            ApplySingleMove(state, ignoreInvalidMove: false);
             if (state.Worker.FastWheelsTimeLeft > 0)
-                state.Worker.Position += Delta;
+                ApplySingleMove(state, ignoreInvalidMove: true);
+        }
+
+        private void ApplySingleMove(State state, bool ignoreInvalidMove)
+        {
+            var newPosition = state.Worker.Position + Delta;
+            if (!newPosition.Inside(state.Map) || state.Map[newPosition] == CellState.Obstacle && state.Worker.DrillTimeLeft == 0)
+            {
+                if (ignoreInvalidMove)
+                    return;
+                throw new InvalidOperationException($"Invalid move from {state.Worker.Position} to obstacle {newPosition}. Action: {this}");
+            }
+
+            state.Worker.Position += Delta;
+            state.Wrap();
         }
     }
 }

@@ -28,5 +28,16 @@ namespace lib.Models
                 Apply(action);
             }
         }
+
+        public void Wrap()
+        {
+            Map[Worker.Position] = CellState.Wrapped;
+            foreach (var manipulator in Worker.Manipulators)
+            {
+                var p = Worker.Position + manipulator;
+                if (Map.IsReachable(p, Worker.Position))
+                    Map[p] = CellState.Wrapped;
+            }
+        }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,16 +26,6 @@ namespace lib.Models
         /// relative positions
         /// </summary>
         public List<V> Manipulators { get; set; }
-
-        public void RotateCW()
-        {
-            throw new NotImplementedException();
-        }
-        
-        public void RotateCCW()
-        {
-            throw new NotImplementedException();
-        }
 
         public void NextTurn()
         {

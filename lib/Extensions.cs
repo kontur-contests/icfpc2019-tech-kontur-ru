@@ -53,6 +53,8 @@ namespace lib
 
         public static bool IsReachable(this Map map, V src, V dest)
         {
+            if (map[src] == CellState.Obstacle || map[dest] == CellState.Obstacle)
+                return false;
             var x0 = src.X;
             var y0 = src.Y;
             var x1 = dest.X;

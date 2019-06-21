@@ -1,6 +1,8 @@
-﻿namespace lib
+﻿using System;
+
+namespace lib
 {
-    public class V
+    public class V : IEquatable<V>
     {
         public V(int x, int y)
         {
@@ -8,7 +10,14 @@
             Y = y;
         }
 
-        protected bool Equals(V other) => X == other.X && Y == other.Y;
+        public bool Equals(V other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            return X == other.X && Y == other.Y;
+        }
 
         public override bool Equals(object obj)
         {
@@ -29,7 +38,7 @@
             }
         }
 
-        public override string ToString() 
+        public override string ToString()
             => $"({X},{Y})";
 
         public static implicit operator V(string s)
@@ -41,6 +50,8 @@
         public int X { get; }
         public int Y { get; }
 
+        public int MLen() => Math.Abs(X) + Math.Abs(Y);
+
         private static readonly V[] shifts = {new V(0, 1), new V(1, 0), new V(0, -1), new V(-1, 0)};
 
         public static V GetShift(int direction)
@@ -48,10 +59,14 @@
             return shifts[direction];
         }
 
-        public static V operator + (V a, V b) => new V(a.X + b.X, a.Y + b.Y);
+        public static V operator+(V a, V b) => new V(a.X + b.X, a.Y + b.Y);
 
-        public static V operator -(V a, V b) => new V(a.X - b.X, a.Y - b.Y);
+        public static V operator-(V a, V b) => new V(a.X - b.X, a.Y - b.Y);
 
         public static V Zero => new V(0, 0);
+
+        public static bool operator==(V left, V right) => Equals(left, right);
+
+        public static bool operator!=(V left, V right) => !Equals(left, right);
     }
 }

@@ -8,7 +8,7 @@ namespace lib.Models
     {
         public static State ToState(this Problem problem)
         {
-            return new State(
+            var state = new State(
                 new Worker
                 {
                     Position = problem.Point,
@@ -16,6 +16,8 @@ namespace lib.Models
                 },
                 ConvertMap(problem.Map, problem.Obstacles),
                 problem.Boosters);
+            state.Wrap();
+            return state;
         }
 
         private static Map ConvertMap(List<V> problemMap, List<List<V>> problemObstacles)
