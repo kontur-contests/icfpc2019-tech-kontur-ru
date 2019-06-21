@@ -11,6 +11,11 @@ namespace lib
             return 0 <= v.X && v.X < map.SizeX && 0 <= v.Y && v.Y < map.SizeY;
         }
 
+        public static V Shift(this V v, int direction)
+        {
+            return v + V.GetShift(direction);
+        }
+
         public static Direction Rotate(this Direction direction, int delta)
         {
             var newDirection = (4 + ((int)direction + delta) % 4) % 4;

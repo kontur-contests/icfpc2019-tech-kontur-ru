@@ -20,5 +20,13 @@ namespace lib.Models
             action.Apply(this);
             Worker.NextTurn();
         }
+
+        public void Apply(IEnumerable<ActionBase> actions)
+        {
+            foreach (var action in actions)
+            {
+                Apply(action);
+            }
+        }
     }
 }

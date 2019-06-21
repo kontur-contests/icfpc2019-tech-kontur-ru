@@ -4,16 +4,16 @@ namespace lib.Models
 {
     public class Map<T>
     {
-        private readonly CellState[,] cells;
+        private readonly T[,] cells;
 
         public Map(int sizeX, int sizeY)
         {
             SizeX = sizeX;
             SizeY = sizeY;
-            cells = new CellState[sizeY, sizeX];
+            cells = new T[sizeY, sizeX];
         }
 
-        private Map(int sizeX, int sizeY, CellState[,] cells)
+        private Map(int sizeX, int sizeY, T[,] cells)
         {
             SizeX = sizeX;
             SizeY = sizeY;
@@ -23,7 +23,7 @@ namespace lib.Models
         public int SizeX { get; }
         public int SizeY { get; }
 
-        public CellState this[V p]
+        public T this[V p]
         {
             get => cells[p.Y, p.X];
             set => cells[p.Y, p.X] = value;
@@ -38,9 +38,7 @@ namespace lib.Models
                     {
                         var strings = Enumerable
                             .Range(0, SizeX)
-                            .Select(x => cells[SizeY - y - 1, x] == CellState.Void ? "."
-                                : cells[SizeY - y - 1, x] == CellState.Obstacle ? "#" 
-                                : "*")
+                            .Select(x => cells[SizeY - y - 1, x])
                             .ToArray();
                         return string.Join("", strings);
                     });
@@ -49,7 +47,7 @@ namespace lib.Models
 
         public Map<T> Clone()
         {
-            return new Map<T>(SizeX, SizeY, (CellState[,])cells.Clone());
+            return new Map<T>(SizeX, SizeY, (T[,])cells.Clone());
         }
     }
 }
