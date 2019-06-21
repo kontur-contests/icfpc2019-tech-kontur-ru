@@ -8,19 +8,37 @@ namespace lib.Models
     public class ProblemReader
     {
         public const string PART_1_INITIAL = "part-1-initial";
-        public const string PART_1_EXAMPLE = "part-1-example";
+        public const string PART_1_EXAMPLE = "part-1-examples";
+        
+        public static ProblemReader Current = new ProblemReader(PART_1_INITIAL);
 
-        private readonly string pack;
+        public string Pack { get; }
 
         public ProblemReader(string pack)
         {
-            this.pack = pack;
+            Pack = pack;
+        }
+
+        public string GetProblemPath(int problem)
+        {
+            return Path.Combine(FileHelper.PatchDirectoryName("problems"), Pack, $"prob-{problem:000}.desc");
         }
 
         public Problem Read(int problem)
         {
-            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), pack, $"prob-{problem:000}.desc");
+            var fileName = GetProblemPath(problem);
             return Read(File.ReadAllText(fileName));
+        }
+
+        public string GetSolutionPath(int problem)
+        {
+            return Path.Combine(FileHelper.PatchDirectoryName("problems"), Pack, $"prob-{problem:000}.sol");
+        }
+
+        public string ReadSolutionBlob(int problem)
+        {
+            var fileName = GetSolutionPath(problem);
+            return File.ReadAllText(fileName);
         }
 
         public static Problem Read(string source)

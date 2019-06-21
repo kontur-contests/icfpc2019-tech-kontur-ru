@@ -8,4 +8,11 @@
       <ProjectReference Include="..\lib\lib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="PhantomJS" Version="2.1.1" />
+      <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.24.0" />
+      <PackageReference Include="Selenium.Support" Version="3.141.0" />
+      <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+    </ItemGroup>
+
 </Project>

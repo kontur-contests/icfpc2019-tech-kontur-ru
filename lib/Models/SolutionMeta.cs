@@ -2,15 +2,18 @@ using System;
 using System.Collections;
 using System.Xml.Linq;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
 
 namespace lib.Models
 {
     public class SolutionMeta
     {
-        public SolutionMeta(string taskId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs)
+        public SolutionMeta(string problemPack, int problemId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs)
         {
-            TaskId = taskId;
+            ProblemPack = problemPack;
+            ProblemId = problemId;
             SolutionBlob = solutionBlob;
             OurTime = ourTime;
             AlgorithmId = algorithmId;
@@ -18,7 +21,9 @@ namespace lib.Models
             CalculationTookMs = calculationTookMs;
         }
 
-        public string TaskId;
+        public ObjectId Id;
+        public string ProblemPack;
+        public int ProblemId;
         public string SolutionBlob;
         public int OurTime;
         public bool IsOnlineChecked;
