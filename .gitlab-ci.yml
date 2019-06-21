@@ -8,7 +8,8 @@ check_unchecked:
     stage: test
     script:
         - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
-    when: manual
+    only:
+        - schedules
 
 submit:
     stage: deploy
