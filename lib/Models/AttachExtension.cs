@@ -2,11 +2,11 @@ namespace lib.Models
 {
     public class AttachExtension : ActionBase
     {
-        public AttachExtension(Point relative)
+        public AttachExtension(V relative)
         {
             Relative = relative;
         }
 
-        public Point Relative { get; }
+        public V Relative { get; }
     }
 }

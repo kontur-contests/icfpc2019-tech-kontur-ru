@@ -9,7 +9,7 @@ namespace lib.Models
             this.cells = cells;
         }
 
-        public bool this[Point p]
+        public bool this[V p]
         {
             get { return cells[p.Y, p.X]; }
             set { cells[p.Y, p.X] = value; }

@@ -2,13 +2,13 @@ namespace lib.Models
 {
     public class Booster
     {
-        public Booster(BoosterType type, Point position)
+        public Booster(BoosterType type, V position)
         {
             Type = type;
             Position = position;
         }
 
         public BoosterType Type { get; }
-        public Point Position { get; }
+        public V Position { get; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace lib.Models
 {
-    public class Point
+    public class V
     {
-        public Point(int x, int y)
+        public V(int x, int y)
         {
             X = x;
             Y = y;

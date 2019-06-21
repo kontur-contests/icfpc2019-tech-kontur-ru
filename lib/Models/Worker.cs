@@ -5,7 +5,7 @@ namespace lib.Models
 {
     public class Worker
     {
-        public Point Position { get; set; }
+        public V Position { get; set; }
 
         public int ExtensionCount { get; set; }
         public int FastWheelsCount { get; set; }
@@ -17,7 +17,7 @@ namespace lib.Models
         /// <summary>
         /// relative positions
         /// </summary>
-        public List<Point> Manipulators { get; set; }
+        public List<V> Manipulators { get; set; }
 
         public void RotateCW()
         {

@@ -2,11 +2,11 @@ namespace lib.Models
 {
     public class Move : ActionBase
     {
-        public Move(Point delta)
+        public Move(V delta)
         {
             Delta = delta;
         }
 
-        public Point Delta { get; }
+        public V Delta { get; }
     }
 }
