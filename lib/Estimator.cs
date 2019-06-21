@@ -3,12 +3,12 @@ using lib.Models;
 
 namespace lib
 {
-    //class Estimator
-    //{
-    //    public double Estimate(State state)
-    //    {
-    //        var wrappedCount = state.Map.EnumerateCells().Count(c => c.Item2 == CellState.Wrapped);
-    //        return wrappedCount;
-    //    }
-    //}
+    public class Estimator
+    {
+        public double Estimate(State state)
+        {
+            var wrappedCount = state.Map.EnumerateCells().Count(c => c.Item2 == CellState.Void);
+            return wrappedCount;
+        }
+    }
 }
