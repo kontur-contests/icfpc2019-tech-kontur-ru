@@ -2,6 +2,7 @@ image: beevee/dotfox:latest
 
 stages:
     - test
+    - build
     - deploy
 
 check_unchecked:scheduled:
@@ -18,7 +19,7 @@ check_unchecked:
     when: manual
 
 submit:
-    stage: deploy
+    stage: build
     script:
         - "dotnet run --project console-runner/console-runner.csproj -- submit -z solutions"
         - "curl -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"

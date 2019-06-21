@@ -36,11 +36,11 @@ namespace pipeline
             
             var pipeline = new[] 
             {
-                new BsonDocument { { "$match", new BsonDocument(new Dictionary<string, object>
-                {
-                    { "IsOnlineChecked", true },
-                    { "IsOnlineCorrect", true }
-                }) } },
+                // new BsonDocument { { "$match", new BsonDocument(new Dictionary<string, object>
+                // {
+                //     { "IsOnlineChecked", true },
+                //     { "IsOnlineCorrect", true }
+                // }) } },
                 new BsonDocument { { "$group", new BsonDocument(new Dictionary<string, object>
                 {
                     { "_id", "$ProblemId" },
