@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace tests.Strategies
 {
-    [TestFixture]
+    [TestFixture, Explicit]
     internal class BruteForceTests
     {
         [Test]
