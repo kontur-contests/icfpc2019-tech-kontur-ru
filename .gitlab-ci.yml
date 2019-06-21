@@ -1,0 +1,5 @@
+image: microsoft/dotnet:latest
+
+build:
+    script:
+        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
