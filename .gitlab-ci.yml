@@ -1,16 +1,17 @@
 image: beevee/dotfox:latest
 
 stages:
-    - build
+    - test
+    - deploy
 
 check_unchecked:
-    stage: build
+    stage: test
     script:
         - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
     when: manual
 
 submit:
-    stage: build
+    stage: deploy
     script:
         - "dotnet run --project console-runner/console-runner.csproj -- submit"
     when: manual

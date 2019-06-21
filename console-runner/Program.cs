@@ -131,8 +131,8 @@ namespace console_runner
                     if (Directory.Exists(solutionDirectory))
                     {
                         Directory.Delete(solutionDirectory, true);
-                        Directory.CreateDirectory(solutionDirectory);
                     }
+                    Directory.CreateDirectory(solutionDirectory);
                     
                     if (!Directory.Exists(submissionsDirectory))
                     {
