@@ -1,12 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "console-runner", "console-runner\console-runner.csproj", "{ACBB1716-51D1-490F-9AFE-C7D53BA1D3A0}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "console-runner", "console-runner\console-runner.csproj", "{ACBB1716-51D1-490F-9AFE-C7D53BA1D3A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib", "lib\lib.csproj", "{DA4EAABF-B6B3-4A8D-8477-F646BAA9EDB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lib", "lib\lib.csproj", "{DA4EAABF-B6B3-4A8D-8477-F646BAA9EDB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests.csproj", "{68D4D0B4-71BA-4FE3-99E3-44E39E4BC740}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests", "tests\tests.csproj", "{68D4D0B4-71BA-4FE3-99E3-44E39E4BC740}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pipeline", "pipeline\pipeline.csproj", "{3F3CE37D-8B04-4EC0-8D5D-8F19E4784AE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "pipeline", "pipeline\pipeline.csproj", "{3F3CE37D-8B04-4EC0-8D5D-8F19E4784AE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MishaResearch", "MishaResearch\MishaResearch.csproj", "{187F9161-1633-4076-B36E-35D816D892C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +35,15 @@ Global
 		{3F3CE37D-8B04-4EC0-8D5D-8F19E4784AE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F3CE37D-8B04-4EC0-8D5D-8F19E4784AE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F3CE37D-8B04-4EC0-8D5D-8F19E4784AE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{187F9161-1633-4076-B36E-35D816D892C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{187F9161-1633-4076-B36E-35D816D892C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{187F9161-1633-4076-B36E-35D816D892C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{187F9161-1633-4076-B36E-35D816D892C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {37229EF1-8578-46EC-8E6C-1726C323E4C1}
 	EndGlobalSection
 EndGlobal
