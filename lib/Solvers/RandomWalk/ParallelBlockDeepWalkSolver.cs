@@ -157,32 +157,32 @@ namespace lib.Solvers.RandomWalk
 
         public List<List<ActionBase>> Solve(State state)
         {
-            var solution = new List<ActionBase>();
+            var solution = new List<List<ActionBase>>{new List<ActionBase>()};
 
             //Console.Out.WriteLine("--INIT:\n" + state.Map);
 
-            BoosterMaster.CreatePalka(state, solution);
+            BoosterMaster.CreatePalka(state, solution[0]);
             BoosterMaster.CloneAttack(state, solution);
 
-            return new List<List<ActionBase>> {solution};
-
-            while (state.UnwrappedLeft > 0)
-            {
-                //Console.Out.WriteLine($"--BEFORE ({solution.Count}):\n{state.Map}");
-
-                var sub = GetBlock(state);
-                // Console.Out.WriteLine("--SUB:\n" + sub.Map);
-                while (sub.UnwrappedLeft > 0)
-                {
-                    var part = SolvePart(sub);
-                    solution.AddRange(part);
-                    sub.ApplyRange(part);
-                    state.ApplyRange(part);
-                }
-            }
-
-            // Console.Out.WriteLine("--AFTER:\n" + state.Map);
-            return new List<List<ActionBase>> {solution};
+            return solution;
+            //
+            // while (state.UnwrappedLeft > 0)
+            // {
+            //     //Console.Out.WriteLine($"--BEFORE ({solution.Count}):\n{state.Map}");
+            //
+            //     var sub = GetBlock(state);
+            //     // Console.Out.WriteLine("--SUB:\n" + sub.Map);
+            //     while (sub.UnwrappedLeft > 0)
+            //     {
+            //         var part = SolvePart(sub);
+            //         solution.AddRange(part);
+            //         sub.ApplyRange(part);
+            //         state.ApplyRange(part);
+            //     }
+            // }
+            //
+            // // Console.Out.WriteLine("--AFTER:\n" + state.Map);
+            // return new List<List<ActionBase>> {solution};
         }
 
         public List<ActionBase> SolvePart(State state)

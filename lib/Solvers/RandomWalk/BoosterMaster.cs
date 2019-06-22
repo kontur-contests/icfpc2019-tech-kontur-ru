@@ -7,7 +7,7 @@ namespace lib.Solvers.RandomWalk
 {
     public static class BoosterMaster
     {
-        public static void CloneAttack(State state, List<ActionBase> result)
+        public static void CloneAttack(State state, List<List<ActionBase>> result)
         {
             if (state.Boosters.All(b => b.Type != BoosterType.MysteriousPoint))
                 return;
@@ -27,7 +27,7 @@ namespace lib.Solvers.RandomWalk
                 var actions = pathBuilder.GetActions(best.Position);
 
                 state.ApplyRange(actions);
-                result.AddRange(actions);
+                result[0].AddRange(actions);
             }
 
             if (state.CloningCount == 0)
@@ -39,21 +39,30 @@ namespace lib.Solvers.RandomWalk
             var mactions = mpathBuilder.GetActions(mbest.Position);
 
             state.ApplyRange(mactions);
-            result.AddRange(mactions);
+            result[0].AddRange(mactions);
 
             while (state.CloningCount > 0)
             {
                 var cactions = new List<(Worker w, ActionBase action)>();
-                foreach (var w in state.Workers)
+                for (var i = 0; i < state.Workers.Count; i++)
                 {
+                    var w = state.Workers[i];
                     if (cactions.Count < state.CloningCount)
-                        cactions.Add((w, new UseCloning()));
+                    {
+                        var useCloning = new UseCloning();
+                        cactions.Add((w, useCloning));
+                        result[i].Add(useCloning);
+                        result.Add(new List<ActionBase>());
+                    }
                     else
-                        cactions.Add((w, new Wait()));
+                    {
+                        var wait = new Wait();
+                        cactions.Add((w, wait));
+                        result[i].Add(wait);
+                    }
                 }
 
                 state.Apply(cactions);
-                result.AddRange(cactions.Select(x => x.action));
             }
         }
 

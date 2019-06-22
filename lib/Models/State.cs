@@ -48,18 +48,22 @@ namespace lib.Models
                             .Select(
                                 x =>
                                 {
-                                    var p = new V(Map.SizeY - y - 1, x);
+                                    var p = new V(x, Map.SizeY - y - 1);
                                     if (Map[p] == CellState.Obstacle)
                                         return "#";
+                                    
+                                    var wCount = Workers.Count(w => w.Position == p);
+                                    if (wCount != 0)
+                                        return wCount.ToString();
+                                    
                                     var booster = Boosters.FirstOrDefault(b => b.Position == p);
                                     if (booster != null)
                                         return booster.ToString()[0].ToString();
+                                    
                                     if (Map[p] == CellState.Void)
                                         return ".";
-                                    var wCount = Workers.Count(w => w.Position == p);
-                                    if (wCount == 0)
-                                        return "*";
-                                    return wCount.ToString();
+                                    
+                                    return "*";
                                 })
                             .ToArray();
                         return string.Join("", strings);
