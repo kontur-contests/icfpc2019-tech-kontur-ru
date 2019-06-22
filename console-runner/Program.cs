@@ -221,7 +221,7 @@ namespace console_runner
                         .OrderBy(x => x.Item2.Format().Length)
                         .First();
                         
-                    var solutionPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.sol");
+                    var solutionPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_{best.Item1.GetName()}_{best.Item1.GetVersion()}.sol");
                     File.WriteAllText(solutionPath, best.Item2.Format());
 
                     return 0;
