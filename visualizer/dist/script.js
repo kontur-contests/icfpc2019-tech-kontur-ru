@@ -100,7 +100,7 @@ function nextTick(e) {
     try {
         createHistory();
         Wl();
-        renderHistory();
+        // renderHistory();
     } catch (e) {
         stop();
     } finally {
@@ -151,7 +151,7 @@ function reset(e) {
     robotTrack = [];
     ticks = [];
     history = [];
-    renderHistory();
+    // renderHistory();
 }
 
 function stop() {
@@ -170,7 +170,7 @@ function addTrajectoryPoint(x, y) {
     }
 
     if (robotTrack.length > 1) {
-        drawTrack();
+        // drawTrack();
     }
 }
 
