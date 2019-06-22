@@ -113,6 +113,7 @@ namespace console_runner
                     {
                         var solvers = RunnableSolvers
                             .Enumerate()
+                            .OrderBy(_ => Guid.NewGuid())
                             .Select(x => x.Invoke())
                             .ToList();
 
