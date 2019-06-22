@@ -103,6 +103,32 @@ namespace console_runner
                 });
             });
 
+            app.Command("list-unsolved", (command) =>
+            {
+                command.Description = "List all tasks to be solved by current runnable solvers";
+                command.HelpOption("-?|-h|--help");
+
+                command.OnExecute(() =>
+                {
+                    var solvers = RunnableSolvers.Enumerate()
+                        .Select(s => s.Invoke())
+                        .OrderBy(s => s.GetName());
+                    var problems = ProblemReader.ReadAll();
+                    
+                    foreach (var solver in solvers)
+                    {
+                        Console.Write($"{solver.GetName()}: ");
+                        
+                        var solved = Storage.EnumerateSolved(solver).Select(x => x.ProblemId);
+                        Console.WriteLine(string.Join(", ", problems
+                            .Select(x => x.ProblemId)
+                            .Except(solved)));
+                    }
+                    
+                    return 0;
+                });
+            });
+            
             app.Command("solve-unsolved", (command) =>
             {
                 command.Description = "Create solutions for all nonexistent problem-solver pairs";
