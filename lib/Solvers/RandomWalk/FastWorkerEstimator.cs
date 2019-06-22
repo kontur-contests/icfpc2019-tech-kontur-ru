@@ -5,19 +5,16 @@ using lib.Models;
 
 namespace lib.Solvers.RandomWalk
 {
-    public class WorkerEstimator : IWorkerEstimator
+    public class FastWorkerEstimator : IFastWorkerEstimator
     {
-        public double Estimate(State state, State prevState, Worker worker)
+        public double Estimate(State state, Worker worker)
         {
             if (state.UnwrappedLeft == 0)
-                return 1_000_000_000 - state.Time;
+                return 1_000_000_000.0 - state.Time;
 
             var distScore = DistanceToVoid(state.Map, worker.Position);
 
-            if (state.UnwrappedLeft == prevState.UnwrappedLeft)
-                return -distScore;
-
-            return 100_000_000 - distScore - (state.UnwrappedLeft - prevState.UnwrappedLeft) * 100_000;
+            return 100_000_000.0 - distScore - state.UnwrappedLeft * 1_000_000.0;
         }
 
         private int DistanceToVoid(Map map, V start)
