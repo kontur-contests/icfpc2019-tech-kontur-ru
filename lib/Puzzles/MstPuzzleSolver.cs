@@ -10,7 +10,7 @@ namespace lib.Puzzles
         {
             var map = MarkCells(puzzle);
 
-            Print(map, new V(61, 157));
+            //Print(map, new V(61, 157));
 
             var completed = Complete(map, puzzle);
 
