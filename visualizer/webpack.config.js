@@ -1,15 +1,17 @@
 const path = require('path');
 
 module.exports = {
-    entry: './files.js',
+    entry: {
+        solutions: './files.js',
+        puzzles: './files-puzzles.js'},
     output: {
-        filename: 'bundle.js',
+        filename: '[name].js',
         publicPath: 'dist',
     },
     module: {
         rules: [
             {
-                test: /\.(desc|sol)$/i,
+                test: /\.(desc|sol|cond)$/i,
                 use: 'raw-loader',
             },
         ],

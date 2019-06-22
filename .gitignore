@@ -39,7 +39,10 @@ msbuild.wrn
 prob-*.sol
 
 visualizer/dist/bundle.js
+visualizer/dist/puzzles.js
+visualizer/dist/solutions.js
 visualizer/files.js
+visualizer/files-puzzles.js
 node_modules/
 package-lock.json
 

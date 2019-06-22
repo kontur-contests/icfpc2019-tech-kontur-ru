@@ -2358,7 +2358,7 @@ var render, validate;
         return a.Fl
     }
 
-    function zg(a, b, c, e, f) {
+    function zg(a, b, c, e, f) { // объект настроек текужей карты
         this.Rm = this.no = 0;
         this.Fl = null;
         this.q = 0;
@@ -2418,27 +2418,22 @@ var render, validate;
     }
 
     function renderActionPoints(a, b, color) { // рисует бустеры
-        var e = a.ac;
+        var ctx = a.ac;
         color = getColorHex(color);
-        e.fillStyle = color;
-
+        ctx.fillStyle = color;
 
         b = new uf(b.k, b.l);
-        e = new uf(.5, .5);
+        var e = new uf(.5, .5);
         b = Dg(a, new uf(b.k + e.k, b.l + e.l));
-        if (color === '#ff0000') {
-            addTrajectoryPoint(b.k, b.l);
-        }
-        a.ac.beginPath();
-        a.ac.arc(b.k, b.l, a.$m, 0, 6.283185307179586);
-        a.ac.fill();
-        b = a.ac;
-        e = getColorHex(Gg().kj);
-        b.fillStyle = e;
-        a.ac.stroke();
-        a = a.ac;
+        ctx.beginPath();
+        ctx.arc(b.k, b.l, a.$m, 0, 6.283185307179586);
+        ctx.fill();
+        color = getColorHex(Gg().kj);
+        ctx.fillStyle = color;
+        ctx.stroke();
         b = getColorHex(Gg().Hf);
-        a.fillStyle = b
+        ctx.fillStyle = b
+
     }
 
     function renderTile(ctx, b, color) { // рисует поле и препятствия и каждый квадратик
@@ -4878,6 +4873,7 @@ var render, validate;
                     var c = a.de;
                     ld(rd(), a);
                     var e = new zg(em(W()), c, qm(W()).ob(), qm(W()).Jb(), W().aj);
+                    window.canvasSettings = e;
                     W().re = b;
                     W().Qc = new M(a);
                     W().kh = new M(e);
@@ -4889,7 +4885,7 @@ var render, validate;
                         c); else throw l;
                 }
             }
-        }(a, b)), Sg(Tg()).setTimeout(Sl(Tl(), a), 50) | 0
+        }(a, b)), window.setTimeout(Sl(Tl(), a), 50) | 0
     }
 
     function nm(a, b) {

@@ -1,67 +1,7 @@
 const actionsWrapper = document.getElementById('main_section');
-
-const controlCenter = document.createElement('div');
-controlCenter.classList.add('control-center');
-
-const zeroRow = document.createElement('form');
-zeroRow.classList.add('row');
-zeroRow.addEventListener('submit', submitForm);
-
-const input = document.createElement('input');
-input.setAttribute('type', 'number');
-input.id = 'taskNumber';
-
-const firstRow = document.createElement('div');
-firstRow.classList.add('row');
-
-const prevButton = document.createElement('button');
-prevButton.textContent = '<';
-prevButton.addEventListener('click', prevTick);
-
-const nextButton = document.createElement('button');
-nextButton.textContent = '>';
-nextButton.addEventListener('click', nextTick);
-
-const playButton = document.createElement('button');
-playButton.textContent = '▶︎||';
-playButton.addEventListener('click', playPause);
-
-const resetButton = document.createElement('button');
-resetButton.classList.add('reset-button');
-resetButton.textContent = '↺';
-resetButton.addEventListener('click', reset);
-
-const secondRow = document.createElement('div');
-secondRow.classList.add('row');
-secondRow.classList.add('second-row');
-
-const prevFiveButton = document.createElement('button');
-prevFiveButton.textContent = '<<';
-prevFiveButton.addEventListener('click', prevFiveTick);
-
-const nextFiveButton = document.createElement('button');
-nextFiveButton.textContent = '>>';
-nextFiveButton.addEventListener('click', nextFiveTick);
-
 const historyContainer = document.createElement('div');
-historyContainer.classList.add('history-wrapper');
 
-zeroRow.appendChild(input);
-
-firstRow.appendChild(prevButton);
-firstRow.appendChild(playButton);
-firstRow.appendChild(nextButton);
-
-secondRow.appendChild(prevFiveButton);
-secondRow.appendChild(nextFiveButton);
-
-controlCenter.appendChild(firstRow);
-controlCenter.appendChild(secondRow);
-
-actionsWrapper.appendChild(zeroRow);
-actionsWrapper.appendChild(controlCenter);
-actionsWrapper.appendChild(resetButton);
-actionsWrapper.appendChild(historyContainer);
+createMarkup();
 
 let intervalId = null;
 let pause = true;
@@ -71,6 +11,72 @@ let ticks = [];
 let currentProblemNumber = null;
 let lastCommandPosition = 0;
 let history = [];
+
+function createMarkup() {
+    const controlCenter = document.createElement('div');
+    controlCenter.classList.add('control-center');
+
+    const zeroRow = document.createElement('form');
+    zeroRow.classList.add('row');
+    zeroRow.addEventListener('submit', submitForm);
+
+    const input = document.createElement('input');
+    input.setAttribute('type', 'number');
+    input.id = 'taskNumber';
+
+    const firstRow = document.createElement('div');
+    firstRow.classList.add('row');
+
+    const prevButton = document.createElement('button');
+    prevButton.textContent = '<';
+    prevButton.addEventListener('click', prevTick);
+
+    const nextButton = document.createElement('button');
+    nextButton.textContent = '>';
+    nextButton.addEventListener('click', nextTick);
+
+    const playButton = document.createElement('button');
+    playButton.textContent = '▶︎||';
+    playButton.addEventListener('click', playPause);
+
+    const resetButton = document.createElement('button');
+    resetButton.classList.add('reset-button');
+    resetButton.textContent = '↺';
+    resetButton.addEventListener('click', reset);
+
+    const secondRow = document.createElement('div');
+    secondRow.classList.add('row');
+    secondRow.classList.add('second-row');
+
+    const prevFiveButton = document.createElement('button');
+    prevFiveButton.textContent = '<<';
+    prevFiveButton.addEventListener('click', prevFiveTick);
+
+    const nextFiveButton = document.createElement('button');
+    nextFiveButton.textContent = '>>';
+    nextFiveButton.addEventListener('click', nextFiveTick);
+
+    const historyContainer = document.createElement('div');
+    historyContainer.classList.add('history-wrapper');
+
+    zeroRow.appendChild(input);
+
+    firstRow.appendChild(prevButton);
+    firstRow.appendChild(playButton);
+    firstRow.appendChild(nextButton);
+
+    secondRow.appendChild(prevFiveButton);
+    secondRow.appendChild(nextFiveButton);
+
+    controlCenter.appendChild(firstRow);
+    controlCenter.appendChild(secondRow);
+
+    actionsWrapper.appendChild(zeroRow);
+    actionsWrapper.appendChild(controlCenter);
+    actionsWrapper.appendChild(resetButton);
+    actionsWrapper.appendChild(historyContainer);
+}
+
 
 function playPause(e) {
     e.preventDefault();

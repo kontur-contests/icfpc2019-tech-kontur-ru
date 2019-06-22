@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "node createDeps.js && webpack",
-    "start": "node createDeps.js && webpack-dev-server"
+    "build": "node createDeps.js && node createDepsPuzzles.js && webpack",
+    "start": "node createDeps.js && node createDeps.js && webpack-dev-server"
   },
   "repository": {
     "type": "git",
