@@ -157,9 +157,22 @@ namespace lib.Models
 
         public Action CollectBoosters()
         {
-            var boostersToCollect = Boosters
-                .Where(b => Workers.Any(w => b.Position == w.Position) && b.Type != BoosterType.MysteriousPoint)
-                .ToList();
+            var boostersToCollect = new List<Booster>();
+            foreach (var b in Boosters)
+            {
+                if (b.Type != BoosterType.MysteriousPoint)
+                {
+                    foreach (var w in Workers)
+                    {
+                        if (b.Position == w.Position)
+                        {
+                            boostersToCollect.Add(b);
+                            break;
+                        }
+                    }
+                }
+            }
+
             foreach (var booster in boostersToCollect)
             {
                 switch (booster.Type)
