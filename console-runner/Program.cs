@@ -180,6 +180,10 @@ namespace console_runner
             {
                 command.Description = "Create solution for the current puzzle";
                 command.HelpOption("-?|-h|--help");
+                
+                var submitOption = command.Option("-s|--submit",
+                    "Immediately submit block",
+                    CommandOptionType.NoValue);
 
                 command.OnExecute(async () =>
                 {
@@ -200,6 +204,7 @@ namespace console_runner
                     };
 
                     var puzzleSolved = false;
+                    var ourProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.desc");
                     foreach (var puzzleSolver in puzzleSolvers)
                     {
                         var ourProblem = puzzleSolver.Solve(block.Puzzle);
@@ -207,7 +212,6 @@ namespace console_runner
                             continue;
 
                         puzzleSolved = true;
-                        var ourProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.desc");
                         File.WriteAllText(ourProblemPath, ourProblem.ToString());
                     }
                     if (!puzzleSolved)
@@ -248,6 +252,15 @@ namespace console_runner
                     File.WriteAllText(solutionPath, bestActions.Format());
 
                     Console.WriteLine($"Best score = {bestActions.CalculateTime()}");
+
+                    if (submitOption.HasValue())
+                    {
+                        Console.WriteLine("Submitting block ...");
+                        var submissionResult = await Api.Submit(block.BlockNumber, solutionPath, ourProblemPath);
+                        if (submissionResult.Errors.Count > 0)
+                            submissionResult.Errors.ToList().ForEach(
+                                e => { Console.WriteLine($"Error {e.Key}: {e.Value}"); });
+                    }
 
                     return 0;
                 });
