@@ -8,7 +8,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return $"random-walk-{depth}/{tryCount}";
+            return $"random-walk-{depth}/{tryCount}/{usePalka}";
         }
 
         public int GetVersion()
@@ -30,18 +30,23 @@ namespace lib.Solvers.RandomWalk
             new Move("1,0"), 
             new Move("-1,0")
         };
+        private readonly bool usePalka;
 
-        public RandomWalkSolver(int depth, IEstimator estimator, Random random, int tryCount)
+        public RandomWalkSolver(int depth, IEstimator estimator, Random random, int tryCount, bool usePalka)
         {
             this.depth = depth;
             this.estimator = estimator;
             this.random = random;
             this.tryCount = tryCount;
+            this.usePalka = usePalka;
         }
 
         public List<ActionBase> Solve(State state)
         {
             var solution = new List<ActionBase>();
+            
+            if (usePalka)
+                PalkaAppender.CollectManipulators(state, solution);
 
             while (state.UnwrappedLeft > 0)
             {

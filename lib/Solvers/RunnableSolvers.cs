@@ -14,7 +14,7 @@ namespace lib.Solvers
             return new List<Func<ISolver>>
             {
                 () => new StupidSolver(),
-                () => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100),
+                () => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 () => new DeepWalkSolver(depth: 2, new Estimator()),
                 () => new GreedySolver(new SingleStateEstimator()),
                 () => new BlockDeepWalkSolver(blockSize: 5, depth: 2, new Estimator(), usePalka: true),
