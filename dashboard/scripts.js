@@ -1,15 +1,34 @@
 
-// const rowsHtml = Object.keys(rows).map(i => `<tr><td>${i}</td>${algos.map(x => "<td " + (Object.values(rows[i]).every(z => z >= rows[i][x]) ? 'class="min"' : (!rows[i][x] ? 'class="no"' : "")) + ">" + (rows[i][x] || "") + "</td>").join("")}</tr>`).join("")
+const body = document.getElementsByTagName('body')[0];
 
-
+let hiddenAlgs = getHiddenColumns();
 let algs = new Set();
 const formattedData = mapData(dataFromServer);
 const tenMinutes = 10 * 60 * 1000;
+renderShowAllButton();
 createTable();
 
 
+function getHiddenColumns() {
+    return JSON.parse(localStorage.getItem('hiddenColumn')) || [];
+}
+
+function renderShowAllButton() {
+    if (!hiddenAlgs || !hiddenAlgs.length || document.getElementsByClassName('show-all').length) {
+        return;
+    }
+
+
+    const button = document.createElement('button');
+    button.textContent = 'Показать все алгоритмы';
+    button.classList.add('show-all');
+    button.addEventListener('click', showAll);
+
+    body.appendChild(button);
+
+}
+
 function createTable() {
-    const body = document.getElementsByTagName('body')[0];
     const table = document.createElement('table');
     table.classList.add('table');
 
@@ -25,7 +44,9 @@ function createTable() {
     bestTh.innerText = 'best score';
     tableHeaderRow.appendChild(bestTh);
 
-    [...algs].sort().forEach(item => {
+    const algsOrder = [...algs].sort().filter(alg => !hiddenAlgs.includes(alg));
+
+    algsOrder.forEach(item => {
         const th = document.createElement('th');
         th.textContent = `${item}`;
 
@@ -47,7 +68,7 @@ function createTable() {
 
 
         const row = formattedData[num];
-        [...algs].sort().forEach(item => {
+        algsOrder.forEach(item => {
             const td = document.createElement('td');
             td.textContent = (row[item] && row[item].result) || '';
 
@@ -75,12 +96,16 @@ function createTable() {
     table.appendChild(tableHeader);
     table.appendChild(tableBody);
     body.appendChild(table);
+
+    addListeners();
 }
 
 function mapData() {
     return dataFromServer.reduce((acc, item) => {
         const [id, alg, version] = item._id.split('_');
         const algName = `${alg} v${version}`;
+
+
         algs.add(algName);
 
         if (!acc[id]) {
@@ -94,4 +119,49 @@ function mapData() {
 
         return acc;
     }, {})
+}
+
+function addListeners() {
+    const ths = [...document.getElementsByTagName('th')];
+
+    for (let i = 0; i < ths.length; i++) {
+        ths[i].addEventListener('click', hideColumn)
+    }
+
+}
+
+function deleteTable() {
+    const table = document.getElementsByClassName('table')[0];
+
+    body.removeChild(table);
+}
+
+function hideColumn(e) {
+    const algId = e.target.innerText;
+
+    if (!hiddenAlgs) {
+        hiddenAlgs = [];
+    }
+
+    hiddenAlgs.push(algId);
+
+    localStorage.setItem("hiddenColumn", JSON.stringify(hiddenAlgs));
+
+    deleteTable();
+    renderShowAllButton();
+    createTable();
+}
+
+function showAll() {
+    hiddenAlgs = [];
+
+    localStorage.setItem("hiddenColumn", JSON.stringify(hiddenAlgs));
+
+    deleteTable();
+    createTable();
+
+
+    const button = document.getElementsByClassName('show-all')[0];
+
+    body.removeChild(button);
 }
