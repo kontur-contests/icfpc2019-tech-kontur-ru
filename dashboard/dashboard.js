@@ -49,6 +49,8 @@ MongoClient
             rows[id][algo] = row.time
         })
 
+        algos.sort();
+
         // console.log(rows)
 
         const styles = `<style>.min {background-color:#cfc} .no {background-color:#ccc}</style>`
