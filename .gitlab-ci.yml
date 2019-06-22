@@ -50,5 +50,5 @@ solve_block:
         - "pip3 install -r lambda-client/requirements.txt"
     script:
         - "cd lambda-client && python3 lambdad.py &"
-        - "cd .. && dotnet run -c Release --project console-runner/console-runner.csproj -- solve-block -s"
+        - "dotnet run -c Release --project console-runner/console-runner.csproj -- solve-block -s"
     when: manual
