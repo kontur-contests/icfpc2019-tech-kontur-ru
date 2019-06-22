@@ -116,7 +116,7 @@ namespace console_runner
                 {
                     var threadsCount = threadsOption.HasValue() ? int.Parse(threadsOption.Value()) : Environment.ProcessorCount;
                     var threads = Enumerable.Range(0, threadsCount).ToList();
-                    Parallel.ForEach(threads, new ParallelOptions {MaxDegreeOfParallelism = threadsCount}, t =>
+                    Parallel.ForEach(threads, new ParallelOptions {MaxDegreeOfParallelism = threadsCount}, thread =>
                         {
                             while (true)
                             {
@@ -139,7 +139,7 @@ namespace console_runner
                                             .ToList()
                                             .First();
 
-                                        Solve(solver, problems.Find(x => x.ProblemId == unsolved));
+                                        Solve(solver, problems.Find(x => x.ProblemId == unsolved), thread);
                                     });
                             }
                         });
@@ -220,7 +220,7 @@ namespace console_runner
         {
             var prefix = thread.HasValue ? $"#{thread.Value}: " : string.Empty;
 
-            Console.Write($"{prefix}Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
+            Console.WriteLine($"{prefix}Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
     
             var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
             solutionMeta.SaveToDb();
