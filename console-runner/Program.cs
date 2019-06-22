@@ -184,6 +184,9 @@ namespace console_runner
                 command.OnExecute(async () =>
                 {
                     var block = await Api.GetCurrentBlockchainBlock();
+                    
+                    var blockProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_orig.desc");
+                    File.WriteAllText(blockProblemPath, block.Problem.ToString());
 
                     var ourProblem = new MstPuzzleSolver().Solve(block.Puzzle);
                     if (!ourProblem.IsValidForPuzzle(block.Puzzle))
