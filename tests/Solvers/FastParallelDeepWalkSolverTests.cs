@@ -10,7 +10,7 @@ namespace tests.Solvers
         public void SolveOne()
         {
             var solver = new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: false);
-            SolveOneProblem(solver, 250);
+            SolveOneProblem(solver, 296);
         }
     }
 }

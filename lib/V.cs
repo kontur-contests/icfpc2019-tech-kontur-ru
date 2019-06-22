@@ -2,7 +2,7 @@
 
 namespace lib
 {
-    public class V : IEquatable<V>
+    public struct V : IEquatable<V>
     {
         public V(int x, int y)
         {
@@ -10,25 +10,9 @@ namespace lib
             Y = y;
         }
 
-        public bool Equals(V other)
-        {
-            if (ReferenceEquals(null, other))
-                return false;
-            if (ReferenceEquals(this, other))
-                return true;
-            return X == other.X && Y == other.Y;
-        }
+        public bool Equals(V other) => X == other.X && Y == other.Y;
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-                return false;
-            if (ReferenceEquals(this, obj))
-                return true;
-            if (obj.GetType() != this.GetType())
-                return false;
-            return Equals((V)obj);
-        }
+        public override bool Equals(object obj) => obj is V other && Equals(other);
 
         public override int GetHashCode()
         {

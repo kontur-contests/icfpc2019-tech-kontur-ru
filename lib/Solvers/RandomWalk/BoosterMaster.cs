@@ -106,7 +106,7 @@ namespace lib.Solvers.RandomWalk
             private readonly V start;
             private Queue<V> queue;
             private Map<int> distance;
-            private Map<V> parent;
+            private Map<V?> parent;
 
             public PathBuilder(Map map, V start, bool stop)
             {
@@ -115,7 +115,7 @@ namespace lib.Solvers.RandomWalk
                 queue.Enqueue(start);
 
                 distance = new Map<int>(map.SizeX, map.SizeY);
-                parent = new Map<V>(map.SizeX, map.SizeY);
+                parent = new Map<V?>(map.SizeX, map.SizeY);
 
                 while (queue.Any())
                 {
@@ -146,9 +146,9 @@ namespace lib.Solvers.RandomWalk
                 {
                     var from = parent[to];
 
-                    result.Add(new Move(to - from));
+                    result.Add(new Move(to - from.Value));
 
-                    to = from;
+                    to = from.Value;
                 }
 
                 result.Reverse();
