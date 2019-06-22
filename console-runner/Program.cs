@@ -104,48 +104,35 @@ namespace console_runner
 
             app.Command("solve-unsolved", (command) =>
             {
-                command.Description = "Create solutions for any nonexistent problem-solver pair";
+                command.Description = "Create solutions for all nonexistent problem-solver pairs";
                 command.HelpOption("-?|-h|--help");
-                
-                var subsetSizeOption = command.Option("-n",
-                    "Random subset size",
-                    CommandOptionType.SingleValue);
 
                 command.OnExecute(() =>
                 {
-                    var solvers = RunnableSolvers
-                        .Enumerate()
-                        .Select(x => x.Invoke())
-                        .ToList();
-
-                    var problems = ProblemReader.ReadAll();
-                    
-                    solvers.ForEach(solver =>
+                    while (true)
                     {
-                        var solved = Storage.EnumerateSolved(solver).Select(x => x.ProblemId);
-                        var unsolved = problems
-                            .Select(x => x.ProblemId)
-                            .Except(solved)
-                            .OrderBy(_ => Guid.NewGuid())
+                        var solvers = RunnableSolvers
+                            .Enumerate()
+                            .Select(x => x.Invoke())
                             .ToList();
 
-                        if (subsetSizeOption.HasValue())
+                        var problems = ProblemReader.ReadAll();
+                    
+                        solvers.ForEach(solver =>
                         {
-                            var subset = unsolved
-                                .Take(int.Parse(subsetSizeOption.Value()))
-                                .ToList();
-                            
-                            Console.WriteLine($"Unsolved by {solver.GetName()} v{solver.GetVersion()}: {string.Join(", ", subset)}");
-                                
-                            subset.ForEach(x => Solve(solver, problems.Find(y => x == y.ProblemId)));
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Unsolved by {solver.GetName()} v{solver.GetVersion()}: {string.Join(", ", unsolved)}");
-                                
-                            unsolved.ForEach(x => Solve(solver, problems.Find(y => x == y.ProblemId)));
-                        }
-                    });
+                            var solved = Storage.EnumerateSolved(solver).Select(x => x.ProblemId);
+                            var unsolved = problems
+                                .Select(x => x.ProblemId)
+                                .Except(solved)
+                                .OrderBy(_ => Guid.NewGuid())
+                                .ToList()
+                                .First();
+
+                            Console.WriteLine($"Unsolved by {solver.GetName()} v{solver.GetVersion()}: {unsolved}");
+
+                            Solve(solver, problems.Find(x => x.ProblemId == unsolved));
+                        });
+                    }
 
                     return 0;
                 });
