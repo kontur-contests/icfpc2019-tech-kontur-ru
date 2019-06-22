@@ -8,11 +8,11 @@ namespace lib.Models
     {
         public static async Task<Puzzle> ReadCurrentFromApiAsync()
         {
-            var block = await Api.GetCurrentBlockchainBlock();
+            var block = await Api.GetBlockchainBlock();
             return block.Puzzle;
         }
-        
-        public static string GetPuzzlePath(int puzzle)
+
+        private static string GetPuzzlePath(int puzzle)
         {
             return Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{puzzle:000}.cond");
         }

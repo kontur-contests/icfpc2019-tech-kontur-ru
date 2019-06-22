@@ -1,8 +1,7 @@
 using System;
-using System.Threading;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using JsonRpc.Client;
-using JsonRpc.Http;
+using Flurl.Http;
 using lib.Models;
 
 namespace lib.API
@@ -11,17 +10,19 @@ namespace lib.API
     {
         private const string endpointUrl = "http://icfpc19-crunch1:8332/";
 
-        public static async Task<BlockchainBlock> GetCurrentBlockchainBlock()
+        public static async Task<BlockchainBlock> GetBlockchainBlock(int blockNumber = -1)
         {
-            using (var handler = new HttpRpcClientHandler
-            {
-                EndpointUrl = endpointUrl
-            })
-            {
-                var client = new JsonRpcClient(handler);
-                var response = await client.SendRequestAsync("getblockinfo", null, CancellationToken.None);
-                return new BlockchainBlock(response.Result.ToObject<GetBlockInfoResponse>());
-            }
+            var prms = blockNumber == -1 ? new List<int>() : new List<int>{blockNumber};
+            var response = await endpointUrl
+                .PostJsonAsync(new
+                {
+                    jsonrpc = "2.0",
+                    id = "c#",
+                    method = "getblockinfo",
+                    @params = prms
+                })
+                .ReceiveJson<UniversalResponse<GetBlockInfoResponse>>();
+            return new BlockchainBlock(response.Result);
         }
     }
 }

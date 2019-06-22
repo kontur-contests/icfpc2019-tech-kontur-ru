@@ -31,7 +31,7 @@ namespace lib.Models
         
         public static async Task<Problem> ReadCurrentFromApiAsync()
         {
-            var block = await Api.GetCurrentBlockchainBlock();
+            var block = await Api.GetBlockchainBlock();
             return block.Problem;
         }
 
