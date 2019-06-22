@@ -24,7 +24,7 @@ namespace lib.Models
 
         public Worker SingleWorker => Workers.Single();
 
-        public List<Worker> Workers { get; private set; }
+        public List<Worker> Workers { get; set; }
         public Map Map { get; private set; }
         public int UnwrappedLeft { get; set; }
         public List<Booster> Boosters { get; private set; }
@@ -55,7 +55,13 @@ namespace lib.Models
                                     var wCount = Workers.Count(w => w.Position == p);
                                     if (wCount != 0)
                                         return wCount.ToString();
+
+                                    if (Workers.Any(w => w.Manipulators.Any(m => w.Position + m == p && Map.IsReachable(w.Position, w.Position + m))))
+                                        return "-";
                                     
+                                    if (Workers.Any(w => w.Manipulators.Any(m => w.Position + m == p)))
+                                        return "!";
+
                                     var booster = Boosters.FirstOrDefault(b => b.Position == p);
                                     if (booster != null)
                                         return booster.ToString()[0].ToString();
