@@ -43,6 +43,9 @@ const nextFiveButton = document.createElement('button');
 nextFiveButton.textContent = '>>';
 nextFiveButton.addEventListener('click', nextFiveTick);
 
+const historyContainer = document.createElement('div');
+historyContainer.classList.add('history-wrapper');
+
 zeroRow.appendChild(input);
 
 firstRow.appendChild(prevButton);
@@ -58,14 +61,16 @@ controlCenter.appendChild(secondRow);
 actionsWrapper.appendChild(zeroRow);
 actionsWrapper.appendChild(controlCenter);
 actionsWrapper.appendChild(resetButton);
-
-
+actionsWrapper.appendChild(historyContainer);
 
 let intervalId = null;
 let pause = true;
 let currentTick = 0;
 let robotTrack = [];
 let ticks = [];
+let currentProblemNumber = null;
+let lastCommandPosition = 0;
+let history = [];
 
 function playPause(e) {
     e.preventDefault();
@@ -93,7 +98,9 @@ function nextTick(e) {
     const gameObj = W();
     gameObj.Hi = false;
     try {
+        createHistory();
         Wl();
+        renderHistory();
     } catch (e) {
         stop();
     } finally {
@@ -143,6 +150,8 @@ function reset(e) {
     currentTick = 0;
     robotTrack = [];
     ticks = [];
+    history = [];
+    renderHistory();
 }
 
 function stop() {
@@ -201,6 +210,7 @@ function submitForm(e) {
     e.preventDefault();
     const selectedTask = document.getElementById('taskNumber').value;
 
+    currentProblemNumber = selectedTask;
     useProblem(selectedTask);
 }
 
@@ -209,4 +219,70 @@ function saveImage() {
     const ctx = em(W());
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     ticks.push(imageData);
+}
+
+function createHistory() {
+    let solution = files.sol[currentProblemNumber];
+
+    const nextCommand = solution[lastCommandPosition++];
+    let afterCommand = solution[lastCommandPosition];
+
+    if (afterCommand === '(') {
+        lastCommandPosition++;
+        while (solution[lastCommandPosition] !== ')') {
+            afterCommand += solution[lastCommandPosition++];
+        }
+    }
+
+    switch (nextCommand) {
+        case 'W':
+            history.push('↑ Двигаюсь вверх');
+            break;
+        case 'A':
+            history.push('← Двигаюсь влево');
+            break;
+        case 'S':
+            history.push('↓ Двигаюсь вниз');
+            break;
+        case 'D':
+            history.push('→ Двигаюсь вправо');
+            break;
+        case 'Z':
+            history.push('⧖ Жду...');
+            break;
+        case 'E':
+            history.push('↻ Повернулся по часовой стрелке');
+            break;
+        case 'Q':
+            history.push('↺ Повернулся против часовой стрелки');
+            break;
+        case 'F':
+            history.push('♿︎ Применил Fast Wheels');
+            break;
+        case 'L':
+            history.push('🍆 Начал использовать дрель');
+            break;
+        case 'R':
+            history.push('🚨 Установил маяк');
+            break;
+        case 'B':
+            afterCommand = afterCommand.replace(/[()]/g, '');
+            history.push('🏗 Добавил манипулятор по координатам ' + afterCommand);
+            break;
+        case 'T':
+            afterCommand = afterCommand.replace(/[()]/g, '');
+            history.push('🛸 Телепоровался к маяку по координатам' + afterCommand);
+            break;
+    }
+}
+
+function renderHistory() {
+    historyContainer.innerHTML = '';
+
+    for (let i = 0; i < currentTick; i++ ) {
+        const historyItem = document.createElement('div');
+        historyItem.textContent = (i+1) + ": " + history[i];
+
+        historyContainer.appendChild(historyItem);
+    }
 }

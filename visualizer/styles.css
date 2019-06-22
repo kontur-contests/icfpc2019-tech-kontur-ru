@@ -34,3 +34,8 @@
 #main_section p {
     display: none;
 }
+
+.history-wrapper {
+    max-height: calc(100vh - 290px);
+    overflow-y: auto;
+}
