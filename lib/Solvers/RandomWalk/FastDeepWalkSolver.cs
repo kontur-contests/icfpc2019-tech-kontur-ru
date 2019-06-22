@@ -60,6 +60,8 @@ namespace lib.Solvers.RandomWalk
             {
                 //Console.Out.WriteLine($"--BEFORE:\n{state.Print()}");
                 var part = SolvePart(state, used);
+                if (part == null)
+                    part = SolvePart(state, new HashSet<(V position, int unwrappedLeft)>());
                 used.Add((state.SingleWorker.Position, state.UnwrappedLeft));
                 solution.AddRange(part);
                 state.ApplyRange(part);
