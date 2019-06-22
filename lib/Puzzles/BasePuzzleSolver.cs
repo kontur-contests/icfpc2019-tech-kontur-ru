@@ -7,6 +7,8 @@ namespace lib.Puzzles
 {
     public class BasePuzzleSolver
     {
+        [ThreadStatic] private static Random random = new Random();
+
         protected Problem Complete(Map<PuzzleCell> map, Puzzle puzzle)
         {
             while (true)
@@ -62,7 +64,7 @@ namespace lib.Puzzles
             return problem;
         }
 
-        protected void Print(Map<PuzzleCell> map)
+        protected void Print(Map<PuzzleCell> map, V mark = null)
         {
             var enumerable = Enumerable
                 .Range(0, map.SizeY)
@@ -71,7 +73,7 @@ namespace lib.Puzzles
                     {
                         var strings = Enumerable
                             .Range(0, map.SizeX)
-                            .Select(x => x == 56 && y == 120 ? '@' : (char)map[new V(x, map.SizeY - y - 1)])
+                            .Select(x => x == mark?.X && y == mark?.Y ? '@' : (char)map[new V(x, map.SizeY - y - 1)])
                             .ToArray();
                         return string.Join("", strings);
                     });
@@ -80,24 +82,36 @@ namespace lib.Puzzles
 
         private void AddVertices(Map<PuzzleCell> map, int puzzleMinVertices)
         {
+            int was = VerticesCount(map);
             for (int x = 0; x < map.SizeX; x++)
                 for (int y = 0; y < map.SizeY; y++)
                 {
                     var v = new V(x, y);
-                    if (OnBound(map, v))
+                    if (OnBound(map, v, out var u))
                     {
-                        int was = VerticesCount(map);
-                        map[v] = PuzzleCell.Inside;
-                        int cur = VerticesCount(map);
-
-                        if (cur <= was)
+                        var dirs = new[]
                         {
-                            map[v] = PuzzleCell.Unknown;
-                            continue;
+                            Direction.Up, Direction.Right, Direction.Up, Direction.Up, Direction.Left, Direction.Up
+                        };
+
+                        var path = new List<V> {v};
+                        for (int step = 0; step < Math.Max(10, puzzleMinVertices - was); step++)
+                        {
+                            v = v.Shift((int)dirs[step % dirs.Length]);
+                            if (!v.Inside(map) || map[v] != PuzzleCell.Unknown || !DeepOutside(map, v))
+                                break;
+                            path.Add(v);
                         }
 
-                        if (cur >= puzzleMinVertices)
-                            return;
+                        if (path.Count < 5)
+                            continue;
+                        foreach (var v1 in path)
+                            map[v1] = PuzzleCell.Inside;
+
+                        was = VerticesCount(map);
+
+                        if (was >= puzzleMinVertices)
+                           return;
                     }
                 }
         }
@@ -114,7 +128,7 @@ namespace lib.Puzzles
                 for (int y = 0; y < map.SizeY && need > 0; y++)
                 {
                     var v = new V(x, y);
-                    if (OnBound(map, v))
+                    if (OnBound(map, v, out _))
                     {
                         map[v] = PuzzleCell.Inside;
                         need--;
@@ -122,19 +136,36 @@ namespace lib.Puzzles
                 }
         }
 
-        private bool OnBound(Map<PuzzleCell> map, V v)
+        private bool OnBound(Map<PuzzleCell> map, V v, out V u)
         {
+            u = null;
             if (!v.Inside(map) || map[v] != PuzzleCell.Unknown)
                 return false;
 
             for (int d = 0; d < 4; d++)
             {
-                var u = v.Shift(d);
+                u = v.Shift(d);
                 if (u.Inside(map) && map[u] == PuzzleCell.Inside)
                     return true;
             }
 
             return false;
+        }
+
+        private bool DeepOutside(Map<PuzzleCell> map, V v)
+        {
+            if (!v.Inside(map) || map[v] != PuzzleCell.Unknown)
+                return false;
+
+            for (int dx = -1; dx <= 1; dx++)
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                var u = new V(v.X + dx, v.Y + dy);
+                if (u.Inside(map) && map[u] != PuzzleCell.Unknown)
+                    return false;
+            }
+
+            return true;
         }
 
         private List<V> MarkedInside(Map<PuzzleCell> map)

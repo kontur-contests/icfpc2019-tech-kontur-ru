@@ -5,12 +5,28 @@ let hiddenAlgs = getHiddenColumns();
 let algs = new Set();
 const formattedData = mapData(dataFromServer);
 const tenMinutes = 10 * 60 * 1000;
+let bests = {};
+calcBests();
 renderShowAllButton();
 createTable();
 
 
 function getHiddenColumns() {
     return JSON.parse(localStorage.getItem('hiddenColumn')) || [];
+}
+
+function calcBests() {
+
+    for (const taskNum of Object.keys(formattedData)) {
+        const taskTries = formattedData[taskNum];
+        for (const algName of Object.keys(taskTries)) {
+            const algRes = taskTries[algName];
+            algRes.algName = algName;
+            if (!bests[taskNum] || bests[taskNum].result > algRes.result) {
+                bests[taskNum] = algRes;
+            }
+        }
+    }
 }
 
 function renderShowAllButton() {
@@ -66,7 +82,6 @@ function createTable() {
         tr.appendChild(index);
         tr.appendChild(bestTd);
 
-
         const row = formattedData[num];
         algsOrder.forEach(item => {
             const td = document.createElement('td');
@@ -75,9 +90,8 @@ function createTable() {
 
             if (!row[item] || !row[item].result) {
                 td.classList.add('no');
-            } else if (Object.values(row).every(el => el.result >= row[item].result)) {
+            } else if (bests[num].algName === item) {
                 td.classList.add('min');
-                bestTd.innerHTML = `<b>${row[item].result}</b><br>${item}`;
             }
 
             const now = Date.now();
@@ -87,7 +101,14 @@ function createTable() {
             }
 
             tr.appendChild(td);
+
+
+
+            bestTd.innerHTML = `<b>${bests[num].result}</b><br>${bests[num].algName}`;
+
         });
+
+
 
         tableBody.appendChild(tr);
     });

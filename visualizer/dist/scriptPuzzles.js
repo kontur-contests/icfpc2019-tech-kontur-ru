@@ -43,9 +43,9 @@ function submitForm(e) {
 }
 
 function useProblem(number) {
-    //mm(W(), window.files.desc[number].trim());
     const map = parseMap(window.files.desc[number].trim());
     config = calcMapSize(map);
+    initialCanvas();
     renderMap(map);
 
     const points = parsePoints(window.files.cond[number].trim());

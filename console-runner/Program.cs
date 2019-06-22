@@ -185,9 +185,17 @@ namespace console_runner
                     "Immediately submit block",
                     CommandOptionType.NoValue);
 
+                var blockNumberOption = command.Option("-b|--block",
+                    "Calculate specific block",
+                    CommandOptionType.SingleValue);
+
                 command.OnExecute(async () =>
                 {
-                    var block = await Api.GetBlockchainBlock();
+                    BlockchainBlock block;
+                    if (blockNumberOption.HasValue())
+                        block = await Api.GetBlockchainBlock(int.Parse(blockNumberOption.Value()));
+                    else
+                        block = await Api.GetBlockchainBlock();
                     Console.WriteLine($"Solving block #{block.BlockNumber} ...");
                     
                     var blockProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_orig.desc");
@@ -232,14 +240,28 @@ namespace console_runner
                             thread =>
                             {
                                 var solver = solvers[thread];
+                                
+                                var stopwatch = Stopwatch.StartNew();
                                 var actions = solver.Solve(block.Problem.ToState().Clone());
+                                var calculationTime = stopwatch.ElapsedMilliseconds;
+                                
                                 var time = actions.CalculateTime();
+                                var solutionBlob = actions.Format();
 
                                 var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_sol_{solver.GetName()}_v{solver.GetVersion()}_{time}.sol");
-                                File.WriteAllText(path, actions.Format());
+                                File.WriteAllText(path, solutionBlob);
 
                                 Console.WriteLine($"{solver.GetName()}_v{solver.GetVersion()} score = {time}");
 
+                                new SolutionMeta(
+                                    block.BlockNumber,
+                                    solutionBlob,
+                                    time,
+                                    solver.GetName(),
+                                    solver.GetVersion(),
+                                    calculationTime
+                                ).SaveToDb(isBlockSolution: true);
+                                
                                 return Tuple.Create(solver, actions);
                             })
                         .ToList();
@@ -340,6 +362,7 @@ namespace console_runner
 
             Console.WriteLine($"{prefix}Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
     
+            new SolutionInProgress(problemMeta.ProblemId, solver.GetName(), solver.GetVersion()).SaveToDb();
             var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
             solutionMeta.SaveToDb();
                         

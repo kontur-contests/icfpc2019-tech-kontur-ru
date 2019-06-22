@@ -27,6 +27,9 @@ namespace tests
             var id = 2;
 
             var puzzle = PuzzleReader.ReadFromFile(id);
+            //puzzle.MinVertices = 3000;
+            //puzzle.MaxVertices = puzzle.MinVertices + 100;
+
             var problem = new MstPuzzleSolver().Solve(puzzle);
             var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{id:000}.desc");
             File.WriteAllText(path, problem.ToString());

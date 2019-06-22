@@ -10,6 +10,8 @@ namespace lib.Puzzles
         {
             var map = MarkCells(puzzle);
 
+            //Print(map, new V(61, 157));
+
             var completed = Complete(map, puzzle);
 
             return completed;
@@ -23,8 +25,7 @@ namespace lib.Puzzles
                 map[new V(x, y)] = PuzzleCell.Unknown;
 
             var not = puzzle.MustNotContainPoints.ToList();
-            not.Insert(0, V.Zero);
-
+            
             foreach (var n in not)
                 map[n] = PuzzleCell.Outside;
 
@@ -42,7 +43,7 @@ namespace lib.Puzzles
         {
             var toAdd = points.ToList();
 
-            if (toAdd.Any())
+            if (toAdd.Any() && type == PuzzleCell.Inside)
             {
                 map[toAdd[0]] = type;
                 toAdd.RemoveAt(0);
@@ -57,7 +58,8 @@ namespace lib.Puzzles
                     if (pathBuilder.Distance(toAdd[i]) < pathBuilder.Distance(toAdd[best]))
                         best = i;
 
-                var path = pathBuilder.GetPath(toAdd[best]);
+                var to = toAdd[best];
+                var path = pathBuilder.GetPath(to);
                 foreach (var x in path)
                     map[x] = type;
 
@@ -75,11 +77,13 @@ namespace lib.Puzzles
             {
                 this.map = map;
                 var queue = new LinkedList<V>();
-                for (int x = 0; x < map.SizeX; x++)
-                for (int y = 0; y < map.SizeY; y++)
+                for (int x = -1; x <= map.SizeX; x++)
+                for (int y = -1; y <= map.SizeY; y++)
                 {
-                    if (map[new V(x, y)] == type)
-                        queue.AddLast(new V(x, y));
+                    var v = new V(x, y);
+                    if (type == PuzzleCell.Inside && v.Inside(map) && map[v] == type ||
+                        type == PuzzleCell.Outside && (!v.Inside(map) || map[v] == type))
+                        queue.AddLast(v);
                 }
 
                 distance = new Map<int>(map.SizeX, map.SizeY);
@@ -97,7 +101,7 @@ namespace lib.Puzzles
                             continue;
 
                         parent[u] = v;
-                        distance[u] = distance[v] + 1;
+                        distance[u] = (v.Inside(map) ? distance[v] : 0) + 1;
                         queue.AddLast(u);
                     }
                 }
@@ -109,7 +113,7 @@ namespace lib.Puzzles
             {
                 var result = new List<V>();
 
-                while (map[to] == PuzzleCell.Unknown)
+                while (to.Inside(map) && map[to] == PuzzleCell.Unknown)
                 {
                     result.Add(to);
                     to = parent[to];
