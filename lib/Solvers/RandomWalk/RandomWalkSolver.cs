@@ -93,7 +93,7 @@ namespace lib.Solvers.RandomWalk
                 var action = availableActions[random.Next(availableActions.Length)];
                 if (action is Move moveAction)
                 {
-                    var nextPosition = state.Worker.Position + moveAction.Shift;
+                    var nextPosition = state.SingleWorker.Position + moveAction.Shift;
                     if (!nextPosition.Inside(state.Map) || state.Map[nextPosition] == CellState.Obstacle)
                         continue;
                 }

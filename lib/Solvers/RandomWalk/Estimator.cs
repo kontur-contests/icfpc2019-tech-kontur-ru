@@ -12,7 +12,7 @@ namespace lib.Solvers.RandomWalk
             if (state.UnwrappedLeft == 0)
                 return 1_000_000_000 - state.Time;
 
-            var distScore = DistanceToVoid(state.Map, state.Worker.Position);
+            var distScore = DistanceToVoid(state.Map, state.SingleWorker.Position);
             
             if (state.UnwrappedLeft == prevState.UnwrappedLeft)
                 return -distScore;

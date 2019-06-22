@@ -6,9 +6,9 @@ namespace lib.Models
 {
     public class State
     {
-        public State(Worker worker, Map map, List<Booster> boosters)
+        public State(IEnumerable<Worker> workers, Map map, List<Booster> boosters)
         {
-            Worker = worker;
+            Workers = workers.ToList();
             Map = map;
             Boosters = boosters;
             Time = 0;
@@ -16,7 +16,9 @@ namespace lib.Models
             UnwrappedLeft = Map.VoidCount();
         }
 
-        public Worker Worker { get; private set; }
+        public Worker SingleWorker => Workers.Single();
+        
+        public List<Worker> Workers { get; private set; }
         public Map Map { get; private set; }
         public int UnwrappedLeft { get; set; }
         public List<Booster> Boosters { get; private set; }
@@ -28,18 +30,23 @@ namespace lib.Models
         public int TeleportsCount { get; set; }
         public int CloningCount { get; set; }
 
-        public Action Apply(ActionBase action)
+        public Action Apply(IEnumerable<(Worker worker, ActionBase action)> workerActions)
         {
-            var prevWorker = Worker.Clone();
-            var undo = action.Apply(this, Worker);
-            Worker.NextTurn();
+            var prevWorkers = Workers.Select(x => x.Clone()).ToList();
+            var undos = workerActions.Select(x => x.action.Apply(this, x.worker)).ToList();
+            Workers.ForEach(x => x.NextTurn());
             Time++;
             return () =>
             {
                 Time--;
-                Worker = prevWorker;
-                undo();
+                Workers = prevWorkers;
+                undos.ForEach(u => u());
             };
+        }
+
+        public Action Apply(ActionBase action)
+        {
+            return Apply(new[] {(SingleWorker, action)});
         }
 
         public Action ApplyRange(IEnumerable<ActionBase> actions)
@@ -60,13 +67,15 @@ namespace lib.Models
         public Action Wrap()
         {
             var res = new List<(V pos, CellState oldState)>();
-            WrapPoint(Worker.Position);
-
-            foreach (var manipulator in Worker.Manipulators)
+            foreach (var worker in Workers)
             {
-                var p = Worker.Position + manipulator;
-                if (p.Inside(Map) && Map.IsReachable(p, Worker.Position))
-                    WrapPoint(p);
+                WrapPoint(worker.Position);
+                foreach (var manipulator in worker.Manipulators)
+                {
+                    var p = worker.Position + manipulator;
+                    if (p.Inside(Map) && Map.IsReachable(p, worker.Position))
+                        WrapPoint(p);
+                }
             }
 
             void WrapPoint(V pp)
@@ -84,7 +93,7 @@ namespace lib.Models
         {
             var clone = (State)MemberwiseClone();
             clone.Map = clone.Map.Clone();
-            clone.Worker = clone.Worker.Clone();
+            clone.Workers = clone.Workers.Select(x => x.Clone()).ToList();
             clone.Boosters = clone.Boosters.ToList();
             return clone;
         }
@@ -92,7 +101,7 @@ namespace lib.Models
         public Action CollectBoosters()
         {
             var boostersToCollect = Boosters
-                .Where(b => b.Position == Worker.Position && b.Type != BoosterType.MysteriousPoint)
+                .Where(b => Workers.Any(w => b.Position == w.Position) && b.Type != BoosterType.MysteriousPoint)
                 .ToList();
             foreach (var booster in boostersToCollect)
             {

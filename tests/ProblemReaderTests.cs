@@ -38,11 +38,11 @@ namespace tests
             state.Should()
                 .BeEquivalentTo(
                     new State(
-                        new Worker
+                        new[]{new Worker
                         {
                             Position = new V(0, 0),
                             Manipulators = new List<V> {new V(1, 0), new V(1, 1), new V(1, -1)}
-                        },
+                        }},
                         expectedMap,
                         new List<Booster>()
                     ));

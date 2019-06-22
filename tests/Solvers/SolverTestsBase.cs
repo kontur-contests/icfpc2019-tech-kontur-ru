@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using lib;
 using lib.Models;
 using lib.Solvers;
+using NUnit.Framework;
 
 namespace tests.Solvers
 {

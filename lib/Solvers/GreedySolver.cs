@@ -33,7 +33,7 @@ namespace lib.Solvers
                 var actions = new List<ActionBase>();
                 actions.Add(new Rotate(true));
                 actions.Add(new Rotate(false));
-                actions.AddRange(shifts.Select(s => new Move(s)).Where(m => m.IsValid(state, state.Worker)));
+                actions.AddRange(shifts.Select(s => new Move(s)).Where(m => m.IsValid(state, state.SingleWorker)));
                 var best = actions.Select(a => EstimateAction(a, state)).OrderByDescending(a => a.score).FirstOrDefault();
                 //Console.WriteLine(best);
                 result.Add(best.action);

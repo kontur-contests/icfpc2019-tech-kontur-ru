@@ -51,8 +51,8 @@ namespace lib.Solvers.RandomWalk
         {
             var queue = new Queue<V>();
             var used = new HashSet<V>();
-            queue.Enqueue(state.Worker.Position);
-            used.Add(state.Worker.Position);
+            queue.Enqueue(state.SingleWorker.Position);
+            used.Add(state.SingleWorker.Position);
 
             V start = null;
             while (queue.Any() && start == null)
@@ -200,7 +200,7 @@ namespace lib.Solvers.RandomWalk
                 {
                     if (action is Move moveAction)
                     {
-                        var nextPosition = clone.Worker.Position + moveAction.Shift;
+                        var nextPosition = clone.SingleWorker.Position + moveAction.Shift;
                         if (!nextPosition.Inside(clone.Map) || clone.Map[nextPosition] == CellState.Obstacle)
                             continue;
                     }

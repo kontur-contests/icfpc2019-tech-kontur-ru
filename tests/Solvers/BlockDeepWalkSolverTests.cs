@@ -11,8 +11,8 @@ namespace tests.Solvers
         [Test]
         public void SolveOne()
         {
-            var solver = new BlockDeepWalkSolver(50, 2, new Estimator(), usePalka: true);
-            SolveOneProblem(solver, 150);
+            var solver = new BlockDeepWalkSolver(5, 2, new Estimator(), usePalka: true);
+            SolveOneProblem(solver, 2);
         }
     }
 }

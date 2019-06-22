@@ -9,10 +9,13 @@ namespace lib.Models
         public static State ToState(this Problem problem)
         {
             var state = new State(
-                new Worker
+                new[]
                 {
-                    Position = problem.Point,
-                    Manipulators = new List<V> {new V(1, 0), new V(1, 1), new V(1, -1)}
+                    new Worker
+                    {
+                        Position = problem.Point,
+                        Manipulators = new List<V> {new V(1, 0), new V(1, 1), new V(1, -1)}
+                    }
                 },
                 ConvertMap(problem.Map, problem.Obstacles),
                 problem.Boosters);
@@ -49,7 +52,7 @@ namespace lib.Models
                     map[new V(x, y)] = inside ? CellState.Void : CellState.Obstacle;
                 }
             }
-            
+
             return map;
         }
     }

@@ -18,7 +18,7 @@ namespace lib.Solvers.RandomWalk
                     return;
 
                 var map = state.Map;
-                var me = state.Worker;
+                var me = state.SingleWorker;
                 var pathBuilder = new PathBuilder(map, me.Position, false);
 
                 var best = boosters.OrderBy(b => pathBuilder.Distance(b.Position)).First();

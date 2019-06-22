@@ -73,7 +73,7 @@ namespace lib.Solvers.RandomWalk
                 {
                     if (action is Move moveAction)
                     {
-                        var nextPosition = clone.Worker.Position + moveAction.Shift;
+                        var nextPosition = clone.SingleWorker.Position + moveAction.Shift;
                         if (!nextPosition.Inside(clone.Map) || clone.Map[nextPosition] == CellState.Obstacle)
                             continue;
                     }
