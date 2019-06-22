@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 namespace lib.Models
@@ -28,7 +29,7 @@ namespace lib.Models
             get => cells[p.Y, p.X];
             set => cells[p.Y, p.X] = value;
         }
-
+        
         public override string ToString()
         {
             var enumerable = Enumerable
