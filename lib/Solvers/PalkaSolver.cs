@@ -91,7 +91,7 @@ namespace lib.Solvers
                     if (best == null)
                         continue;
 
-                    var actions = pathBuilder.GetActions(best).Take(1).ToList();
+                    var actions = pathBuilder.GetActions(best).ToList();
                     state.ApplyRange(actions);
                     result.AddRange(actions);
                     break;
