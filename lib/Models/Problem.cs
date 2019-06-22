@@ -67,8 +67,12 @@ namespace lib.Models
             //Console.WriteLine(convertedMap);
             
             // map does not contain unnecessary squares
-            if (puzzle.MustNotContainPoints.Any(p => p.Inside(convertedMap) && convertedMap[p] != CellState.Obstacle))
+            var cell = puzzle.MustNotContainPoints.FirstOrDefault(p => p.Inside(convertedMap) && convertedMap[p] != CellState.Obstacle);
+            if (cell != null)
+            {
+                Console.WriteLine($"Cell {cell} should be outside.");
                 return false;
+            }
 
             return true;
         }

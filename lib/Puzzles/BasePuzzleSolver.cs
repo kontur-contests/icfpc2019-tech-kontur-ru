@@ -62,7 +62,7 @@ namespace lib.Puzzles
             return problem;
         }
 
-        protected void Print(Map<PuzzleCell> map)
+        protected void Print(Map<PuzzleCell> map, V mark = null)
         {
             var enumerable = Enumerable
                 .Range(0, map.SizeY)
@@ -71,7 +71,7 @@ namespace lib.Puzzles
                     {
                         var strings = Enumerable
                             .Range(0, map.SizeX)
-                            .Select(x => x == 56 && y == 120 ? '@' : (char)map[new V(x, map.SizeY - y - 1)])
+                            .Select(x => x == mark?.X && y == mark?.Y ? '@' : (char)map[new V(x, map.SizeY - y - 1)])
                             .ToArray();
                         return string.Join("", strings);
                     });
