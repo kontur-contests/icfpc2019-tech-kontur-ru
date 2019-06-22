@@ -25,7 +25,7 @@ function createTable() {
     bestTh.innerText = 'best score';
     tableHeaderRow.appendChild(bestTh);
 
-    [...algs].forEach(item => {
+    [...algs].sort().forEach(item => {
         const th = document.createElement('th');
         th.textContent = `${item}`;
 
@@ -47,7 +47,7 @@ function createTable() {
 
 
         const row = formattedData[num];
-        [...algs].forEach(item => {
+        [...algs].sort().forEach(item => {
             const td = document.createElement('td');
             td.textContent = (row[item] && row[item].result) || '';
 
