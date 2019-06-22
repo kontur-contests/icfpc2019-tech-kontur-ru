@@ -109,8 +109,6 @@ namespace MishaResearch
             {
                 child.Value.CalculateDistancesBetweenChilds();
             }
-            if(DistanceBetweenClusters.Count == 4 )
-                Console.WriteLine("");
         }
 
         private void BuildDistances(ClusterHierarchy node, HashSet<ClusterHierarchy> aims)

@@ -19,7 +19,7 @@ namespace MishaResearch
         static void Main(string[] args)
         {
             Directory.CreateDirectory("pathes");
-            foreach (var file in Directory.EnumerateFiles("clusters.v2").Skip(3).Take(5))
+            foreach (var file in Directory.EnumerateFiles("clusters.v2"))
             {
                 var code = $"{int.Parse(pathRegex.Match(file).Groups[1].Value):D3}";
                 var problem = ProblemReader.Read(File.ReadAllText($"../../../../problems/all/prob-{code}.desc"));
