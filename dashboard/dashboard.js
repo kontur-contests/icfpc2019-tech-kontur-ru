@@ -52,9 +52,10 @@ MongoClient
         // console.log(rows)
 
         const styles = `<style>.min {background-color:#cfc} .no {background-color:#ccc}</style>`
+        const meta = `<META HTTP-EQUIV="REFRESH" CONTENT="10;URL=/">`
         const headerHtml = `<th>${algos.map(x => "<th>" + x + "</th>").join("")}</tr>`
         const rowsHtml = Object.keys(rows).map(i => `<tr><td>${i}</td>${algos.map(x => "<td " + (Object.values(rows[i]).every(z => z >= rows[i][x]) ? 'class="min"' : (!rows[i][x] ? 'class="no"' : "")) + ">" + (rows[i][x] || "") + "</td>").join("")}</tr>`).join("")
-        const tableHtml = `${styles}<table border='1' cellspacing='0' cellpadding='5'>${headerHtml}${rowsHtml}</table>`
+        const tableHtml = `${styles}${meta}<table border='1' cellspacing='0' cellpadding='5'>${headerHtml}${rowsHtml}</table>`
 
         fs.writeFileSync("dashboard.html", tableHtml)
     })
