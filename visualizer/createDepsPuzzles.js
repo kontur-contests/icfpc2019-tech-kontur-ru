@@ -18,7 +18,7 @@ files.forEach(function (file) {
         return;
     }
 
-    const num = file.substr(5, 3);
+    const num = file.substr(-8, 3);
 
     if (ext === 'cond') {
         tasksNumbers.push(num);
@@ -27,8 +27,11 @@ files.forEach(function (file) {
     }
 });
 
-for (let i = 1; i <= Math.max(tasksNumbers.length, solutionsNumbers.length); i++) {
-    const number = i.toString().padStart(3, '0');
+const count = Math.max(tasksNumbers.length, solutionsNumbers.length);
+const longerArr = tasksNumbers.length > solutionsNumbers.length ? tasksNumbers : solutionsNumbers;
+for (let i = 0; i < count; i++) {
+
+    const number = longerArr[i];
     const problemPath = `${dirUrl}/puzzle-${number}.cond`;
     const solutionPath = `${dirUrl}/task-${number}.desc`;
     filesImports.push(`window.files.cond['${number}'] = require('${problemPath}').default;`);

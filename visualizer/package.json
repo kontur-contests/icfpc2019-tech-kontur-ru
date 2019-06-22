@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node createDeps.js && node createDepsPuzzles.js && webpack",
-    "start": "node createDeps.js && node createDeps.js && webpack-dev-server"
+    "start": "node createDeps.js && node createDepsPuzzles.js && webpack-dev-server"
   },
   "repository": {
     "type": "git",
