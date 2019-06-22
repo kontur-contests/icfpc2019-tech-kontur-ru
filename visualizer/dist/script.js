@@ -149,7 +149,7 @@ function reset(e) {
     W().Hi = true;
     currentTick = 0;
     robotTrack = [];
-    ticks = [];
+    ticks = {};
     history = [];
     // renderHistory();
 }
@@ -218,7 +218,13 @@ function saveImage() {
     const canvas = fm(W());
     const ctx = em(W());
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    ticks.push(imageData);
+    ticks[currentTick] = imageData;
+
+    Object.keys(ticks).forEach(key => {
+        if (currentTick - key > 50 ) {
+            delete ticks[key];
+        }
+    });
 }
 
 function createHistory() {
