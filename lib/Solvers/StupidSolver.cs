@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Schema;
 using lib.Models;
 using lib.Models.Actions;
 using lib.Solvers.RandomWalk;
@@ -37,30 +35,86 @@ namespace lib.Solvers
 
                 V best = null;
                 var bestDist = int.MaxValue;
+                var bestSize = double.MaxValue;
 
+                var (comp, csize) = ComponentBuilder.Build(map, me.Position);
+                
                 for (int x = 0; x < map.SizeX; x++)
                 for (int y = 0; y < map.SizeY; y++)
                 {
-                    if (map[new V(x, y)] != CellState.Void)
+                    var p = new V(x, y);
+                    if (map[p] != CellState.Void)
                         continue;
 
-                    var dist = pathBuilder.Distance(new V(x, y));
-                    if (dist < bestDist)
+                    var dist = pathBuilder.Distance(p);
+                    var size = csize[comp[p]];
+                    if (size < bestSize || size == bestSize && dist < bestDist)
                     {
                         bestDist = dist;
-                        best = new V(x, y);
+                        bestSize = size;
+                        best = p;
                     }
                 }
 
                 if (best == null)
                     break;
 
-                var actions = pathBuilder.GetActions(best).Take(1).ToList();
+                var actions = pathBuilder.GetActions(best).ToList();
                 state.ApplyRange(actions);
                 result.AddRange(actions);
             }
 
             return new List<List<ActionBase>> {result};
+        }
+
+        private static class ComponentBuilder
+        {
+            public static (Map<int> comp, Dictionary<int, double> size) Build(Map map, V me)
+            {
+                var dists = new Dictionary<int, List<double>>();
+                var comp = new Map<int>(map.SizeX, map.SizeY);
+
+                int id = 0;
+
+                for (int x = 0; x < map.SizeX; x++)
+                for (int y = 0; y < map.SizeY; y++)
+                {
+                    var v = new V(x, y);
+                    if (map[v] != CellState.Void || comp[v] != 0)
+                        continue;
+
+                    id++;
+                    dists[id] = new List<double>();
+
+                    var queue = new Queue<V>();
+                    queue.Enqueue(v);
+
+                    while (queue.Any())
+                    {
+                        v = queue.Dequeue();
+                        comp[v] = id;
+                        dists[id].Add((me - v).MLen());
+
+                        for (var direction = 0; direction < 4; direction++)
+                        {
+                            var u = v.Shift(direction);
+                            if (!u.Inside(map) || map[u] != CellState.Void || comp[u] != 0)
+                                continue;
+
+                            comp[u] = id;
+                            queue.Enqueue(u);
+                        }
+                    }
+                }
+
+                var size = new Dictionary<int, double>();
+                foreach (var k in dists.Keys)
+                {
+                    var top = dists[k].OrderBy(x => x).Take(10).ToList();
+                    size[k] = top.Average();
+                }
+                return (comp, size);
+            }
         }
 
         private class PathBuilder
@@ -82,8 +136,8 @@ namespace lib.Solvers
                 while (queue.Any())
                 {
                     var v = queue.Dequeue();
-                    if (map[v] == CellState.Void && stop)
-                        break;
+                    //if (map[v] == CellState.Void && stop)
+                    //    break;
 
                     for (var direction = 0; direction < 4; direction++)
                     {
