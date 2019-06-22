@@ -13,7 +13,7 @@ namespace lib.Models.Actions
 
             state.DrillCount--;
             worker.DrillTimeLeft = Constants.DrillTime;
-            return () => {};
+            return () => state.DrillCount++;
         }
     }
 }

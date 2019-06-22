@@ -34,10 +34,11 @@ namespace lib.Models.Actions
                 var undo2 = ApplySingleMove(state, worker, ignoreInvalidMove: true);
                 return () =>
                 {
-                    undo();
                     undo2();
+                    undo();
                 };
             }
+
             return undo;
         }
 
@@ -47,7 +48,7 @@ namespace lib.Models.Actions
             if (!newPosition.Inside(state.Map) || state.Map[newPosition] == CellState.Obstacle && worker.DrillTimeLeft == 0)
             {
                 if (ignoreInvalidMove)
-                    return () => { };
+                    return () => {};
                 throw new InvalidOperationException($"Invalid move from {worker.Position} to obstacle {newPosition}. Action: {this}");
             }
 
@@ -56,8 +57,8 @@ namespace lib.Models.Actions
             var returnBoosters = state.CollectBoosters();
             return () =>
             {
-                unwrap();
                 returnBoosters();
+                unwrap();
             };
         }
     }

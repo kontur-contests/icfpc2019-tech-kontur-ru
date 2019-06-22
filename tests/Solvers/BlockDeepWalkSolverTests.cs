@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using lib.Solvers.RandomWalk;
 using NUnit.Framework;
 

@@ -13,7 +13,7 @@ namespace lib.Models.Actions
 
             state.FastWheelsCount--;
             worker.FastWheelsTimeLeft = Constants.FastWheelsTime;
-            return () => {};
+            return () => state.FastWheelsCount++;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace lib.Solvers
 
         private readonly V[] shifts = { "0,1", "1,0", "0,-1", "-1,0" };
 
-        public List<ActionBase> Solve(State state)
+        public List<List<ActionBase>> Solve(State state)
         {
             var result = new List<ActionBase>();
 
@@ -40,7 +40,7 @@ namespace lib.Solvers
                 result.Add(best.action);
                 state.Apply(best.action);
             }
-            return result;
+            return new List<List<ActionBase>> {result};
         }
 
         private (ActionBase action, double score) EstimateAction(ActionBase action, State state)

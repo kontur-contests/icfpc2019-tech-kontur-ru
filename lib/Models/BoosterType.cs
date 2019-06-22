@@ -8,5 +8,6 @@ namespace lib.Models
         MysteriousPoint,
         Teleport,
         Cloning,
+        TeleportBeacon,
     }
 }

@@ -11,7 +11,7 @@ namespace lib.Models.Actions
         }
 
         public V Relative { get; }
-        
+
         public override string ToString()
         {
             return $"B{Relative}";
@@ -24,17 +24,22 @@ namespace lib.Models.Actions
 
             var attachPositions = worker.Manipulators.ToList();
             attachPositions.Add(V.Zero);
-            
+
             if (attachPositions.Any(x => x == Relative))
                 throw new InvalidOperationException($"Manipulator {Relative} already exists");
-            
+
             if (attachPositions.All(x => (x - Relative).MLen() != 1))
                 throw new InvalidOperationException($"Manipulator {Relative} should be attached to existing manipulator or body");
-                
+
             state.ExtensionCount--;
             worker.Manipulators.Add(Relative);
-                
-            return state.Wrap();
+
+            var unwrap = state.Wrap();
+            return () => 
+            {
+                unwrap();
+                state.ExtensionCount++;
+            };
         }
     }
 }

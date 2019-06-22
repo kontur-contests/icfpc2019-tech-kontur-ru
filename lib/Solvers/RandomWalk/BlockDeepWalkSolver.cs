@@ -157,7 +157,7 @@ namespace lib.Solvers.RandomWalk
             return result;
         }
 
-        public List<ActionBase> Solve(State state)
+        public List<List<ActionBase>> Solve(State state)
         {
             var solution = new List<ActionBase>();
 
@@ -182,7 +182,7 @@ namespace lib.Solvers.RandomWalk
             }
 
             // Console.Out.WriteLine("--AFTER:\n" + state.Map);
-            return solution;
+            return new List<List<ActionBase>> {solution};
         }
 
         public List<ActionBase> SolvePart(State state)

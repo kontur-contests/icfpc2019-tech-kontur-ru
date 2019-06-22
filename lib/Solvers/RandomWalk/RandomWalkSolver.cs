@@ -42,7 +42,7 @@ namespace lib.Solvers.RandomWalk
             this.usePalka = usePalka;
         }
 
-        public List<ActionBase> Solve(State state)
+        public List<List<ActionBase>> Solve(State state)
         {
             var solution = new List<ActionBase>();
             
@@ -56,7 +56,7 @@ namespace lib.Solvers.RandomWalk
                 state.ApplyRange(part);
             }
 
-            return solution;
+            return new List<List<ActionBase>> {solution};
         }
 
         public List<ActionBase> SolvePart(State state)

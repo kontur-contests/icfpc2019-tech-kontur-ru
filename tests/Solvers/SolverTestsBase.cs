@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using lib;
 using lib.Models;
 using lib.Models.Actions;
 using lib.Solvers;
-using NUnit.Framework;
 
 namespace tests.Solvers
 {
@@ -19,8 +16,8 @@ namespace tests.Solvers
             var state = ReadFromFile(id);
             var result = solver.Solve(state);
             Save(result, id);
-            Console.WriteLine($"Solved {id} problem in {result.Count} steps.");
-            return result.Count;
+            Console.WriteLine($"Solved {id} problem in {result.CalculateTime()} steps.");
+            return result.CalculateTime();
         }
 
         public void SolveSomeProblems(Func<ISolver> solverProvider, List<int> ids)
@@ -50,7 +47,7 @@ namespace tests.Solvers
             return problem.ToState();
         }
 
-        public void Save(List<ActionBase> actions, int id)
+        public void Save(List<List<ActionBase>> actions, int id)
         {
             var text = actions.Format();
             var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}.sol");

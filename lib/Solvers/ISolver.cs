@@ -8,6 +8,6 @@ namespace lib.Solvers
     {
         string GetName();
         int GetVersion();
-        List<ActionBase> Solve(State state);
+        List<List<ActionBase>> Solve(State state);
     }
 }

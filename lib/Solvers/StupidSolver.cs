@@ -21,7 +21,7 @@ namespace lib.Solvers
             return 1;
         }
 
-        public List<ActionBase> Solve(State state)
+        public List<List<ActionBase>> Solve(State state)
         {
             result = new List<ActionBase>();
 
@@ -59,7 +59,7 @@ namespace lib.Solvers
                 result.AddRange(actions);
             }
 
-            return result;
+            return new List<List<ActionBase>> {result};
         }
 
         private void CollectManipulators(State state)

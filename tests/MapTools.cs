@@ -48,12 +48,25 @@ namespace tests
 
         private Rgba32 GetColor(BoosterType boosterType)
         {
-            if (boosterType == BoosterType.Extension) return Rgba32.Blue;
-            if (boosterType == BoosterType.FastWheels) return Rgba32.Brown;
-            if (boosterType == BoosterType.Drill) return Rgba32.Green;
-            if (boosterType == BoosterType.Teleport) return Rgba32.Violet;
-            if (boosterType == BoosterType.MysteriousPoint) return Rgba32.Red;
-            throw new Exception(boosterType.ToString());
+            switch (boosterType)
+            {
+                case BoosterType.Extension:
+                    return Rgba32.Blue;
+                case BoosterType.FastWheels:
+                    return Rgba32.Brown;
+                case BoosterType.Drill:
+                    return Rgba32.Green;
+                case BoosterType.Teleport:
+                    return Rgba32.Violet;
+                case BoosterType.MysteriousPoint:
+                    return Rgba32.Yellow;
+                case BoosterType.Cloning:
+                    return Rgba32.Aqua;
+                case BoosterType.TeleportBeacon:
+                    return Rgba32.Red;
+                default:
+                    throw new Exception(boosterType.ToString());
+            }
         }
 
         private Rgba32 GetColor(CellState cellState)

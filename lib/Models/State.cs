@@ -7,34 +7,45 @@ namespace lib.Models
 {
     public class State
     {
-        public State(IEnumerable<Worker> workers, Map map, List<Booster> boosters)
+        public State(Worker worker, Map map, List<Booster> boosters)
         {
-            Workers = workers.ToList();
+            Workers = new List<Worker> {worker};
             Map = map;
             Boosters = boosters;
             Time = 0;
+            ExtensionCount = 0;
+            FastWheelsCount = 0;
+            DrillCount = 0;
+            TeleportCount = 0;
+            CloningCount = 0;
             Wrap();
             UnwrappedLeft = Map.VoidCount();
         }
 
         public Worker SingleWorker => Workers.Single();
-        
+
         public List<Worker> Workers { get; private set; }
         public Map Map { get; private set; }
         public int UnwrappedLeft { get; set; }
         public List<Booster> Boosters { get; private set; }
         public int Time { get; private set; }
-        
+
         public int ExtensionCount { get; set; }
         public int FastWheelsCount { get; set; }
         public int DrillCount { get; set; }
-        public int TeleportsCount { get; set; }
+        public int TeleportCount { get; set; }
         public int CloningCount { get; set; }
 
-        public Action Apply(IEnumerable<(Worker worker, ActionBase action)> workerActions)
+        public Action Apply(IReadOnlyList<(Worker worker, ActionBase action)> workerActions)
         {
+            if (workerActions.Count != Workers.Count)
+                throw new InvalidOperationException("workerActions.Count != Workers.Count");
+
+            var actions = Workers.Select(w => workerActions.Single(x => x.worker == w).action).ToList();
+            
             var prevWorkers = Workers.Select(x => x.Clone()).ToList();
-            var undos = workerActions.Select(x => x.action.Apply(this, x.worker)).ToList();
+            var undos = actions.Select((x, i) => x.Apply(this, Workers[i])).ToList();
+            undos.Reverse();
             Workers.ForEach(x => x.NextTurn());
             Time++;
             return () =>
@@ -55,13 +66,11 @@ namespace lib.Models
             var undos = new List<Action>();
             foreach (var action in actions)
                 undos.Add(Apply(action));
+            undos.Reverse();
             return () =>
             {
-                for (var i = undos.Count - 1; i >= 0; i--)
-                {
-                    var action = undos[i];
+                foreach (var action in undos)
                     action();
-                }
             };
         }
 
@@ -118,14 +127,16 @@ namespace lib.Models
                         DrillCount++;
                         break;
                     case BoosterType.Teleport:
-                        TeleportsCount++;
+                        TeleportCount++;
                         break;
                     case BoosterType.Cloning:
                         CloningCount++;
                         break;
                 }
+
                 Boosters.Remove(booster);
             }
+
             return () =>
             {
                 foreach (var booster in boostersToCollect)
@@ -142,14 +153,14 @@ namespace lib.Models
                             DrillCount--;
                             break;
                         case BoosterType.Teleport:
-                            TeleportsCount--;
+                            TeleportCount--;
                             break;
                         case BoosterType.Cloning:
                             CloningCount--;
                             break;
                     }
-                    Boosters.Remove(booster);
                 }
+
                 Boosters.AddRange(boostersToCollect);
             };
         }
@@ -159,7 +170,8 @@ namespace lib.Models
             foreach (var wrappedCell in wrappedCells)
             {
                 Map[wrappedCell.pos] = wrappedCell.oldState;
-                if (wrappedCell.oldState == CellState.Void) UnwrappedLeft++;
+                if (wrappedCell.oldState == CellState.Void)
+                    UnwrappedLeft++;
             }
         }
     }

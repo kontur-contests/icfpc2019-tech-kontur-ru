@@ -29,6 +29,8 @@ namespace lib.Models
                     return $"R{Position}";
                 case BoosterType.Cloning:
                     return $"C{Position}";
+                case BoosterType.TeleportBeacon:
+                    return $"T{Position}";
                 default:
                     throw new ArgumentOutOfRangeException();
             }
