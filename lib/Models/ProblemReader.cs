@@ -34,15 +34,8 @@ namespace lib.Models
         
         public static async Task<Problem> ReadCurrentFromApiAsync()
         {
-            using (var handler = new HttpRpcClientHandler
-            {
-                EndpointUrl = Api.EndpointUrl
-            })
-            {
-                var client = new JsonRpcClient(handler);
-                var response = await client.SendRequestAsync("getmininginfo", null, CancellationToken.None);
-                return Read(response.Result.ToObject<GetMiningInfoResponse>().Task);
-            }
+            var block = await Api.GetCurrentBlockchainBlock();
+            return block.Problem;
         }
 
         public static Problem Read(string source)
