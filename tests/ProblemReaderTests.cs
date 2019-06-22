@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using FluentAssertions;
 using lib;
 using lib.Models;
@@ -23,6 +24,13 @@ namespace tests
         {
             var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{problem:000}.desc");
             ProblemReader.Read(problem).ToString().Should().Be(File.ReadAllText(fileName));
+        }
+        
+        [Test]
+        public async Task ReadCurrentFromApi()
+        {
+            var problem = await ProblemReader.ReadCurrentFromApiAsync();
+            problem.Should().NotBeNull();
         }
 
         [Test]
