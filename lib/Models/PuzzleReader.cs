@@ -1,10 +1,6 @@
-using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Client;
-using JsonRpc.Http;
-using lib.Models.API;
+using lib.API;
 
 namespace lib.Models
 {
