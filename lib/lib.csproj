@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CXuesong.JsonRpc.Http" Version="0.5.0" />
+        <PackageReference Include="Flurl.Http" Version="2.4.2" />
         <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
     </ItemGroup>
 

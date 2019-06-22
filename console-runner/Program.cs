@@ -183,7 +183,7 @@ namespace console_runner
 
                 command.OnExecute(async () =>
                 {
-                    var block = await Api.GetCurrentBlockchainBlock();
+                    var block = await Api.GetBlockchainBlock();
                     Console.WriteLine($"Solving block #{block.BlockNumber} ...");
                     
                     var blockProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_orig.desc");
