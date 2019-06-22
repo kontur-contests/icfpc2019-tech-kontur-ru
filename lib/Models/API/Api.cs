@@ -5,15 +5,15 @@ using JsonRpc.Http;
 
 namespace lib.Models.API
 {
-    public class Api
+    public static class Api
     {
-        public const string EndpointUrl = "http://icfpc19-crunch1:8332/";
+        private const string endpointUrl = "http://icfpc19-crunch1:8332/";
 
         public static async Task<BlockchainBlock> GetCurrentBlockchainBlock()
         {
             using (var handler = new HttpRpcClientHandler
             {
-                EndpointUrl = EndpointUrl
+                EndpointUrl = endpointUrl
             })
             {
                 var client = new JsonRpcClient(handler);
