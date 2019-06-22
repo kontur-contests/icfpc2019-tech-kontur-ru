@@ -5,9 +5,59 @@ using lib.Models.Actions;
 
 namespace lib.Solvers.RandomWalk
 {
-    public static class PalkaAppender
+    public static class BoosterMaster
     {
-        public static void CollectManipulators(State state, List<ActionBase> result)
+        public static void CloneAttack(State state, List<ActionBase> result)
+        {
+            if (state.Boosters.All(b => b.Type != BoosterType.MysteriousPoint))
+                return;
+
+            while (true)
+            {
+                var boosters = state.Boosters.Where(b => b.Type == BoosterType.Cloning).ToList();
+
+                if (!boosters.Any())
+                    break;
+
+                var map = state.Map;
+                var me = state.SingleWorker;
+                var pathBuilder = new PathBuilder(map, me.Position, false);
+                var best = boosters.OrderBy(b => pathBuilder.Distance(b.Position)).First();
+
+                var actions = pathBuilder.GetActions(best.Position);
+
+                state.ApplyRange(actions);
+                result.AddRange(actions);
+            }
+
+            if (state.CloningCount == 0)
+                return;
+
+            var mboosters = state.Boosters.Where(b => b.Type == BoosterType.MysteriousPoint).ToList();
+            var mpathBuilder = new PathBuilder(state.Map, state.SingleWorker.Position, false);
+            var mbest = mboosters.OrderBy(b => mpathBuilder.Distance(b.Position)).First();
+            var mactions = mpathBuilder.GetActions(mbest.Position);
+
+            state.ApplyRange(mactions);
+            result.AddRange(mactions);
+
+            while (state.CloningCount > 0)
+            {
+                var cactions = new List<(Worker w, ActionBase action)>();
+                foreach (var w in state.Workers)
+                {
+                    if (cactions.Count < state.CloningCount)
+                        cactions.Add((w, new UseCloning()));
+                    else
+                        cactions.Add((w, new Wait()));
+                }
+
+                state.Apply(cactions);
+                result.AddRange(cactions.Select(x => x.action));
+            }
+        }
+
+        public static void CreatePalka(State state, List<ActionBase> result)
         {
             var k = 0;
 

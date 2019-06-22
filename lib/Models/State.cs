@@ -36,13 +36,44 @@ namespace lib.Models
         public int TeleportCount { get; set; }
         public int CloningCount { get; set; }
 
+        public string Print()
+        {
+            var enumerable = Enumerable
+                .Range(0, Map.SizeY)
+                .Select(
+                    y =>
+                    {
+                        var strings = Enumerable
+                            .Range(0, Map.SizeX)
+                            .Select(
+                                x =>
+                                {
+                                    var p = new V(Map.SizeY - y - 1, x);
+                                    if (Map[p] == CellState.Obstacle)
+                                        return "#";
+                                    var booster = Boosters.FirstOrDefault(b => b.Position == p);
+                                    if (booster != null)
+                                        return booster.ToString()[0].ToString();
+                                    if (Map[p] == CellState.Void)
+                                        return ".";
+                                    var wCount = Workers.Count(w => w.Position == p);
+                                    if (wCount == 0)
+                                        return "*";
+                                    return wCount.ToString();
+                                })
+                            .ToArray();
+                        return string.Join("", strings);
+                    });
+            return string.Join("\n", enumerable);
+        }
+
         public Action Apply(IReadOnlyList<(Worker worker, ActionBase action)> workerActions)
         {
             if (workerActions.Count != Workers.Count)
                 throw new InvalidOperationException("workerActions.Count != Workers.Count");
 
             var actions = Workers.Select(w => workerActions.Single(x => x.worker == w).action).ToList();
-            
+
             var prevWorkers = Workers.Select(x => x.Clone()).ToList();
             var undos = actions.Select((x, i) => x.Apply(this, Workers[i])).ToList();
             undos.Reverse();

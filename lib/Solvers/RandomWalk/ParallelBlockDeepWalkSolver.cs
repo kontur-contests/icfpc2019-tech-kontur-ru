@@ -6,11 +6,11 @@ using lib.Models.Actions;
 
 namespace lib.Solvers.RandomWalk
 {
-    public class BlockDeepWalkSolver : ISolver
+    public class ParallelBlockDeepWalkSolver : ISolver
     {
         public string GetName()
         {
-            return $"block-deep-walk-{depth}-{blockSize}-{usePalka}";
+            return $"parallel-block-deep-walk-{depth}-{blockSize}";
         }
 
         public int GetVersion()
@@ -21,7 +21,6 @@ namespace lib.Solvers.RandomWalk
         private readonly int blockSize;
         private readonly int depth;
         private readonly IEstimator estimator;
-        private readonly bool usePalka;
 
         private readonly ActionBase[] availableActions =
         {
@@ -34,12 +33,11 @@ namespace lib.Solvers.RandomWalk
         };
         private readonly List<List<ActionBase>> chains;
 
-        public BlockDeepWalkSolver(int blockSize, int depth, IEstimator estimator, bool usePalka)
+        public ParallelBlockDeepWalkSolver(int blockSize, int depth, IEstimator estimator)
         {
             this.blockSize = blockSize;
             this.depth = depth;
             this.estimator = estimator;
-            this.usePalka = usePalka;
 
             chains = availableActions.Select(x => new List<ActionBase> {x}).ToList();
             for (int i = 1; i < depth; i++)
@@ -163,8 +161,10 @@ namespace lib.Solvers.RandomWalk
 
             //Console.Out.WriteLine("--INIT:\n" + state.Map);
 
-            if (usePalka)
-                BoosterMaster.CreatePalka(state, solution);
+            BoosterMaster.CreatePalka(state, solution);
+            BoosterMaster.CloneAttack(state, solution);
+
+            return new List<List<ActionBase>> {solution};
 
             while (state.UnwrappedLeft > 0)
             {

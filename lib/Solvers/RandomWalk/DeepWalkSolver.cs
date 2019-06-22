@@ -46,7 +46,7 @@ namespace lib.Solvers.RandomWalk
         {
             var solution = new List<ActionBase>();
             
-            PalkaAppender.CollectManipulators(state, solution);
+            BoosterMaster.CreatePalka(state, solution);
 
             while (state.UnwrappedLeft > 0)
             {
