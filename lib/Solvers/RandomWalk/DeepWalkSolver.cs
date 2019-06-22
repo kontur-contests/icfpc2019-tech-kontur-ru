@@ -29,6 +29,7 @@ namespace lib.Solvers.RandomWalk
             new Move("-1,0")
         };
         private readonly List<List<ActionBase>> chains;
+        private CyclingTracker cyclingTracker;
 
         public DeepWalkSolver(int depth, IEstimator estimator)
         {
@@ -43,6 +44,7 @@ namespace lib.Solvers.RandomWalk
 
         public List<List<ActionBase>> Solve(State state)
         {
+            this.cyclingTracker = new CyclingTracker();
             var solution = new List<ActionBase>();
             
             BoosterMaster.CreatePalka(state, solution);
@@ -50,8 +52,12 @@ namespace lib.Solvers.RandomWalk
             while (state.UnwrappedLeft > 0)
             {
                 var part = SolvePart(state);
+                foreach (var action in part)
+                {
+                    state.Apply(action);
+                    cyclingTracker.AddState(state);
+                }
                 solution.AddRange(part);
-                state.ApplyRange(part);
             }
 
             return new List<List<ActionBase>> {solution};
@@ -84,6 +90,8 @@ namespace lib.Solvers.RandomWalk
                         break;
                 }
 
+                if (cyclingTracker.IsCycled(clone))
+                    continue;
                 var estimation = estimator.Estimate(clone, state);
                 // Console.Out.Write($"  {estimation} {solution.Format()}");
                 if (estimation > bestEstimation)
