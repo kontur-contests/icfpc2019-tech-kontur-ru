@@ -66,7 +66,7 @@ const inProgressRequest = MongoClient
 Promise.all([algsRequest, inProgressRequest]).then(([data, inProg]) => {
     const styles = '<link rel="stylesheet" href="styles.css">';
     const metaGeneral = '<meta charset="utf-8"><title>ICFPC 2019. Дашборд</title>';
-    const meta = '' // `<META HTTP-EQUIV="REFRESH" CONTENT="10;URL=/">`;
+    const meta = `<META HTTP-EQUIV="REFRESH" CONTENT="10;URL=/">`;
     const dataForScript = `<script type="text/javascript">const dataFromServer = ${JSON.stringify(data)}</script>`;
     const progressDataForScript = `<script type="text/javascript">const progressDataForScript = ${JSON.stringify(inProg)}</script>`;
     const scripts = '<script type="text/javascript" src="scripts.js"></script>';
