@@ -273,6 +273,8 @@ function createHistory() {
             afterCommand = afterCommand.replace(/[()]/g, '');
             history.push('🛸 Телепоровался к маяку по координатам' + afterCommand);
             break;
+        default:
+            history.push('❓ Я не знаю, что это было')
     }
 }
 
