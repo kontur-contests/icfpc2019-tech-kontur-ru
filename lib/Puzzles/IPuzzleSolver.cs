@@ -4,6 +4,6 @@ namespace lib.Puzzles
 {
     internal interface IPuzzleSolver
     {
-        Map<bool> Solve(Puzzle puzzle);
+        Problem Solve(Puzzle puzzle);
     }
 }

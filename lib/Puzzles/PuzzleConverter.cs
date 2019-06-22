@@ -35,7 +35,8 @@ namespace lib.Puzzles
                         d = Direction.Up;
                     else
                         d = Direction.Left;
-                } else
+                }
+                else
                 if (d == Direction.Down)
                 {
                     if (Has(x - 1, y - 1))

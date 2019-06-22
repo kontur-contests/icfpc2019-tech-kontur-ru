@@ -7,7 +7,94 @@ namespace lib.Puzzles
 {
     public class MstPuzzleSolver : IPuzzleSolver
     {
-        public Map<bool> Solve(Puzzle puzzle)
+        public Problem Solve(Puzzle puzzle)
+        {
+            var map = SolveInner(puzzle);
+            
+            while (true)
+            {
+                var countIn = Inside(map).Count;
+                var countMin = (int) 0.2 * puzzle.TaskSize * puzzle.TaskSize + 10;
+
+                if (countIn < countMin)
+                {
+                    Add(map, countMin - countIn);
+                    continue;
+                }
+
+                break;
+            }
+
+            var inside = Inside(map);
+
+            var boosters = new List<Booster>();
+            int bi = 1;
+            
+            var needBoosters = new List<(BoosterType, int)>
+            {
+                (BoosterType.Cloning, puzzle.ClonesCount),
+                (BoosterType.Drill, puzzle.DrillsCount),
+                (BoosterType.Extension, puzzle.ManipulatorsCount),
+                (BoosterType.FastWheels, puzzle.FastwheelsCount),
+                (BoosterType.MysteriousPoint, puzzle.SpawnsCount),
+                (BoosterType.Teleport, puzzle.TeleportsCount)
+            };
+
+            foreach (var (type, cnt) in needBoosters)
+                for (var i = 0; i < cnt; i++)
+                    boosters.Add(new Booster(type, inside[(bi++) % inside.Count]));
+            
+            var problem = new Problem
+            {
+                Map = PuzzleConverter.ConvertMapToPoints(map),
+                Boosters = boosters,
+                Obstacles =  new List<List<V>>(),
+                Point = inside.First()
+            };
+
+            return problem;
+        }
+
+        private void Add(Map<bool> map, int need)
+        {
+            for (int x = 0; x < map.SizeX && need > 0; x++)
+            for (int y = 0; y < map.SizeY && need > 0; y++)
+            {
+                var v = new V(x, y);
+                if (OnBound(map, v))
+                {
+                    map[v] = true;
+                    need--;
+                }
+            }
+        }
+
+        private bool OnBound(Map<bool> map, V v)
+        {
+            if (!v.Inside(map) || map[v])
+                return false;
+
+            for (int d = 0; d < 4; d++)
+            {
+                var u = v.Shift(d);
+                if (u.Inside(map) && map[u])
+                    return true;
+            }
+
+            return false;
+        }
+
+        private List<V> Inside(Map<bool> map)
+        {
+            var result = new List<V>();
+            for (int x = 0; x < map.SizeX; x++)
+                for (int y = 0; y < map.SizeY; y++)
+                    if (map[new V(x, y)])
+                        result.Add(new V(x, y));
+            return result;
+        }
+
+        public Map<bool> SolveInner(Puzzle puzzle)
         {
             var outside = puzzle.MustContainPoints.ToList();
             var map = new Map<bool>(puzzle.TaskSize, puzzle.TaskSize);

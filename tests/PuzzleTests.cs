@@ -25,7 +25,6 @@ namespace tests
         {
             var puzzle = PuzzleReader.ReadFromFile(1);
             var map = new MstPuzzleSolver().Solve(puzzle);
-            Console.WriteLine(map.ToStringBool());
         }
 
         [Test]
