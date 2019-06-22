@@ -12,10 +12,16 @@ namespace lib.Solvers
     {
         private List<List<ActionBase>> result;
         private Random random = new Random();
+        private bool palka;
+
+        public StupidSolver(bool palka = true)
+        {
+            this.palka = palka;
+        }
 
         public string GetName()
         {
-            return "stupid";
+            return $"stupid_{palka}";
         }
 
         public int GetVersion()
@@ -27,7 +33,8 @@ namespace lib.Solvers
         {
             result = new List<List<ActionBase>> { new List<ActionBase>() };
 
-            //BoosterMaster.CreatePalka(state, result[0]);
+            if (palka)
+                BoosterMaster.CreatePalka(state, result[0]);
 
             BoosterMaster.CloneAttack(state, result);
 
