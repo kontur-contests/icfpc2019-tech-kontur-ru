@@ -59,7 +59,7 @@ namespace lib.Solvers
                 if (best == null)
                     break;
 
-                var actions = pathBuilder.GetActions(best).ToList();
+                var actions = pathBuilder.GetActions(best).Take(1).ToList();
                 state.ApplyRange(actions);
                 result.AddRange(actions);
             }
@@ -71,7 +71,8 @@ namespace lib.Solvers
         {
             public static (Map<int> comp, Dictionary<int, double> size) Build(Map map, V me)
             {
-                var dists = new Dictionary<int, List<double>>();
+                var dist = new Dictionary<int, double>();
+                var size = new Dictionary<int, int>();
                 var comp = new Map<int>(map.SizeX, map.SizeY);
 
                 int id = 0;
@@ -84,7 +85,8 @@ namespace lib.Solvers
                         continue;
 
                     id++;
-                    dists[id] = new List<double>();
+                    dist[id] = 0;
+                    size[id] = 0;
 
                     var queue = new Queue<V>();
                     queue.Enqueue(v);
@@ -93,7 +95,8 @@ namespace lib.Solvers
                     {
                         v = queue.Dequeue();
                         comp[v] = id;
-                        dists[id].Add((me - v).MLen());
+                        dist[id] += (me - v).MLen();
+                        size[id]++;
 
                         for (var direction = 0; direction < 4; direction++)
                         {
@@ -107,13 +110,11 @@ namespace lib.Solvers
                     }
                 }
 
-                var size = new Dictionary<int, double>();
-                foreach (var k in dists.Keys)
+                foreach (var k in size.Keys)
                 {
-                    var top = dists[k].OrderBy(x => x).Take(10).ToList();
-                    size[k] = top.Average();
+                    dist[k] /= size[k];
                 }
-                return (comp, size);
+                return (comp, dist);
             }
         }
 
