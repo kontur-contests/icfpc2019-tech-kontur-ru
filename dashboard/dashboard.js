@@ -33,10 +33,11 @@ MongoClient
     .then(db => db.collection(metaCollectionName).aggregate(pipeline).toArray())
     .then(data => {
         const styles = '<link rel="stylesheet" href="styles.css">';
-        const meta = `<META HTTP-EQUIV="REFRESH" CONTENT="10;URL=/">`
+        const metaGeneral = '<meta charset="utf-8"><title>ICFPC 2019. Дашборд</title>';
+        const meta = `<META HTTP-EQUIV="REFRESH" CONTENT="10;URL=/">`;
         const dataForScript = `<script type="text/javascript">const dataFromServer = ${JSON.stringify(data)}</script>`;
         const scripts = '<script type="text/javascript" src="scripts.js"></script>';
-        const tableHtml = `<head>${styles}${meta}</head><body>${dataForScript}${scripts}</body>`;
+        const tableHtml = `<head>${styles}${metaGeneral}${meta}</head><body>${dataForScript}${scripts}</body>`;
 
         fs.writeFileSync("dashboard.html", tableHtml)
     });
