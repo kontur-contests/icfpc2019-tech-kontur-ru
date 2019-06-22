@@ -185,9 +185,17 @@ namespace console_runner
                     "Immediately submit block",
                     CommandOptionType.NoValue);
 
+                var blockNumberOption = command.Option("-b|--block",
+                    "Calculate specific block",
+                    CommandOptionType.SingleValue);
+
                 command.OnExecute(async () =>
                 {
-                    var block = await Api.GetBlockchainBlock();
+                    BlockchainBlock block;
+                    if (blockNumberOption.HasValue())
+                        block = await Api.GetBlockchainBlock(int.Parse(blockNumberOption.Value()));
+                    else
+                        block = await Api.GetBlockchainBlock();
                     Console.WriteLine($"Solving block #{block.BlockNumber} ...");
                     
                     var blockProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_orig.desc");
@@ -354,6 +362,7 @@ namespace console_runner
 
             Console.WriteLine($"{prefix}Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
     
+            new SolutionInProgress(problemMeta.ProblemId, solver.GetName(), solver.GetVersion()).SaveToDb();
             var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
             solutionMeta.SaveToDb();
                         
