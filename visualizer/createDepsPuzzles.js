@@ -18,7 +18,7 @@ files.forEach(function (file) {
         return;
     }
 
-    const num = file.substr(-8, 3);
+    const num = file.substr(5, 3);
 
     if (ext === 'cond') {
         tasksNumbers.push(num);
@@ -32,8 +32,8 @@ const longerArr = tasksNumbers.length > solutionsNumbers.length ? tasksNumbers :
 for (let i = 0; i < count; i++) {
 
     const number = longerArr[i];
-    const problemPath = `${dirUrl}/puzzle-${number}.cond`;
-    const solutionPath = `${dirUrl}/task-${number}.desc`;
+    const problemPath = `${dirUrl}/block${number}.cond`;
+    const solutionPath = `${dirUrl}/block${number}.desc`;
     filesImports.push(`window.files.cond['${number}'] = require('${problemPath}').default;`);
     filesImports.push(`window.files.desc['${number}'] = require('${solutionPath}').default;`);
 

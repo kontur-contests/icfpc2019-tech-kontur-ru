@@ -174,7 +174,7 @@ function renderMap(map) {
 function coordInPixels(x, y) {
     return {
         x: x * config.pixelSize + config.left,
-        y: canvas.height - (y * config.pixelSize) - config.top,
+        y: canvas.height - (y * config.pixelSize) - (config.top / 2),
     }
 }
 
