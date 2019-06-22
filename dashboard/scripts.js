@@ -17,6 +17,9 @@ function createTable() {
     const tableHeader = document.createElement('thead');
     const tableHeaderRow = document.createElement('tr');
 
+    const indexTh = document.createElement('th');
+    tableHeaderRow.appendChild(indexTh);
+
     const bestTh = document.createElement('th');
     bestTh.classList.add('min');
     bestTh.innerText = 'best score';
@@ -33,8 +36,13 @@ function createTable() {
 
     Object.keys(formattedData).sort((a, b) => a - b).forEach((num) => {
         const tr = document.createElement('tr');
+        const index = document.createElement('td');
+        index.textContent = num;
+
         const bestTd = document.createElement('td');
         bestTd.classList.add('min');
+
+        tr.appendChild(index);
         tr.appendChild(bestTd);
 
 
