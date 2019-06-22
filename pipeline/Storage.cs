@@ -21,12 +21,14 @@ namespace pipeline
         private const string dbName = "icfpc";
         private const string metaCollectionName = "solution_metas";
         private const string blockMetaCollectionName = "block_solution_metas";
+        private const string solutionInProgressCollectionName = "solution_inprogress";
 
         private static readonly MongoClient client = new MongoClient(dbHost);
         private static readonly IMongoDatabase database = client.GetDatabase(dbName);
         
         internal static readonly IMongoCollection<SolutionMeta> MetaCollection = database.GetCollection<SolutionMeta>(metaCollectionName);
         internal static readonly IMongoCollection<SolutionMeta> BlockMetaCollection = database.GetCollection<SolutionMeta>(blockMetaCollectionName);
+        internal static readonly IMongoCollection<SolutionInProgress> SolutionInProgressCollection = database.GetCollection<SolutionInProgress>(solutionInProgressCollectionName);
         
         public static List<SolutionMeta> EnumerateUnchecked()
         {
@@ -90,6 +92,13 @@ namespace pipeline
             meta.SavedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
             var collection = isBlockSolution ? Storage.BlockMetaCollection : Storage.MetaCollection;
             collection.ReplaceOne(x => x.Id == meta.Id, meta, new UpdateOptions { IsUpsert = true});
+        }
+
+        public static void SaveToDb(this SolutionInProgress inProgress)
+        {
+            inProgress.StartedAt = DateTime.Now;
+            inProgress.HostName = Environment.MachineName;
+            Storage.SolutionInProgressCollection.InsertOne(inProgress);
         }
     }
 }

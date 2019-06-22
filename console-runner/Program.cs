@@ -362,6 +362,7 @@ namespace console_runner
 
             Console.WriteLine($"{prefix}Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
     
+            new SolutionInProgress(problemMeta.ProblemId, solver.GetName(), solver.GetVersion()).SaveToDb();
             var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
             solutionMeta.SaveToDb();
                         
