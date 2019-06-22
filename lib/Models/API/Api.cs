@@ -7,7 +7,7 @@ namespace lib.Models.API
 {
     public class Api
     {
-        public const string EndpointUrl = "http://localhost:8332/";
+        public const string EndpointUrl = "http://icfpc19-crunch1:8332/";
 
         public static async Task<BlockchainBlock> GetCurrentBlockchainBlock()
         {
