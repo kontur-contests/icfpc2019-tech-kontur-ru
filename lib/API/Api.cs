@@ -8,7 +8,7 @@ namespace lib.API
 {
     public static class Api
     {
-        private const string endpointUrl = "http://icfpc19-crunch1:8332/";
+        private const string endpointUrl = "http://localhost:8332/";
 
         public static async Task<BlockchainBlock> GetBlockchainBlock(int blockNumber = -1)
         {
@@ -23,6 +23,21 @@ namespace lib.API
                 })
                 .ReceiveJson<UniversalResponse<GetBlockInfoResponse>>();
             return new BlockchainBlock(response.Result);
+        }
+
+        public static async Task<SubmitResponse> Submit(int blockNumber, string solutionPath, string problemPath)
+        {
+            var response = await endpointUrl
+                .PostJsonAsync(
+                    new
+                    {
+                        jsonrpc = "2.0",
+                        id = "c#",
+                        method = "submit",
+                        @params = new List<string> {blockNumber.ToString(), solutionPath, problemPath}
+                    })
+                .ReceiveJson<UniversalResponse<SubmitResponse>>();
+            return response.Result;
         }
     }
 }
