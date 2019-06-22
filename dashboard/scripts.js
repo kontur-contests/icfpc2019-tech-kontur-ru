@@ -99,6 +99,7 @@ function createTable() {
 
             if (row[item] && now - row[item].timestamp * 1000 < tenMinutes) {
                 td.classList.add('recent');
+                td.setAttribute('title', `Посчитан недавно`)
             }
 
             if (formattedDataProgress[num] && formattedDataProgress[num][item]) {
