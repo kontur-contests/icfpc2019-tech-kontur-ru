@@ -14,7 +14,7 @@ namespace lib.Models
         
         public static string GetPuzzlePath(int puzzle)
         {
-            return Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"puzzle-{puzzle:000}.cond");
+            return Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{puzzle:000}.cond");
         }
         
         public static Puzzle ReadFromFile(int puzzle)

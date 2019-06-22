@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FluentAssertions;
 using lib;
@@ -23,8 +24,10 @@ namespace tests
         [Test]
         public void TestSolve()
         {
-            var puzzle = PuzzleReader.ReadFromFile(1);
+            var puzzle = PuzzleReader.ReadFromFile(2);
             var problem = new MstPuzzleSolver().Solve(puzzle);
+            var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{puzzle:000}.desc");
+            File.WriteAllText(path, problem.ToString());
             problem.IsValidForPuzzle(puzzle).Should().BeTrue();
         }
 
