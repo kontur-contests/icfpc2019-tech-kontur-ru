@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Threading.Tasks;
 using System.Xml;
 using lib;
 using lib.Models;
@@ -107,33 +108,41 @@ namespace console_runner
                 command.Description = "Create solutions for all nonexistent problem-solver pairs";
                 command.HelpOption("-?|-h|--help");
 
+                var threadsOption = command.Option("-t|--threads",
+                    "Number of worker threads",
+                    CommandOptionType.SingleValue);
+
                 command.OnExecute(() =>
                 {
-                    while (true)
-                    {
-                        var solvers = RunnableSolvers
-                            .Enumerate()
-                            .OrderBy(_ => Guid.NewGuid())
-                            .Select(x => x.Invoke())
-                            .ToList();
-
-                        var problems = ProblemReader.ReadAll();
-                    
-                        solvers.ForEach(solver =>
+                    var threadsCount = threadsOption.HasValue() ? int.Parse(threadsOption.Value()) : Environment.ProcessorCount;
+                    var threads = Enumerable.Range(0, threadsCount).ToList();
+                    Parallel.ForEach(threads, new ParallelOptions {MaxDegreeOfParallelism = threadsCount}, t =>
                         {
-                            var solved = Storage.EnumerateSolved(solver).Select(x => x.ProblemId);
-                            var unsolved = problems
-                                .Select(x => x.ProblemId)
-                                .Except(solved)
-                                .OrderBy(_ => Guid.NewGuid())
-                                .ToList()
-                                .First();
+                            while (true)
+                            {
+                                var solvers = RunnableSolvers
+                                    .Enumerate()
+                                    .OrderBy(_ => Guid.NewGuid())
+                                    .Select(x => x.Invoke())
+                                    .ToList();
 
-                            Console.WriteLine($"Unsolved by {solver.GetName()} v{solver.GetVersion()}: {unsolved}");
+                                var problems = ProblemReader.ReadAll();
 
-                            Solve(solver, problems.Find(x => x.ProblemId == unsolved));
+                                solvers.ForEach(
+                                    solver =>
+                                    {
+                                        var solved = Storage.EnumerateSolved(solver).Select(x => x.ProblemId);
+                                        var unsolved = problems
+                                            .Select(x => x.ProblemId)
+                                            .Except(solved)
+                                            .OrderBy(_ => Guid.NewGuid())
+                                            .ToList()
+                                            .First();
+
+                                        Solve(solver, problems.Find(x => x.ProblemId == unsolved));
+                                    });
+                            }
                         });
-                    }
 
                     return 0;
                 });
@@ -207,17 +216,16 @@ namespace console_runner
             app.Execute(args);
         }
 
-        private static void Solve(ISolver solver, ProblemMeta problemMeta)
+        private static void Solve(ISolver solver, ProblemMeta problemMeta, int? thread = null)
         {
-            Console.Write(
-                $"Solving {problemMeta.ProblemId} " +
-                $"with {solver.GetName()} v{solver.GetVersion()}... ");
+            var prefix = thread.HasValue ? $"#{thread.Value}: " : string.Empty;
+
+            Console.Write($"{prefix}Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
     
             var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
             solutionMeta.SaveToDb();
                         
-            Console.WriteLine($"Done in {solutionMeta.CalculationTookMs} ms, " +
-                              $"{solutionMeta.OurTime} time units");
+            Console.WriteLine($"{prefix}Done in {solutionMeta.CalculationTookMs} ms, {solutionMeta.OurTime} time units");
         }
     }
 }
