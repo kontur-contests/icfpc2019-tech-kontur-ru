@@ -11,7 +11,7 @@ namespace tests
         [Test]
         public async Task ReadCurrentFromApi()
         {
-            var puzzle = await PuzzleReader.ReadCurrentPuzzleFromApiAsync();
+            var puzzle = await PuzzleReader.ReadCurrentFromApiAsync();
             puzzle.Should().NotBeNull();
         }
 

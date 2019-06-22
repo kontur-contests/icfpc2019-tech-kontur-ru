@@ -10,11 +10,11 @@ namespace lib.Models
 {
     public static class PuzzleReader
     {
-        public static async Task<Puzzle> ReadCurrentPuzzleFromApiAsync()
+        public static async Task<Puzzle> ReadCurrentFromApiAsync()
         {
             using (var handler = new HttpRpcClientHandler
             {
-                EndpointUrl = $"http://{host}:{port}/"
+                EndpointUrl = Api.EndpointUrl
             })
             {
                 var client = new JsonRpcClient(handler);
@@ -33,8 +33,5 @@ namespace lib.Models
             var fileName = GetPuzzlePath(puzzle);
             return new Puzzle(File.ReadAllText(fileName));
         }
-        
-        private const int port = 8332;
-        private const string host = "localhost";
     }
 }

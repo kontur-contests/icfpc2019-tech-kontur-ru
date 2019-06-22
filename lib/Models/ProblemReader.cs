@@ -2,6 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using JsonRpc.Client;
+using JsonRpc.Http;
+using lib.Models.API;
 
 namespace lib.Models
 {
@@ -25,6 +30,19 @@ namespace lib.Models
                 .Where(i => File.Exists(GetProblemPath(i)))
                 .Select(i => new ProblemMeta(i, Read(i)))
                 .ToList();
+        }
+        
+        public static async Task<Problem> ReadCurrentFromApiAsync()
+        {
+            using (var handler = new HttpRpcClientHandler
+            {
+                EndpointUrl = Api.EndpointUrl
+            })
+            {
+                var client = new JsonRpcClient(handler);
+                var response = await client.SendRequestAsync("getmininginfo", null, CancellationToken.None);
+                return Read(response.Result.ToObject<GetMiningInfoResponse>().Task);
+            }
         }
 
         public static Problem Read(string source)
