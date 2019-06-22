@@ -4,6 +4,7 @@ const body = document.getElementsByTagName('body')[0];
 let hiddenAlgs = getHiddenColumns();
 let algs = new Set();
 const formattedData = mapData(dataFromServer);
+const formattedDataProgress = mapData(progressDataForScript);
 const tenMinutes = 10 * 60 * 1000;
 let bests = {};
 calcBests();
@@ -22,7 +23,7 @@ function calcBests() {
         for (const algName of Object.keys(taskTries)) {
             const algRes = taskTries[algName];
             algRes.algName = algName;
-            if (!bests[taskNum] || bests[taskNum].result > algRes.result) {
+            if (!bests[taskNum] || bests[taskNum].time > algRes.time) {
                 bests[taskNum] = algRes;
             }
         }
@@ -85,10 +86,10 @@ function createTable() {
         const row = formattedData[num];
         algsOrder.forEach(item => {
             const td = document.createElement('td');
-            td.textContent = (row[item] && row[item].result) || '';
+            td.textContent = (row[item] && row[item].time) || '';
 
 
-            if (!row[item] || !row[item].result) {
+            if (!row[item] || !row[item].time) {
                 td.classList.add('no');
             } else if (bests[num].algName === item) {
                 td.classList.add('min');
@@ -100,11 +101,19 @@ function createTable() {
                 td.classList.add('recent');
             }
 
+            if (formattedDataProgress[num] && formattedDataProgress[num][item]) {
+                if (!row[item] || !row[item].time) {
+                    td.classList.add('in-progress');
+                    td.textContent = '⏳';
+                    td.setAttribute('title', `Алгоритм выполняется на ${formattedDataProgress[num][item].hostName}`)
+                }
+            }
+
             tr.appendChild(td);
 
 
 
-            bestTd.innerHTML = `<b>${bests[num].result}</b><br>${bests[num].algName}`;
+            bestTd.innerHTML = `<b>${bests[num].time}</b><br>${bests[num].algName}`;
 
         });
 
@@ -121,8 +130,8 @@ function createTable() {
     addListeners();
 }
 
-function mapData() {
-    return dataFromServer.reduce((acc, item) => {
+function mapData(rawData) {
+    return rawData.reduce((acc, item) => {
         const [id, alg, version] = item._id.split('_');
         const algName = `${alg} v${version}`;
 
@@ -134,13 +143,14 @@ function mapData() {
         }
 
         acc[id][algName] = {
-            result: item.time,
-            timestamp: item.timestamp,
+            ...item,
         };
 
         return acc;
     }, {})
 }
+
+
 
 function addListeners() {
     const ths = [...document.getElementsByTagName('th')];
