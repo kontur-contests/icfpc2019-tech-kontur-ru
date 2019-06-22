@@ -5,5 +5,6 @@ namespace lib.Solvers.RandomWalk
     public interface IEstimator
     {
         double Estimate(State state, State prevState);
+        string GetName();
     }
 }

@@ -7,6 +7,7 @@ namespace lib.Solvers.RandomWalk
 {
     public class EstimatorZakoulocki : IEstimator
     {
+        public string GetName() => "zako";
         public double Estimate(State state, State prevState)
         {
             if (state.UnwrappedLeft == 0)
