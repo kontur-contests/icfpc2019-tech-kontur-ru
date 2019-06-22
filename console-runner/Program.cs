@@ -232,14 +232,28 @@ namespace console_runner
                             thread =>
                             {
                                 var solver = solvers[thread];
+                                
+                                var stopwatch = Stopwatch.StartNew();
                                 var actions = solver.Solve(block.Problem.ToState().Clone());
+                                var calculationTime = stopwatch.ElapsedMilliseconds;
+                                
                                 var time = actions.CalculateTime();
+                                var solutionBlob = actions.Format();
 
                                 var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_sol_{solver.GetName()}_v{solver.GetVersion()}_{time}.sol");
-                                File.WriteAllText(path, actions.Format());
+                                File.WriteAllText(path, solutionBlob);
 
                                 Console.WriteLine($"{solver.GetName()}_v{solver.GetVersion()} score = {time}");
 
+                                new SolutionMeta(
+                                    block.BlockNumber,
+                                    solutionBlob,
+                                    time,
+                                    solver.GetName(),
+                                    solver.GetVersion(),
+                                    calculationTime
+                                ).SaveToDb(isBlockSolution: true);
+                                
                                 return Tuple.Create(solver, actions);
                             })
                         .ToList();
