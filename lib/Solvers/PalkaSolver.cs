@@ -68,6 +68,9 @@ namespace lib.Solvers
                     V best = null;
                     var bestDist = int.MaxValue;
                     var bestY = int.MaxValue;
+                    var bestSize = double.MaxValue;
+                    
+                    var (comp, csize) = ComponentBuilder.Build(map, me.Position);
 
                     for (int y = 0; y < map.SizeY; y++)
                     for (int x = 0; x < map.SizeX; x++)
@@ -76,14 +79,17 @@ namespace lib.Solvers
                             continue;
 
                         var dist = pathBuilder.Distance(new V(x, y));
+                        var size = csize[comp[new V(x, y)]];
+
                         if (dist == int.MaxValue)
                             continue;
 
-                        if (check == 0 && (dist < bestDist /*&& bestY >= y || bestY > y*/)
+                        if (check == 0 && (size < bestSize || size == bestSize && dist < bestDist)
                             || check == 1 && (dist < bestDist && bestY >= y || bestY > y))
                         {
                             bestDist = dist;
                             bestY = y;
+                            bestSize = size;
                             best = new V(x, y);
                         }
                     }
@@ -99,6 +105,56 @@ namespace lib.Solvers
             }
 
             return new List<List<ActionBase>> { result };
+        }
+
+        private static class ComponentBuilder
+        {
+            public static (Map<int> comp, Dictionary<int, double> size) Build(Map map, V me)
+            {
+                var dists = new Dictionary<int, List<double>>();
+                var comp = new Map<int>(map.SizeX, map.SizeY);
+
+                int id = 0;
+
+                for (int x = 0; x < map.SizeX; x++)
+                for (int y = 0; y < map.SizeY; y++)
+                {
+                    var v = new V(x, y);
+                    if (map[v] != CellState.Void || comp[v] != 0)
+                        continue;
+
+                    id++;
+                    dists[id] = new List<double>();
+
+                    var queue = new Queue<V>();
+                    queue.Enqueue(v);
+
+                    while (queue.Any())
+                    {
+                        v = queue.Dequeue();
+                        comp[v] = id;
+                        dists[id].Add((me - v).MLen());
+
+                        for (var direction = 0; direction < 4; direction++)
+                        {
+                            var u = v.Shift(direction);
+                            if (!u.Inside(map) || map[u] != CellState.Void || comp[u] != 0)
+                                continue;
+
+                            comp[u] = id;
+                            queue.Enqueue(u);
+                        }
+                    }
+                }
+
+                var size = new Dictionary<int, double>();
+                foreach (var k in dists.Keys)
+                {
+                    //var top = dists[k].Max(x => x);
+                    size[k] = dists[k].Max(x => x);
+                }
+                return (comp, size);
+            }
         }
 
         private class PathBuilder

@@ -37,7 +37,7 @@ namespace lib.Solvers
                 var bestDist = int.MaxValue;
                 var bestSize = double.MaxValue;
 
-                var (comp, csize) = ComponentBuilder.Build(map, me.Position);
+                var (comp, csize) = ComponentBuilder.Build(map, me.Position, pathBuilder);
                 
                 for (int x = 0; x < map.SizeX; x++)
                 for (int y = 0; y < map.SizeY; y++)
@@ -59,7 +59,7 @@ namespace lib.Solvers
                 if (best == null)
                     break;
 
-                var actions = pathBuilder.GetActions(best).Take(1).ToList();
+                var actions = pathBuilder.GetActions(best).ToList();
                 state.ApplyRange(actions);
                 result.AddRange(actions);
             }
@@ -69,10 +69,9 @@ namespace lib.Solvers
 
         private static class ComponentBuilder
         {
-            public static (Map<int> comp, Dictionary<int, double> size) Build(Map map, V me)
+            public static (Map<int> comp, Dictionary<int, double> size) Build(Map map, V me, PathBuilder pathBuilder)
             {
-                var dist = new Dictionary<int, double>();
-                var size = new Dictionary<int, int>();
+                var dists = new Dictionary<int, List<double>>();
                 var comp = new Map<int>(map.SizeX, map.SizeY);
 
                 int id = 0;
@@ -85,8 +84,7 @@ namespace lib.Solvers
                         continue;
 
                     id++;
-                    dist[id] = 0;
-                    size[id] = 0;
+                    dists[id] = new List<double>();
 
                     var queue = new Queue<V>();
                     queue.Enqueue(v);
@@ -95,8 +93,7 @@ namespace lib.Solvers
                     {
                         v = queue.Dequeue();
                         comp[v] = id;
-                        dist[id] += (me - v).MLen();
-                        size[id]++;
+                        dists[id].Add(pathBuilder.Distance(v));
 
                         for (var direction = 0; direction < 4; direction++)
                         {
@@ -110,11 +107,13 @@ namespace lib.Solvers
                     }
                 }
 
-                foreach (var k in size.Keys)
+                var size = new Dictionary<int, double>();
+                foreach (var k in dists.Keys)
                 {
-                    dist[k] /= size[k];
+                    //var top = dists[k].OrderBy(x => x).Take(10).ToList();
+                    size[k] = dists[k].Average();
                 }
-                return (comp, dist);
+                return (comp, size);
             }
         }
 
