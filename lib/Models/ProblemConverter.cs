@@ -19,7 +19,7 @@ namespace lib.Models
             return state;
         }
 
-        private static Map ConvertMap(List<V> problemMap, List<List<V>> problemObstacles)
+        public static Map ConvertMap(List<V> problemMap, List<List<V>> problemObstacles)
         {
             var map = new Map(problemMap.Max(x => x.X), problemMap.Max(x => x.Y));
 
