@@ -184,27 +184,43 @@ namespace console_runner
                 command.OnExecute(async () =>
                 {
                     var block = await Api.GetCurrentBlockchainBlock();
+                    Console.WriteLine($"Solving block #{block.BlockNumber} ...");
                     
                     var blockProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_orig.desc");
                     File.WriteAllText(blockProblemPath, block.Problem.ToString());
 
-                    var ourProblem = new MstPuzzleSolver().Solve(block.Puzzle);
-                    if (!ourProblem.IsValidForPuzzle(block.Puzzle))
-                    {
-                        throw new InvalidOperationException("invalid task");
-                    }
-                    var ourProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.desc");
-                    File.WriteAllText(ourProblemPath, ourProblem.ToString());
-                    
                     var puzzlePath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.cond");
                     File.WriteAllText(puzzlePath, block.Puzzle.ToString());
 
+                    Console.WriteLine($"Solving puzzle ...");
+
+                    var puzzleSolvers = new List<IPuzzleSolver>
+                    {
+                        new MstPuzzleSolver(),
+                    };
+
+                    var puzzleSolved = false;
+                    foreach (var puzzleSolver in puzzleSolvers)
+                    {
+                        var ourProblem = puzzleSolver.Solve(block.Puzzle);
+                        if (!ourProblem.IsValidForPuzzle(block.Puzzle))
+                            continue;
+
+                        puzzleSolved = true;
+                        var ourProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.desc");
+                        File.WriteAllText(ourProblemPath, ourProblem.ToString());
+                    }
+                    if (!puzzleSolved)
+                        throw new Exception("Puzzle not solved.");
+
                     var solvers = RunnableSolvers
-                        .Enumerate()
+                        .PuzzleSolvers()
                         .OrderBy(_ => Guid.NewGuid())
                         .Select(x => x.Invoke())
                         .ToList();
 
+                    Console.WriteLine($"Solving problem with {solvers.Count} solvers ...");
+                    
                     var results = Enumerable
                         .Range(0, solvers.Count)
                         .AsParallel()
@@ -213,16 +229,25 @@ namespace console_runner
                             {
                                 var solver = solvers[thread];
                                 var actions = solver.Solve(block.Problem.ToState().Clone());
+                                var time = actions.CalculateTime();
+
+                                var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_sol_{solver.GetName()}_v{solver.GetVersion()}_{time}.sol");
+                                File.WriteAllText(path, actions.Format());
+
+                                Console.WriteLine($"{solver.GetName()}_v{solver.GetVersion()} score = {time}");
+
                                 return Tuple.Create(solver, actions);
                             })
                         .ToList();
                         
-                    var best = results
-                        .OrderBy(x => x.Item2.Format().Length)
+                    var(bestSolver, bestActions) = results
+                        .OrderBy(x => x.Item2.CalculateTime())
                         .First();
-                        
-                    var solutionPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_{best.Item1.GetName()}_{best.Item1.GetVersion()}.sol");
-                    File.WriteAllText(solutionPath, best.Item2.Format());
+
+                    var solutionPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_best_{bestSolver.GetName()}_v{bestSolver.GetVersion()}_{bestActions.CalculateTime()}.sol");
+                    File.WriteAllText(solutionPath, bestActions.Format());
+
+                    Console.WriteLine($"Best score = {bestActions.CalculateTime()}");
 
                     return 0;
                 });

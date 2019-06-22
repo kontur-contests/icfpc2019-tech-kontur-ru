@@ -2,7 +2,7 @@
 
 namespace lib.Puzzles
 {
-    internal interface IPuzzleSolver
+    public interface IPuzzleSolver
     {
         Problem Solve(Puzzle puzzle);
     }

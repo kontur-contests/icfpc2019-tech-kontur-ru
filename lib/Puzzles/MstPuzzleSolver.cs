@@ -20,7 +20,7 @@ namespace lib.Puzzles
         {
             var map = SolveInner(puzzle);
 
-            Print(map);
+            //Print(map);
             
             while (true)
             {

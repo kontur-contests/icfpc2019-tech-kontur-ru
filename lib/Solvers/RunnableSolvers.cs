@@ -8,6 +8,22 @@ namespace lib.Solvers
 {
     public static class RunnableSolvers
     {
+        public static List<Func<ISolver>> PuzzleSolvers()
+        {
+            return new List<Func<ISolver>>
+            {
+                () => new StupidSolver(),
+                () => new PalkaSolver()
+                //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
+                //() => new DeepWalkSolver(depth: 2, new Estimator()),
+                //() => new BlockDeepWalkSolver(blockSize: 25, depth: 2, new Estimator(), usePalka: true),
+                //() => new BlockDeepWalkSolver(blockSize: 50, depth: 2, new Estimator(), usePalka: true),
+                //() => new BlockDeepWalkSolver(blockSize: 50, depth: 3, new Estimator(), usePalka: true),
+                // () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: false),
+                // () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: true),
+            };
+        }
+
         // This and only this solvers would be periodically re-run
         public static List<Func<ISolver>> Enumerate()
         {
