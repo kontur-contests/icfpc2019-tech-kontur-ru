@@ -54,9 +54,6 @@ namespace lib.Solvers.RandomWalk
                 BoosterMaster.CreatePalka(state, solution[0]);
             BoosterMaster.CloneAttack(state, solution);
 
-
-            int turn = 0;
-            
             while (state.UnwrappedLeft > 0)
             {
                 // Console.Out.WriteLine($"--BEFORE:\n{state.Print()}");

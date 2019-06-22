@@ -12,15 +12,8 @@ namespace lib.Models
     {
         public static async Task<Puzzle> ReadCurrentFromApiAsync()
         {
-            using (var handler = new HttpRpcClientHandler
-            {
-                EndpointUrl = Api.EndpointUrl
-            })
-            {
-                var client = new JsonRpcClient(handler);
-                var response = await client.SendRequestAsync("getmininginfo", null, CancellationToken.None);
-                return new Puzzle(response.Result.ToObject<GetMiningInfoResponse>().Puzzle);
-            }
+            var block = await Api.GetCurrentBlockchainBlock();
+            return block.Puzzle;
         }
         
         public static string GetPuzzlePath(int puzzle)

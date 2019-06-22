@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using lib;
 using lib.Models;
+using lib.Models.API;
 using lib.Solvers;
 using Microsoft.Extensions.CommandLineUtils;
 using pipeline;
@@ -169,6 +170,44 @@ namespace console_runner
                                     });
                             }
                         });
+
+                    return 0;
+                });
+            });
+            
+            app.Command("solve-block", (command) =>
+            {
+                command.Description = "Create solution for the current puzzle";
+                command.HelpOption("-?|-h|--help");
+
+                command.OnExecute(async () =>
+                {
+                    var block = await Api.GetCurrentBlockchainBlock();
+                    
+                    var solvers = RunnableSolvers
+                        .Enumerate()
+                        .OrderBy(_ => Guid.NewGuid())
+                        .Select(x => x.Invoke())
+                        .ToList();
+
+                    var results = Enumerable
+                        .Range(0, solvers.Count)
+                        .AsParallel()
+                        .Select(
+                            thread =>
+                            {
+                                var solver = solvers[thread];
+                                var actions = solver.Solve(block.Problem.ToState().Clone());
+                                return Tuple.Create(solver, actions);
+                            })
+                        .ToList();
+                        
+                    var best = results
+                        .OrderBy(x => x.Item2.Format().Length)
+                        .First();
+                        
+                    var solutionPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", "best.sol");
+                    File.WriteAllText(solutionPath, best.Item2.Format());
 
                     return 0;
                 });
