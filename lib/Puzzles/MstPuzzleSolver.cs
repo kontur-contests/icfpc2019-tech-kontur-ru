@@ -1,20 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using lib.Models;
 using lib.Models.Actions;
 
 namespace lib.Puzzles
 {
+    public enum Cell
+    {
+        Unknown = '.',
+        Inside = 'i',
+        Outside = 'o'
+    }
+
     public class MstPuzzleSolver : IPuzzleSolver
     {
         public Problem Solve(Puzzle puzzle)
         {
             var map = SolveInner(puzzle);
+
+            Print(map);
             
             while (true)
             {
                 var countIn = Inside(map).Count;
-                var countMin = (int) 0.2 * puzzle.TaskSize * puzzle.TaskSize + 10;
+                var countMin = (int) (0.2 * puzzle.TaskSize * puzzle.TaskSize + 10);
 
                 if (countIn < countMin)
                 {
@@ -22,9 +33,18 @@ namespace lib.Puzzles
                     continue;
                 }
 
+                var verts = VertsCount(map);
+                if (verts < puzzle.MinVertices)
+                {
+                    AddVerts(map, puzzle.MinVertices);
+                    continue;
+                }
+
                 break;
             }
 
+            //Print(map);
+            
             var inside = Inside(map);
 
             var boosters = new List<Booster>();
@@ -55,7 +75,53 @@ namespace lib.Puzzles
             return problem;
         }
 
-        private void Add(Map<bool> map, int need)
+        private void Print(Map<Cell> map)
+        {
+            var enumerable = Enumerable
+                .Range(0, map.SizeY)
+                .Select(
+                    y =>
+                    {
+                        var strings = Enumerable
+                            .Range(0, map.SizeX)
+                            .Select(x => x == 56 && y == 120 ? '@' : (char)map[new V(x, map.SizeY - y - 1)])
+                            .ToArray();
+                        return string.Join("", strings);
+                    });
+            Console.WriteLine(string.Join("\n", enumerable));
+        }
+
+        private void AddVerts(Map<Cell> map, int puzzleMinVertices)
+        {
+            for (int x = 0; x < map.SizeX; x++)
+            for (int y = 0; y < map.SizeY; y++)
+            {
+                var v = new V(x, y);
+                if (OnBound(map, v))
+                {
+                    int was = VertsCount(map);
+                    map[v] = Cell.Inside;
+                    int cur = VertsCount(map);
+
+                    if (cur <= was)
+                    {
+                        map[v] = Cell.Unknown;
+                        continue;
+                    }
+
+                    if (cur >= puzzleMinVertices)
+                        return;
+                }
+            }
+        }
+
+        private int VertsCount(Map<Cell> map)
+        {
+            var pts = PuzzleConverter.ConvertMapToPoints(map);
+            return pts.Count;
+        }
+
+        private void Add(Map<Cell> map, int need)
         {
             for (int x = 0; x < map.SizeX && need > 0; x++)
             for (int y = 0; y < map.SizeY && need > 0; y++)
@@ -63,51 +129,73 @@ namespace lib.Puzzles
                 var v = new V(x, y);
                 if (OnBound(map, v))
                 {
-                    map[v] = true;
+                    map[v] = Cell.Inside;
                     need--;
                 }
             }
         }
 
-        private bool OnBound(Map<bool> map, V v)
+        private bool OnBound(Map<Cell> map, V v)
         {
-            if (!v.Inside(map) || map[v])
+            if (!v.Inside(map) || map[v] != Cell.Unknown)
                 return false;
 
             for (int d = 0; d < 4; d++)
             {
                 var u = v.Shift(d);
-                if (u.Inside(map) && map[u])
+                if (u.Inside(map) && map[u] == Cell.Inside)
                     return true;
             }
 
             return false;
         }
 
-        private List<V> Inside(Map<bool> map)
+        private List<V> Inside(Map<Cell> map)
         {
             var result = new List<V>();
             for (int x = 0; x < map.SizeX; x++)
                 for (int y = 0; y < map.SizeY; y++)
-                    if (map[new V(x, y)])
+                    if (map[new V(x, y)] == Cell.Inside)
                         result.Add(new V(x, y));
             return result;
         }
 
-        public Map<bool> SolveInner(Puzzle puzzle)
+        public Map<Cell> SolveInner(Puzzle puzzle)
         {
-            var outside = puzzle.MustContainPoints.ToList();
-            var map = new Map<bool>(puzzle.TaskSize, puzzle.TaskSize);
+            var map = new Map<Cell>(puzzle.TaskSize, puzzle.TaskSize);
+            for (int x = 0; x < map.SizeX; x++)
+            for (int y = 0; y < map.SizeY; y++)
+                map[new V(x, y)] = Cell.Unknown;
+
+            var not = puzzle.MustNotContainPoints.ToList();
+            not.Insert(0, V.Zero);
+
+            foreach (var n in not)
+                map[n] = Cell.Outside;
+
+            SolveInner(map, puzzle.MustContainPoints, Cell.Inside);
+
+            foreach (var n in not)
+                map[n] = Cell.Unknown;
+
+            SolveInner(map, not, Cell.Outside);
+
+            return map;
+        }
+
+        public void SolveInner(Map<Cell> map, List<V> points, Cell type)
+        {
+            var outside = points.ToList();
 
             if (outside.Any())
             {
-                map[outside[0]] = true;
+                map[outside[0]] = type;
                 outside.RemoveAt(0);
             }
-
+            
             while (outside.Any())
             {
-                var pathBuilder = new PathBuilder(map, puzzle.MustNotContainPoints);
+                var pathBuilder = new PathBuilder(map, type);
 
                 var best = 0;
                 for (int i = 1; i < outside.Count; i++)
@@ -116,37 +204,32 @@ namespace lib.Puzzles
 
                 var path = pathBuilder.GetPath(outside[best]);
                 foreach (var x in path)
-                    map[x] = true;
+                    map[x] = type;
 
                 outside.RemoveAt(best);
             }
-
-            return map;
         }
 
         private class PathBuilder
         {
-            private readonly Map<bool> map;
+            private readonly Map<Cell> map;
             private Map<int> distance;
             private Map<V> parent;
             
-            public PathBuilder(Map<bool> map, List<V> outersList)
+            public PathBuilder(Map<Cell> map, Cell type)
             {
                 this.map = map;
                 var queue = new LinkedList<V>();
                 for (int x = 0; x < map.SizeX; x++)
                 for (int y = 0; y < map.SizeY; y++)
                 {
-                    if (map[new V(x, y)])
+                    if (map[new V(x, y)] == type)
                         queue.AddLast(new V(x, y));
                 }
 
                 distance = new Map<int>(map.SizeX, map.SizeY);
                 parent = new Map<V>(map.SizeX, map.SizeY);
-                var outers = new Map<bool>(map.SizeX, map.SizeY);
-                foreach (var x in outersList)
-                    outers[x] = true;
-
+                
                 while (queue.Any())
                 {
                     var v = queue.First();
@@ -155,7 +238,7 @@ namespace lib.Puzzles
                     for (var direction = 0; direction < 4; direction++)
                     {
                         var u = v.Shift(direction);
-                        if (!u.Inside(map) || parent[u] != null || outers[u] || map[u])
+                        if (!u.Inside(map) || parent[u] != null || map[u] != Cell.Unknown)
                             continue;
 
                         parent[u] = v;
@@ -171,7 +254,7 @@ namespace lib.Puzzles
             {
                 var result = new List<V>();
 
-                while (!map[to])
+                while (map[to] == Cell.Unknown)
                 {
                     result.Add(to);
                     to = parent[to];

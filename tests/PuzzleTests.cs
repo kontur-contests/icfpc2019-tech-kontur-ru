@@ -24,7 +24,8 @@ namespace tests
         public void TestSolve()
         {
             var puzzle = PuzzleReader.ReadFromFile(1);
-            var map = new MstPuzzleSolver().Solve(puzzle);
+            var problem = new MstPuzzleSolver().Solve(puzzle);
+            problem.IsValidForPuzzle(puzzle).Should().BeTrue();
         }
 
         [Test]
@@ -34,11 +35,11 @@ namespace tests
             problem.Obstacles = new List<List<V>>();
 
             var state = problem.ToState().Map;
-            var map = new Map<bool>(state.SizeX, state.SizeY);
+            var map = new Map<Cell>(state.SizeX, state.SizeY);
 
             for (int x = 0; x < map.SizeX; x++)
             for (int y = 0; y < map.SizeY; y++)
-                map[new V(x, y)] = state[new V(x, y)] != CellState.Obstacle;
+                map[new V(x, y)] = state[new V(x, y)] != CellState.Obstacle ? Cell.Inside : Cell.Outside;
 
             var converted = PuzzleConverter.ConvertMapToPoints(map);
 

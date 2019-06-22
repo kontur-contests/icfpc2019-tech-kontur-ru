@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace lib.Models
                 return false;
             
             // initial position of worker is within M
-            if (convertedMap[Point] == CellState.Void)
+            if (convertedMap[Point] == CellState.Obstacle)
                 return false;
             
             // at least one of maximal dimensions is larger than tSize - floor(0.1*tSize)
@@ -38,7 +39,7 @@ namespace lib.Models
                 return false;
             
             // area is at least ceil(0.2*tSize^2)
-            if (convertedMap.SizeX * convertedMap.SizeY - convertedMap.VoidCount() < 0.2 * puzzle.TaskSize * puzzle.TaskSize)
+            if (convertedMap.VoidCount() < 0.2 * puzzle.TaskSize * puzzle.TaskSize)
                 return false;
             
             // vMin <= number of vertices <= vMax
@@ -60,11 +61,13 @@ namespace lib.Models
                 return false;
             
             // map contains all necessary squares
-            if (puzzle.MustContainPoints.Any(p => convertedMap[p] == CellState.Void))
+            if (puzzle.MustContainPoints.Any(p => convertedMap[p] == CellState.Obstacle))
                 return false;
+
+            //Console.WriteLine(convertedMap);
             
             // map does not contain unnecessary squares
-            if (puzzle.MustNotContainPoints.Any(p => convertedMap[p] != CellState.Void))
+            if (puzzle.MustNotContainPoints.Any(p => p.Inside(convertedMap) && convertedMap[p] != CellState.Obstacle))
                 return false;
 
             return true;
