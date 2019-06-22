@@ -54,15 +54,17 @@ namespace lib.Solvers.RandomWalk
                 BoosterMaster.CreatePalka(state, solution);
 
             var tick = 0;
+
+            var used = new HashSet<(V position, int unwrappedLeft)>();
             while (state.UnwrappedLeft > 0)
             {
                 //Console.Out.WriteLine($"--BEFORE:\n{state.Print()}");
-                var part = SolvePart(state);
+                var part = SolvePart(state, used);
+                used.Add((state.SingleWorker.Position, state.UnwrappedLeft));
                 solution.AddRange(part);
                 state.ApplyRange(part);
-                //Console.Out.WriteLine($"  PART:\n{part.Format()}");
-                
-                
+                // Console.Out.WriteLine($"  PART:\n{part.Format()}");
+                //
                 // if (tick++ > 1000)
                 //     break;
             }
@@ -70,7 +72,7 @@ namespace lib.Solvers.RandomWalk
             return new List<List<ActionBase>> {solution};
         }
 
-        public List<ActionBase> SolvePart(State state)
+        public List<ActionBase> SolvePart(State state, HashSet<(V position, int unwrappedLeft)> used)
         {
             var bestEstimation = double.MinValue;
             List<ActionBase> bestSolution = null;
@@ -94,16 +96,19 @@ namespace lib.Solvers.RandomWalk
                         break;
                 }
 
-                var estimation = estimator.Estimate(state, state.SingleWorker);
-                //Console.Out.Write($"  {estimation} {solution.Format()}");
-                if (estimation > bestEstimation)
+                if (!used.Contains((state.SingleWorker.Position, state.UnwrappedLeft)))
                 {
-                    bestEstimation = estimation;
-                    bestSolution = solution;
-                    //Console.Out.WriteLine(" -- better");
+                    var estimation = estimator.Estimate(state, state.SingleWorker);
+                    //Console.Out.Write($"  {estimation} {solution.Format()}");
+                    if (estimation > bestEstimation)
+                    {
+                        bestEstimation = estimation;
+                        bestSolution = solution;
+                        //Console.Out.WriteLine(" -- better");
+                    }
+                    // else
+                    //     Console.Out.WriteLine();
                 }
-                // else
-                //     Console.Out.WriteLine();
 
                 undos.Reverse();
                 foreach (var undo in undos)
