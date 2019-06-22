@@ -14,14 +14,5 @@ namespace tests.Solvers
             var solver = new DeepWalkSolver(2, new Estimator());
             SolveOneProblem(solver, 150);
         }
-        
-        [Test]
-        public void SolveSome()
-        {
-            var seed = Guid.NewGuid().GetHashCode();
-            Console.Out.WriteLine($"Seed: {seed}");
-            SolveSomeProblems(() => new DeepWalkSolver(10, new Estimator()), 
-                Enumerable.Range(1, 150).Take(30).ToList());
-        }
     }
 }
