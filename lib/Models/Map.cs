@@ -29,7 +29,7 @@ namespace lib.Models
                     });
             return string.Join("\n", enumerable);
         }
-
+        
         public new Map Clone()
         {
             return new Map(SizeX, SizeY, (CellState[,])cells.Clone());

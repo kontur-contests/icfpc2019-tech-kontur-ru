@@ -68,5 +68,7 @@ namespace lib
         public static bool operator==(V left, V right) => Equals(left, right);
 
         public static bool operator!=(V left, V right) => !Equals(left, right);
+
+        public static int operator *(V a, V b) => a.X * b.Y - a.Y * b.X;
     }
 }

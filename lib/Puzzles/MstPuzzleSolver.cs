@@ -5,12 +5,18 @@ using lib.Models.Actions;
 
 namespace lib.Puzzles
 {
-    internal class MstPuzzleSolver : IPuzzleSolver
+    public class MstPuzzleSolver : IPuzzleSolver
     {
         public Map<bool> Solve(Puzzle puzzle)
         {
             var outside = puzzle.MustContainPoints.ToList();
             var map = new Map<bool>(puzzle.TaskSize, puzzle.TaskSize);
+
+            if (outside.Any())
+            {
+                map[outside[0]] = true;
+                outside.RemoveAt(0);
+            }
 
             while (outside.Any())
             {

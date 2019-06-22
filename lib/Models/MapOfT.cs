@@ -45,6 +45,24 @@ namespace lib.Models
             return string.Join("\n", enumerable);
         }
 
+        public string ToStringBool()
+        {
+            var enumerable = Enumerable
+                .Range(0, SizeY)
+                .Select(
+                    y =>
+                    {
+                        var strings = Enumerable
+                            .Range(0, SizeX)
+                            .Select(x => cells[SizeY - y - 1, x])
+                            .Cast<bool>()
+                            .Select(x => x ? "+" : "-")
+                            .ToArray();
+                        return string.Join("", strings);
+                    });
+            return string.Join("\n", enumerable);
+        }
+
         public Map<T> Clone()
         {
             return new Map<T>(SizeX, SizeY, (T[,])cells.Clone());
