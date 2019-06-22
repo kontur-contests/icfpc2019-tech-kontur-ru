@@ -19,6 +19,16 @@ namespace tests.Solvers
             Console.WriteLine($"Solved {id} problem in {result.CalculateTime()} steps.");
             return result.CalculateTime();
         }
+        
+        public int SolveOneProblemWithCluster(ISolver solver, int id)
+        {
+            var state = ReadFromFile(id);
+            state.ClustersState = new ClustersState(ClustersStateReader.Read(id), state);
+            var result = solver.Solve(state);
+            Save(result, id);
+            Console.WriteLine($"Solved {id} problem in {result.CalculateTime()} steps.");
+            return result.CalculateTime();
+        }
 
         public void SolveSomeProblems(Func<ISolver> solverProvider, List<int> ids)
         {

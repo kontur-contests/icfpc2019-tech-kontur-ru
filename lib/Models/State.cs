@@ -36,6 +36,8 @@ namespace lib.Models
         public int TeleportCount { get; set; }
         public int CloningCount { get; set; }
 
+        public ClustersState ClustersState { get; set; }
+
         public Action<V> OnWrap { get; set; }
 
         public string Print()
@@ -137,6 +139,7 @@ namespace lib.Models
                 if (Map[pp] == CellState.Void)
                 {
                     UnwrappedLeft--;
+                    ClustersState?.Wrap(pp);
                     OnWrap?.Invoke(pp);
                 }
 
@@ -231,7 +234,10 @@ namespace lib.Models
             {
                 Map[wrappedCell.pos] = wrappedCell.oldState;
                 if (wrappedCell.oldState == CellState.Void)
+                {
                     UnwrappedLeft++;
+                    ClustersState?.Unwrap(wrappedCell.pos);
+                }
             }
         }
     }

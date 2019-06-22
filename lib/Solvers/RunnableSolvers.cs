@@ -30,14 +30,15 @@ namespace lib.Solvers
         {
             return new List<Func<ISolver>>
             {
-                // () => new StupidSolver(),
-                () => new RandomWalkSolver(depth: 2, new EstimatorZakoulocki(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
-                () => new DeepWalkSolver(depth: 2, new EstimatorZakoulocki()),
+                //() => new StupidSolver(),
+                //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
+                //() => new DeepWalkSolver(depth: 2, new Estimator()),
                 //() => new BlockDeepWalkSolver(blockSize: 25, depth: 2, new Estimator(), usePalka: true),
                 //() => new BlockDeepWalkSolver(blockSize: 50, depth: 2, new Estimator(), usePalka: true),
                 //() => new BlockDeepWalkSolver(blockSize: 50, depth: 3, new Estimator(), usePalka: true),
                 // () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: false),
                 // () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: true),
+                () => new FastDeepWalkSolver(2, new ClusterWorkerEstimator(), usePalka: false)
             };
         }
 
