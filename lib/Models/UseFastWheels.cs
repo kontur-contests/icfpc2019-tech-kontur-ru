@@ -6,13 +6,13 @@ namespace lib.Models
     {
         public override string ToString() => "F";
 
-        public override Action Apply(State state)
+        public override Action Apply(State state, Worker worker)
         {
-            if (state.Worker.FastWheelsCount <= 0)
+            if (state.FastWheelsCount <= 0)
                 throw new InvalidOperationException("No fast wheels");
 
-            state.Worker.FastWheelsCount--;
-            state.Worker.FastWheelsTimeLeft = Constants.FastWheelsTime;
+            state.FastWheelsCount--;
+            worker.FastWheelsTimeLeft = Constants.FastWheelsTime;
             return () => {};
         }
     }

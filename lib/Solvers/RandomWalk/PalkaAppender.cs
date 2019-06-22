@@ -32,7 +32,7 @@ namespace lib.Solvers.RandomWalk
 
                 actions.Add(add);
 
-                state.Apply(actions);
+                state.ApplyRange(actions);
                 result.AddRange(actions);
             }
         }

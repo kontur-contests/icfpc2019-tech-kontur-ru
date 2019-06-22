@@ -6,13 +6,13 @@ namespace lib.Models
     {
         public override string ToString() => "L";
 
-        public override Action Apply(State state)
+        public override Action Apply(State state, Worker worker)
         {
-            if (state.Worker.DrillCount <= 0)
+            if (state.DrillCount <= 0)
                 throw new InvalidOperationException("No drills");
 
-            state.Worker.DrillCount--;
-            state.Worker.DrillTimeLeft = Constants.DrillTime;
+            state.DrillCount--;
+            worker.DrillTimeLeft = Constants.DrillTime;
             return () => {};
         }
     }

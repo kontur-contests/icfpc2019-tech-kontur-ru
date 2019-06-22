@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
-using lib.Solvers.RandomWalk;
 
 namespace lib.Solvers
 {
@@ -35,7 +33,7 @@ namespace lib.Solvers
                 var actions = new List<ActionBase>();
                 actions.Add(new Rotate(true));
                 actions.Add(new Rotate(false));
-                actions.AddRange(shifts.Select(s => new Move(s)).Where(m => m.IsValid(state)));
+                actions.AddRange(shifts.Select(s => new Move(s)).Where(m => m.IsValid(state, state.Worker)));
                 var best = actions.Select(a => EstimateAction(a, state)).OrderByDescending(a => a.score).FirstOrDefault();
                 //Console.WriteLine(best);
                 result.Add(best.action);

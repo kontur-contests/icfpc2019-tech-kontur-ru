@@ -17,12 +17,12 @@ namespace lib.Models
             return $"B{Relative}";
         }
 
-        public override Action Apply(State state)
+        public override Action Apply(State state, Worker worker)
         {
-            if (state.Worker.ExtensionCount <= 0)
+            if (state.ExtensionCount <= 0)
                 throw new InvalidOperationException("No extensions");
 
-            var attachPositions = state.Worker.Manipulators.ToList();
+            var attachPositions = worker.Manipulators.ToList();
             attachPositions.Add(V.Zero);
             
             if (attachPositions.Any(x => x == Relative))
@@ -31,8 +31,8 @@ namespace lib.Models
             if (attachPositions.All(x => (x - Relative).MLen() != 1))
                 throw new InvalidOperationException($"Manipulator {Relative} should be attached to existing manipulator or body");
                 
-            state.Worker.ExtensionCount--;
-            state.Worker.Manipulators.Add(Relative);
+            state.ExtensionCount--;
+            worker.Manipulators.Add(Relative);
                 
             return state.Wrap();
         }

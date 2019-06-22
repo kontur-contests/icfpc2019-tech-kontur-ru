@@ -6,26 +6,32 @@ namespace lib.Models
 {
     public class State
     {
-        public State(Worker worker, Map map, List<Booster> boosters, int time, int? unwrappedLeft)
+        public State(Worker worker, Map map, List<Booster> boosters)
         {
             Worker = worker;
             Map = map;
             Boosters = boosters;
-            Time = time;
+            Time = 0;
             Wrap();
-            UnwrappedLeft = unwrappedLeft ?? Map.VoidCount();
+            UnwrappedLeft = Map.VoidCount();
         }
 
         public Worker Worker { get; private set; }
-        public Map Map { get; }
+        public Map Map { get; private set; }
         public int UnwrappedLeft { get; set; }
-        public List<Booster> Boosters { get; }
+        public List<Booster> Boosters { get; private set; }
         public int Time { get; private set; }
+        
+        public int ExtensionCount { get; set; }
+        public int FastWheelsCount { get; set; }
+        public int DrillCount { get; set; }
+        public int TeleportsCount { get; set; }
+        public int CloningCount { get; set; }
 
         public Action Apply(ActionBase action)
         {
             var prevWorker = Worker.Clone();
-            var undo = action.Apply(this);
+            var undo = action.Apply(this, Worker);
             Worker.NextTurn();
             Time++;
             return () =>
@@ -36,10 +42,19 @@ namespace lib.Models
             };
         }
 
-        public void Apply(IEnumerable<ActionBase> actions)
+        public Action ApplyRange(IEnumerable<ActionBase> actions)
         {
+            var undos = new List<Action>();
             foreach (var action in actions)
-                Apply(action);
+                undos.Add(Apply(action));
+            return () =>
+            {
+                for (var i = undos.Count - 1; i >= 0; i--)
+                {
+                    var action = undos[i];
+                    action();
+                }
+            };
         }
 
         public Action Wrap()
@@ -67,7 +82,11 @@ namespace lib.Models
 
         public State Clone()
         {
-            return new State(Worker.Clone(), Map.Clone(), Boosters.ToList(), Time, UnwrappedLeft);
+            var clone = (State)MemberwiseClone();
+            clone.Map = clone.Map.Clone();
+            clone.Worker = clone.Worker.Clone();
+            clone.Boosters = clone.Boosters.ToList();
+            return clone;
         }
 
         public Action CollectBoosters()
@@ -80,21 +99,49 @@ namespace lib.Models
                 switch (booster.Type)
                 {
                     case BoosterType.Extension:
-                        Worker.ExtensionCount++;
+                        ExtensionCount++;
                         break;
                     case BoosterType.FastWheels:
-                        Worker.FastWheelsCount++;
+                        FastWheelsCount++;
                         break;
                     case BoosterType.Drill:
-                        Worker.DrillCount++;
+                        DrillCount++;
                         break;
                     case BoosterType.Teleport:
-                        Worker.TeleportsCount++;
+                        TeleportsCount++;
+                        break;
+                    case BoosterType.Cloning:
+                        CloningCount++;
                         break;
                 }
                 Boosters.Remove(booster);
             }
-            return () => Boosters.AddRange(boostersToCollect);
+            return () =>
+            {
+                foreach (var booster in boostersToCollect)
+                {
+                    switch (booster.Type)
+                    {
+                        case BoosterType.Extension:
+                            ExtensionCount--;
+                            break;
+                        case BoosterType.FastWheels:
+                            FastWheelsCount--;
+                            break;
+                        case BoosterType.Drill:
+                            DrillCount--;
+                            break;
+                        case BoosterType.Teleport:
+                            TeleportsCount--;
+                            break;
+                        case BoosterType.Cloning:
+                            CloningCount--;
+                            break;
+                    }
+                    Boosters.Remove(booster);
+                }
+                Boosters.AddRange(boostersToCollect);
+            };
         }
 
         public void Unwrap(List<(V pos, CellState oldState)> wrappedCells)

@@ -175,8 +175,8 @@ namespace lib.Solvers.RandomWalk
                 {
                     var part = SolvePart(sub);
                     solution.AddRange(part);
-                    sub.Apply(part);
-                    state.Apply(part);
+                    sub.ApplyRange(part);
+                    state.ApplyRange(part);
                 }
             }
 

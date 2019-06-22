@@ -4,6 +4,6 @@ namespace lib.Models
 {
     public abstract class ActionBase
     {
-        public abstract Action Apply(State state);
+        public abstract Action Apply(State state, Worker worker);
     }
 }

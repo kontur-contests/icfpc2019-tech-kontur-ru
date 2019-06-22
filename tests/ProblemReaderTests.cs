@@ -44,9 +44,7 @@ namespace tests
                             Manipulators = new List<V> {new V(1, 0), new V(1, 1), new V(1, -1)}
                         },
                         expectedMap,
-                        new List<Booster>(),
-                        0,
-                        null
+                        new List<Booster>()
                     ));
             state.Map.ToString()
                 .Should()

@@ -15,9 +15,7 @@ namespace lib.Models
                     Manipulators = new List<V> {new V(1, 0), new V(1, 1), new V(1, -1)}
                 },
                 ConvertMap(problem.Map, problem.Obstacles),
-                problem.Boosters,
-                0,
-                null);
+                problem.Boosters);
             return state;
         }
 

@@ -52,7 +52,7 @@ namespace lib.Solvers.RandomWalk
             {
                 var part = SolvePart(state);
                 solution.AddRange(part);
-                state.Apply(part);
+                state.ApplyRange(part);
             }
 
             return solution;

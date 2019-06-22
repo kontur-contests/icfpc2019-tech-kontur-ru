@@ -20,18 +20,18 @@ namespace lib.Models
                 : $"INVALID MOVE {Shift}";
         }
 
-        public bool IsValid(State state)
+        public bool IsValid(State state, Worker worker)
         {
-            var newPosition = state.Worker.Position + Shift;
-            return newPosition.Inside(state.Map) && (state.Map[newPosition] != CellState.Obstacle || state.Worker.DrillTimeLeft > 0);
+            var newPosition = worker.Position + Shift;
+            return newPosition.Inside(state.Map) && (state.Map[newPosition] != CellState.Obstacle || worker.DrillTimeLeft > 0);
         }
 
-        public override Action Apply(State state)
+        public override Action Apply(State state, Worker worker)
         {
-            var undo = ApplySingleMove(state, ignoreInvalidMove: false);
-            if (state.Worker.FastWheelsTimeLeft > 0)
+            var undo = ApplySingleMove(state, worker, ignoreInvalidMove: false);
+            if (worker.FastWheelsTimeLeft > 0)
             {
-                var undo2 = ApplySingleMove(state, ignoreInvalidMove: true);
+                var undo2 = ApplySingleMove(state, worker, ignoreInvalidMove: true);
                 return () =>
                 {
                     undo();
@@ -41,17 +41,17 @@ namespace lib.Models
             return undo;
         }
 
-        private Action ApplySingleMove(State state, bool ignoreInvalidMove)
+        private Action ApplySingleMove(State state, Worker worker, bool ignoreInvalidMove)
         {
-            var newPosition = state.Worker.Position + Shift;
-            if (!newPosition.Inside(state.Map) || state.Map[newPosition] == CellState.Obstacle && state.Worker.DrillTimeLeft == 0)
+            var newPosition = worker.Position + Shift;
+            if (!newPosition.Inside(state.Map) || state.Map[newPosition] == CellState.Obstacle && worker.DrillTimeLeft == 0)
             {
                 if (ignoreInvalidMove)
                     return () => { };
-                throw new InvalidOperationException($"Invalid move from {state.Worker.Position} to obstacle {newPosition}. Action: {this}");
+                throw new InvalidOperationException($"Invalid move from {worker.Position} to obstacle {newPosition}. Action: {this}");
             }
 
-            state.Worker.Position += Shift;
+            worker.Position += Shift;
             var unwrap = state.Wrap();
             var returnBoosters = state.CollectBoosters();
             return () =>

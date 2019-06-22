@@ -15,11 +15,6 @@ namespace lib.Models
 
         public V Position { get; set; }
 
-        public int ExtensionCount { get; set; }
-        public int FastWheelsCount { get; set; }
-        public int DrillCount { get; set; }
-        public int TeleportsCount { get; set; }
-        
         public int FastWheelsTimeLeft { get; set; }
         public int DrillTimeLeft { get; set; }
 

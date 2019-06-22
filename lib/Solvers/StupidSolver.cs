@@ -54,7 +54,7 @@ namespace lib.Solvers
                     break;
 
                 var actions = pathBuilder.GetActions(best).Take(1).ToList();
-                state.Apply(actions);
+                state.ApplyRange(actions);
                 result.AddRange(actions);
             }
 
@@ -87,7 +87,7 @@ namespace lib.Solvers
 
                 actions.Add(add);
 
-                state.Apply(actions);
+                state.ApplyRange(actions);
                 result.AddRange(actions);
             }
         }
