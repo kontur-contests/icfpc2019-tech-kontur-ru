@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using lib;
 using lib.Models;
@@ -24,6 +25,11 @@ namespace tests.Solvers
         {
             var state = ReadFromFile(id);
             state.ClustersState = new ClustersState(ClustersStateReader.Read(id), state);
+            
+            var pathFileName = Path.Combine(FileHelper.PatchDirectoryName("clusters.v2"), $"prob-{id:000}.path");
+            if (File.Exists(pathFileName))
+                state.ClustersState.Path = File.ReadAllLines(pathFileName).Select(int.Parse).ToList();
+
             var result = solver.Solve(state);
             Save(result, id);
             Console.WriteLine($"Solved {id} problem in {result.CalculateTime()} steps.");

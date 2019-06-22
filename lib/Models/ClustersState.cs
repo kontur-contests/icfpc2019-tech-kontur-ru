@@ -14,7 +14,8 @@ namespace lib.Models
             WrappedSq = new Dictionary<(int level, int clusterId), int>();
             ChildIds = new Dictionary<(int level, int clusterId), HashSet<int>>();
             RootIds = new HashSet<int>();
-
+            Path = null;
+            
             RootLevel = lines[0].cluster_hierarchy.Length - 1;
 
             foreach (var line in lines)
@@ -76,6 +77,7 @@ namespace lib.Models
         public Map<int[]> ClusterIds { get; set; }
         public Dictionary<(int level, int clusterId), int> Unwrapped { get; set; }
         public Dictionary<(int level, int clusterId), int> Wrapped { get; set; }
+        public List<int> Path { get; set; }
         
         public Dictionary<(int level, int clusterId), int> WrappedSq { get; set; }
 

@@ -19,10 +19,16 @@ namespace MishaResearch
         static void Main(string[] args)
         {
             Directory.CreateDirectory("pathes");
-            foreach (var file in Directory.EnumerateFiles("clusters.v2"))
+            foreach (var file in Directory.EnumerateFiles(FileHelper.PatchDirectoryName("clusters.v2")).OrderBy(x => int.Parse(pathRegex.Match(x).Groups[1].Value)))
             {
                 var code = $"{int.Parse(pathRegex.Match(file).Groups[1].Value):D3}";
-                var problem = ProblemReader.Read(File.ReadAllText($"../../../../problems/all/prob-{code}.desc"));
+                var resFileName = Path.Combine(FileHelper.PatchDirectoryName("clusters.v2"), $"prob-{code}.path");
+                if (File.Exists(resFileName))
+                    continue;
+
+                Console.Out.WriteLine(code);
+                
+                var problem = ProblemReader.Read(int.Parse(pathRegex.Match(file).Groups[1].Value));
 
                 var records = File.ReadAllLines(file)
                     .Select(JsonConvert.DeserializeObject<ClusterRecord>)
@@ -32,7 +38,8 @@ namespace MishaResearch
                 hierarchy.CalculateDistancesBetweenChilds();
                 var path = hierarchy.BuildPath(startRecord.cluster_hierarchy, null, new List<int>());
 
-                File.WriteAllLines($"pathes/prob-{code}", path.Select(p => p.Points[p.Points.Count / 2]).Select(p => $"{p.X}\t{p.Y}"));
+                //File.WriteAllLines($"pathes/prob-{code}", path.Select(p => p.Points[p.Points.Count / 2]).Select(p => $"{p.X}\t{p.Y}"));
+                File.WriteAllLines(resFileName, path.Select(p => p.Id.ToString()));
             }
         }
 

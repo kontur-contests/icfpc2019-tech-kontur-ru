@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using lib.Models;
 using lib.Solvers.RandomWalk;
 
@@ -49,6 +51,10 @@ namespace lib.Solvers
 
             var state = problemMeta.Problem.ToState();
             state.ClustersState = new ClustersState(ClustersStateReader.Read(problemMeta.ProblemId), state);
+            
+            var pathFileName = Path.Combine(FileHelper.PatchDirectoryName("clusters.v2"), $"prob-{problemMeta.ProblemId:000}.path");
+            state.ClustersState.Path = File.ReadAllLines(pathFileName).Select(int.Parse).ToList();
+            
             var actions = solver.Solve(state);
             var solutionBlob = actions.Format();
 
