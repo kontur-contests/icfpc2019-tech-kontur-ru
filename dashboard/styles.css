@@ -1,12 +1,17 @@
 .table {
     border: 1px solid;
     border-collapse: collapse;
+    margin: 20px 10px;
 }
 
 .table td,
 .table th {
     border: 1px solid;
     padding: 5px;
+}
+
+.table th {
+    cursor: pointer;
 }
 
 .min {
@@ -21,4 +26,14 @@
     border-color: blue;
     border-width: 2px;
     box-shadow: 0 0 7px rgba(0, 0, 255, 0.7);
+}
+
+.show-all {
+    margin: 15px 10px;
+    font-size: 15px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    background: white;
+    box-shadow: none;
+    border: 1px solid #666;
 }
