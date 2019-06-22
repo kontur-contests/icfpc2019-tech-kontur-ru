@@ -1,6 +1,6 @@
 using System;
 
-namespace lib.Models
+namespace lib.Models.Actions
 {
     public abstract class ActionBase
     {

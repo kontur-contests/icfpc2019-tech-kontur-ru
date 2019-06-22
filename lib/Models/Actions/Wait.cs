@@ -1,6 +1,6 @@
 using System;
 
-namespace lib.Models
+namespace lib.Models.Actions
 {
     public class Wait : ActionBase
     {

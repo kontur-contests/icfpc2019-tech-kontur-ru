@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
+using lib.Models.Actions;
 
 namespace lib.Solvers.RandomWalk
 {

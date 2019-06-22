@@ -6,6 +6,7 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using lib;
 using lib.Models;
+using lib.Models.Actions;
 using lib.Solvers;
 using NUnit.Framework;
 

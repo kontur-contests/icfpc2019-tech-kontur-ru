@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace lib.Models
+namespace lib.Models.Actions
 {
     public class UseExtension : ActionBase
     {

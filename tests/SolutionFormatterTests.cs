@@ -1,5 +1,6 @@
 using FluentAssertions;
 using lib.Models;
+using lib.Models.Actions;
 using NUnit.Framework;
 
 namespace tests
