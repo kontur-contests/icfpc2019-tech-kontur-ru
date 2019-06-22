@@ -5,7 +5,7 @@ let currentProblemNumber = null;
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext("2d");
 const colors = {
-    darkGrey: "#404040",
+    darkGrey: "#666",
     lightGrey: "#eaeaea",
     outerPoint: '#000000',
     innerPoint: '#00ff00',
@@ -182,6 +182,6 @@ function renderPoint(x, y, color) {
     ctx.fillStyle = color;
     ctx.strokeStyle = 'black';
     ctx.beginPath();
-    ctx.arc(x,y, config.pixelSize / 2, 0, Math.PI * 2);
+    ctx.arc(x + config.pixelSize / 2, y - config.pixelSize / 2, config.pixelSize / 2, 0, Math.PI * 2);
     ctx.fill();
 }
