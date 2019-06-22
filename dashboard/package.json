@@ -1,0 +1,11 @@
+{
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "mongodb": "^3.2.7"
+  },
+  "scripts": {
+    "start": "node dashboard.js"
+  }
+}
