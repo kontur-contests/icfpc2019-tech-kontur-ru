@@ -38,15 +38,18 @@ namespace lib.Solvers
                 //() => new BlockDeepWalkSolver(blockSize: 50, depth: 3, new Estimator(), usePalka: true),
                 // () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: false),
                 // () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: true),
-                () => new FastDeepWalkSolver(2, new ClusterWorkerEstimator(), usePalka: false)
+                () => new FastDeepWalkSolver(2, new ClusterWorkerEstimator(), usePalka: false),
+                () => new FastDeepWalkSolver(2, new ClusterWorkerEstimator(), usePalka: true),
             };
         }
 
         public static SolutionMeta Solve(ISolver solver, ProblemMeta problemMeta)
         {
             var stopwatch = Stopwatch.StartNew();
-                        
-            var actions = solver.Solve(problemMeta.Problem.ToState());
+
+            var state = problemMeta.Problem.ToState();
+            state.ClustersState = new ClustersState(ClustersStateReader.Read(problemMeta.ProblemId), state);
+            var actions = solver.Solve(state);
             var solutionBlob = actions.Format();
 
             stopwatch.Stop();
