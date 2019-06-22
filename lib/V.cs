@@ -52,7 +52,7 @@ namespace lib
 
         public int MLen() => Math.Abs(X) + Math.Abs(Y);
 
-        private static readonly V[] shifts = {new V(0, 1), new V(1, 0), new V(0, -1), new V(-1, 0)};
+        private static readonly V[] shifts = {new V(1, 0), new V(0, -1), new V(-1, 0), new V(0, 1)};
 
         public static V GetShift(int direction)
         {

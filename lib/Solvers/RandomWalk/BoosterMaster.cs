@@ -57,9 +57,9 @@ namespace lib.Solvers.RandomWalk
             }
         }
 
-        public static void CreatePalka(State state, List<ActionBase> result)
+        public static void CreatePalka(State state, List<ActionBase> result, int type = 0)
         {
-            var k = 0;
+            var k = type == 0 ? 0 : 1;
 
             while (true)
             {
@@ -79,7 +79,11 @@ namespace lib.Solvers.RandomWalk
                 var y = k / 2 + 2;
                 y = k % 2 == 0 ? -y : y;
                 var add = new UseExtension(new V(1, y));
-                k++;
+
+                if (type == 0)
+                    k++;
+                else
+                    k += 2;
 
                 actions.Add(add);
 

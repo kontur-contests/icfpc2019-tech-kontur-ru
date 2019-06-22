@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Schema;
 using lib.Models;
 using lib.Models.Actions;
+using lib.Solvers.RandomWalk;
 
 namespace lib.Solvers
 {
@@ -25,7 +26,7 @@ namespace lib.Solvers
         {
             result = new List<ActionBase>();
 
-            CollectManipulators(state);
+            BoosterMaster.CreatePalka(state, result);
 
             while (true)
             {
@@ -60,37 +61,6 @@ namespace lib.Solvers
             }
 
             return new List<List<ActionBase>> {result};
-        }
-
-        private void CollectManipulators(State state)
-        {
-            var k = 0;
-
-            while (true)
-            {
-                var boosters = state.Boosters.Where(b => b.Type == BoosterType.Extension).ToList();
-
-                if (!boosters.Any())
-                    return;
-
-                var map = state.Map;
-                var me = state.SingleWorker;
-                var pathBuilder = new PathBuilder(map, me.Position, false);
-
-                var best = boosters.OrderBy(b => pathBuilder.Distance(b.Position)).First();
-
-                var actions = pathBuilder.GetActions(best.Position);
-
-                var y = k / 2 + 2;
-                y = k % 2 == 0 ? -y : y;
-                var add = new UseExtension(new V(1, y));
-                k++;
-
-                actions.Add(add);
-
-                state.ApplyRange(actions);
-                result.AddRange(actions);
-            }
         }
 
         private class PathBuilder

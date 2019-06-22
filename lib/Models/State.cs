@@ -36,6 +36,8 @@ namespace lib.Models
         public int TeleportCount { get; set; }
         public int CloningCount { get; set; }
 
+        public Action<V> OnWrap { get; set; }
+
         public string Print()
         {
             var enumerable = Enumerable
@@ -123,7 +125,11 @@ namespace lib.Models
             {
                 res.Add((pp, Map[pp]));
                 if (Map[pp] == CellState.Void)
+                {
                     UnwrappedLeft--;
+                    OnWrap?.Invoke(pp);
+                }
+
                 Map[pp] = CellState.Wrapped;
             }
 
