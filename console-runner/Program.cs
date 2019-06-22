@@ -11,6 +11,7 @@ using System.Xml;
 using lib;
 using lib.API;
 using lib.Models;
+using lib.Puzzles;
 using lib.Solvers;
 using Microsoft.Extensions.CommandLineUtils;
 using pipeline;
@@ -183,7 +184,18 @@ namespace console_runner
                 command.OnExecute(async () =>
                 {
                     var block = await Api.GetCurrentBlockchainBlock();
+
+                    var ourProblem = new MstPuzzleSolver().Solve(block.Puzzle);
+                    if (!ourProblem.IsValidForPuzzle(block.Puzzle))
+                    {
+                        throw new InvalidOperationException("invalid task");
+                    }
+                    var ourProblemPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.desc");
+                    File.WriteAllText(ourProblemPath, ourProblem.ToString());
                     
+                    var puzzlePath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.cond");
+                    File.WriteAllText(puzzlePath, block.Puzzle.ToString());
+
                     var solvers = RunnableSolvers
                         .Enumerate()
                         .OrderBy(_ => Guid.NewGuid())
@@ -206,7 +218,7 @@ namespace console_runner
                         .OrderBy(x => x.Item2.Format().Length)
                         .First();
                         
-                    var solutionPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", "best.sol");
+                    var solutionPath = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}.sol");
                     File.WriteAllText(solutionPath, best.Item2.Format());
 
                     return 0;
