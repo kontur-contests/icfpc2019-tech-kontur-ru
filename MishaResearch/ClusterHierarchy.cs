@@ -78,7 +78,7 @@ namespace MishaResearch
             }
 
             foreach (var pair in Childs.Where(pair => !inComponentHierarchy.Contains(pair.Value)))
-                BuildDistances(pair.Value, inComponentHierarchy.ToHashSet());
+                BuildDistances(pair.Value, Childs.Values.Where(c => c != pair.Value).ToHashSet());
 
             var component = inComponentHierarchy.ToList();
 
@@ -109,6 +109,8 @@ namespace MishaResearch
             {
                 child.Value.CalculateDistancesBetweenChilds();
             }
+            if(DistanceBetweenClusters.Count == 4 )
+                Console.WriteLine("");
         }
 
         private void BuildDistances(ClusterHierarchy node, HashSet<ClusterHierarchy> aims)

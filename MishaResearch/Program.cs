@@ -33,18 +33,6 @@ namespace MishaResearch
                 var path = hierarchy.BuildPath(startRecord.cluster_hierarchy, null, new List<int>());
 
                 File.WriteAllLines($"pathes/prob-{code}", path.Select(p => p.Points[p.Points.Count / 2]).Select(p => $"{p.X}\t{p.Y}"));
-                File.WriteAllLines($"pathes/prob-{code}-l1", hierarchy.Path.Select(p => hierarchy.Childs[p]).Select(p => p.Points[p.Points.Count / 2]).Select(p => $"{p.X}\t{p.Y}"));
-                File.WriteAllLines($"pathes/prob-{code}-l2", hierarchy.Path.Select(p => hierarchy.Childs[p])
-                    .SelectMany(n => n.Path.Select(c => n.Childs[c])).Select(p => p.Points[p.Points.Count / 2]).Select(p => $"{p.X}\t{p.Y}"));
-                File.WriteAllLines($"pathes/prob-{code}-l3", hierarchy.Path.Select(p => hierarchy.Childs[p])
-                    .SelectMany(n => n.Path.Select(c => n.Childs[c]))
-                    .SelectMany(n => n.Path.Select(c => n.Childs[c]))
-                    .Select(p => p.Points[p.Points.Count / 2]).Select(p => $"{p.X}\t{p.Y}"));
-                File.WriteAllLines($"pathes/prob-{code}-l4", hierarchy.Path.Select(p => hierarchy.Childs[p])
-                    .SelectMany(n => n.Path.Select(c => n.Childs[c]))
-                    .SelectMany(n => n.Path.Select(c => n.Childs[c]))
-                    .SelectMany(n => n.Path.Select(c => n.Childs[c]))
-                    .Select(p => p.Points[p.Points.Count / 2]).Select(p => $"{p.X}\t{p.Y}"));
             }
         }
 

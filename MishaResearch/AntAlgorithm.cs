@@ -66,8 +66,6 @@ namespace MishaResearch
                     score += distances[(pos, pathend)];
                 }
 
-                Console.WriteLine(score);
-
                 if (score < bestDistance)
                 {
                     bestPath = path;
