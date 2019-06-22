@@ -3,24 +3,25 @@ image: beevee/dotfox:latest
 stages:
     - compare_csv
     - submit
+    - solve_block
 
 #check_unchecked:scheduled:
 #    stage: test
 #    script:
-#        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
+#        - "dotnet run -c Release --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
 #    only:
 #        - schedules
 #
 #check_unchecked:
 #    stage: test
 #    script:
-#        - "dotnet run --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
+#        - "dotnet run -c Release --project console-runner/console-runner.csproj -- check-unchecked -g geckodriver_docker"
 #    when: manual
 
 compare_csv:scheduled:
     stage: compare_csv
     script:
-        - "dotnet run --project console-runner/console-runner.csproj -- csv > our.csv"
+        - "dotnet run -c Release --project console-runner/console-runner.csproj -- csv > our.csv"
         - "curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/$(curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/submissions.txt | tail -1 | cut -d ' ' -f 1)/score.csv > their.csv"
         - "diff our.csv their.csv"
     allow_failure: false
@@ -30,7 +31,7 @@ compare_csv:scheduled:
 #compare_csv:
 #    stage: compare_csv
 #    script:
-#        - "dotnet run --project console-runner/console-runner.csproj -- csv > our.csv"
+#        - "dotnet run -c Release --project console-runner/console-runner.csproj -- csv > our.csv"
 #        - "curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/$(curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/submissions.txt | tail -1 | cut -d ' ' -f 1)/score.csv > their.csv"
 #        - "diff our.csv their.csv"
 #    allow_failure: false
@@ -39,6 +40,12 @@ compare_csv:scheduled:
 submit:
     stage: submit
     script:
-        - "dotnet run --project console-runner/console-runner.csproj -- submit -z solutions"
+        - "dotnet run -c Release --project console-runner/console-runner.csproj -- submit -z solutions"
         - "curl -s -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"
     when: on_failure
+
+solve_block:
+    stage: solve_block
+    script:
+        - "dotnet run -c Release --project console-runner/console-runner.csproj -- solve-block -s"
+    when: manual
