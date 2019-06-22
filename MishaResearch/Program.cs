@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using lib;
 using lib.Models;
 using MongoDB.Bson.IO;
@@ -13,9 +14,31 @@ namespace MishaResearch
 {
     class Program
     {
+        static Regex pathRegex = new Regex(@"prob-(\d+)", RegexOptions.Compiled);
+
         static void Main(string[] args)
         {
-            var moves = new List<V>{new V(-1,0), new V(1, 0), new V(0, -1), new V(0, 1), new V(-1, -1), new V(1, 1), new V(1, -1), new V(-1, 1) };
+            Directory.CreateDirectory("pathes");
+            foreach (var file in Directory.EnumerateFiles("clusters.v2").Skip(3).Take(5))
+            {
+                var code = $"{int.Parse(pathRegex.Match(file).Groups[1].Value):D3}";
+                var problem = ProblemReader.Read(File.ReadAllText($"../../../../problems/all/prob-{code}.desc"));
+
+                var records = File.ReadAllLines(file)
+                    .Select(JsonConvert.DeserializeObject<ClusterRecord>)
+                    .ToList();
+                var startRecord = records.First(r => new V(r.X, r.Y).Equals(problem.Point));
+                var hierarchy = new ClusterHierarchy(records);
+                hierarchy.CalculateDistancesBetweenChilds();
+                var path = hierarchy.BuildPath(startRecord.cluster_hierarchy, null, new List<int>());
+
+                File.WriteAllLines($"pathes/prob-{code}", path.Select(p => p.Points[p.Points.Count / 2]).Select(p => $"{p.X}\t{p.Y}"));
+            }
+        }
+
+        private static void PrepareDataToCluster()
+        {
+            var moves = new List<V> {new V(-1, 0), new V(1, 0), new V(0, -1), new V(0, 1), new V(-1, -1), new V(1, 1), new V(1, -1), new V(-1, 1)};
 
             Directory.CreateDirectory("maps2");
 
@@ -33,10 +56,10 @@ namespace MishaResearch
                 {
                     for (int x = 0; x < map.SizeX; x++)
                     {
-                        var point = new V(x,y);
-                        if(map[point] == CellState.Obstacle)
+                        var point = new V(x, y);
+                        if (map[point] == CellState.Obstacle)
                             continue;
-                        var gp = new GraphPoint { X = point.X, Y = point.Y, Id = vecToId.GetOrAdd(point, _ => vecToId.Count), ConnectedIds = new List<int>() };
+                        var gp = new GraphPoint {X = point.X, Y = point.Y, Id = vecToId.GetOrAdd(point, _ => vecToId.Count), ConnectedIds = new List<int>()};
 
                         for (int m = 0; m < moves.Count; m++)
                         {
@@ -46,6 +69,7 @@ namespace MishaResearch
                                 continue;
                             gp.ConnectedIds.Add(vecToId.GetOrAdd(point2, _ => vecToId.Count));
                         }
+
                         points.Add(gp);
                     }
                 }
@@ -54,8 +78,6 @@ namespace MishaResearch
                 File.WriteAllLines(newFileName, points.Select(JsonConvert.SerializeObject));
             }
         }
-
-        
     }
 
     class GraphPoint
