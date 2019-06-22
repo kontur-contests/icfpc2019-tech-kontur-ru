@@ -10,15 +10,34 @@ namespace MishaResearch
         [ThreadStatic] private static Random random;
         public static (List<int>, int) GetPath(Dictionary<(int, int), int> distances, int start, List<int> end, int iterations)
         {
-            if(random == null)
+            var nodes = distances.Keys.Select(pair => pair.Item1).Distinct().ToList();
+            {
+                var queue = new PriorityQueue<(List<int> path, int distance)>();
+                int it = 0;
+                queue.Enqueue(0, (new List<int> { start }, 0));
+                while (queue.Count > 0 && it < 100000)
+                {
+                    var next = queue.Dequeue();
+                    if (next.path.Count == nodes.Count)
+                        return (next.path, next.distance);
+                    foreach (var node in nodes.Where(n => !next.path.Contains(n)))
+                    {
+                        var dist = next.distance + distances[(next.path[next.path.Count - 1], node)];
+                        queue.Enqueue(-dist, (next.path.Concat(new[] { node }).ToList(), dist));
+                    }
+
+                    it++;
+                }
+            }
+
+            if (random == null)
                 random = new Random();
             List<int> bestPath = null;
             int bestDistance = int.MaxValue;
             var pheromones = distances.ToDictionary(pair => pair.Key, _ => 1.0);
-            var nodes = distances.Keys.Select(pair => pair.Item1).Distinct().ToList();
             if (nodes.Count < 3)
                 iterations = 1;
-
+            
             for (int i = 0; i < iterations; i++)
             {
                 HashSet<int> visited = new HashSet<int>();
