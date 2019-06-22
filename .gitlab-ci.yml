@@ -47,5 +47,6 @@ submit:
 solve_block:
     stage: solve_block
     script:
+        - "pip3 install -r lambda-client/requirements.txt"
         - "dotnet run -c Release --project console-runner/console-runner.csproj -- solve-block -s"
     when: manual
