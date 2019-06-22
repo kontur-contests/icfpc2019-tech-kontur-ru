@@ -24,9 +24,11 @@ namespace tests
         [Test]
         public void TestSolve()
         {
-            var puzzle = PuzzleReader.ReadFromFile(2);
+            var id = 2;
+
+            var puzzle = PuzzleReader.ReadFromFile(id);
             var problem = new MstPuzzleSolver().Solve(puzzle);
-            var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{puzzle:000}.desc");
+            var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{id:000}.desc");
             File.WriteAllText(path, problem.ToString());
             problem.IsValidForPuzzle(puzzle).Should().BeTrue();
         }
@@ -38,11 +40,11 @@ namespace tests
             problem.Obstacles = new List<List<V>>();
 
             var state = problem.ToState().Map;
-            var map = new Map<Cell>(state.SizeX, state.SizeY);
+            var map = new Map<PuzzleCell>(state.SizeX, state.SizeY);
 
             for (int x = 0; x < map.SizeX; x++)
             for (int y = 0; y < map.SizeY; y++)
-                map[new V(x, y)] = state[new V(x, y)] != CellState.Obstacle ? Cell.Inside : Cell.Outside;
+                map[new V(x, y)] = state[new V(x, y)] != CellState.Obstacle ? PuzzleCell.Inside : PuzzleCell.Outside;
 
             var converted = PuzzleConverter.ConvertMapToPoints(map);
 

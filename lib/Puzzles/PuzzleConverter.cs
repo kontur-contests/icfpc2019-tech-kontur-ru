@@ -7,13 +7,13 @@ namespace lib.Puzzles
 {
     public static class PuzzleConverter
     {
-        public static List<V> ConvertMapToPoints(Map<Cell> map)
+        public static List<V> ConvertMapToPoints(Map<PuzzleCell> map)
         {
             V start = null;
             for (int y = 0; y < map.SizeY && start == null; y++)
             {
                 for (int x = 0; x < map.SizeX && start == null; x++)
-                    if (map[new V(x, y)] == Cell.Inside)
+                    if (map[new V(x, y)] == PuzzleCell.Inside)
                         start = new V(x, y);
             }
 
@@ -73,7 +73,7 @@ namespace lib.Puzzles
             bool Has(int x, int y)
             {
                 var pp = new V(x, y);
-                return pp.Inside(map) && map[pp] == Cell.Inside;
+                return pp.Inside(map) && map[pp] == PuzzleCell.Inside;
             }
 
             int sz = 0;
