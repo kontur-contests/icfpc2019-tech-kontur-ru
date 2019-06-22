@@ -7,6 +7,13 @@ namespace lib.Solvers.RandomWalk
 {
     public class Estimator : IEstimator
     {
+        private readonly bool collectFastWheels;
+
+        public Estimator(bool collectFastWheels = false)
+        {
+            this.collectFastWheels = collectFastWheels;
+        }
+
         public string GetName() => "simple";
         public double Estimate(State state, State prevState)
         {
@@ -24,8 +31,9 @@ namespace lib.Solvers.RandomWalk
             // var distToMinComponent = minComponent
             //     .Select(x => pathBuilder.Distance(x))
             //     .Min();
-            
-            return 100_000_000 - /*components.Count * 100_000*/ distScore - (state.UnwrappedLeft - prevState.UnwrappedLeft) * 100_000;
+
+            int fastWheelsBonus = collectFastWheels ? state.Workers.Sum(w => w.FastWheelsTimeLeft) + state.FastWheelsCount * Constants.FastWheelsTime * 100_000 : 0;
+            return 100_000_000 - /*components.Count * 100_000*/ distScore - (state.UnwrappedLeft - prevState.UnwrappedLeft) * 100_000 + fastWheelsBonus;
         }
 
         private readonly V[] shifts = {"0,1", "1,0", "0,-1", "-1,0"};

@@ -30,9 +30,11 @@ namespace lib.Solvers.RandomWalk
         };
         private readonly List<List<ActionBase>> chains;
         private CyclingTracker cyclingTracker;
+        private readonly bool useWheels;
 
-        public DeepWalkSolver(int depth, IEstimator estimator)
+        public DeepWalkSolver(int depth, IEstimator estimator, bool useWheels = false)
         {
+            this.useWheels = useWheels;
             this.estimator = estimator;
 
             chains = availableActions.Select(x => new List<ActionBase> {x}).ToList();
@@ -51,6 +53,12 @@ namespace lib.Solvers.RandomWalk
 
             while (state.UnwrappedLeft > 0)
             {
+                if (useWheels && state.FastWheelsCount > 0)
+                {
+                    var useFastWheels = new UseFastWheels();
+                    solution.Add(useFastWheels);
+                    state.Apply(useFastWheels);
+                }
                 var part = SolvePart(state);
                 foreach (var action in part)
                 {

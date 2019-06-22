@@ -32,14 +32,16 @@ namespace lib.Solvers.RandomWalk
             new Move("-1,0")
         };
         private readonly bool usePalka;
+        private readonly bool useWheels;
 
-        public RandomWalkSolver(int depth, IEstimator estimator, Random random, int tryCount, bool usePalka)
+        public RandomWalkSolver(int depth, IEstimator estimator, Random random, int tryCount, bool usePalka, bool useWheels = false)
         {
             this.depth = depth;
             this.estimator = estimator;
             this.random = random;
             this.tryCount = tryCount;
             this.usePalka = usePalka;
+            this.useWheels = useWheels;
         }
 
         public List<List<ActionBase>> Solve(State state)
@@ -51,6 +53,12 @@ namespace lib.Solvers.RandomWalk
 
             while (state.UnwrappedLeft > 0)
             {
+                if (useWheels && state.FastWheelsCount > 0)
+                {
+                    var useFastWheels = new UseFastWheels();
+                    solution.Add(useFastWheels);
+                    state.Apply(useFastWheels);
+                }
                 var part = SolvePart(state);
                 solution.AddRange(part);
                 state.ApplyRange(part);

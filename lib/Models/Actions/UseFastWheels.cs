@@ -12,7 +12,8 @@ namespace lib.Models.Actions
                 throw new InvalidOperationException("No fast wheels");
 
             state.FastWheelsCount--;
-            worker.FastWheelsTimeLeft = Constants.FastWheelsTime;
+
+            worker.FastWheelsTimeLeft = worker.FastWheelsTimeLeft == 0 ? Constants.FastWheelsTime + 1 : worker.FastWheelsTimeLeft + Constants.FastWheelsTime;
             return () => state.FastWheelsCount++;
         }
     }

@@ -18,9 +18,23 @@ namespace tests.Solvers
             var result = solver.Solve(state);
             Save(result, id);
             Console.WriteLine($"Solved {id} problem in {result.CalculateTime()} steps.");
+            // LogSolution(id, result);
             return result.CalculateTime();
         }
-        
+
+        private void LogSolution(int id, List<List<ActionBase>> result)
+        {
+            var state1 = ReadFromFile(id);
+            foreach (var action in result)
+            {
+                foreach (var item in action)
+                {
+                    state1.Apply(item);
+                    Console.WriteLine(state1.Time + ": " + item + " -> " + string.Join(" | ", state1.Workers));
+                }
+            }
+        }
+
         public int SolveOneProblemWithCluster(ISolver solver, int id)
         {
             var state = ReadFromFile(id);

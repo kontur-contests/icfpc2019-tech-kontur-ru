@@ -10,14 +10,21 @@ namespace tests.Solvers
         public void SolveOne()
         {
             var solver = new DeepWalkSolver(2, new Estimator());
-            SolveOneProblem(solver, 4);
+            SolveOneProblem(solver, 5);
+        }
+
+        [Test]
+        public void SolveOneWithFastWheels()
+        {
+            var solver = new DeepWalkSolver(2, new Estimator(collectFastWheels:true), useWheels:true);
+            SolveOneProblem(solver, 5);
         }
 
         [Test]
         public void SolveOneZakoulochki()
         {
             var solver = new DeepWalkSolver(2, new EstimatorZakoulocki());
-            SolveOneProblem(solver, 4);
+            SolveOneProblem(solver, 10);
         }
     }
 }
