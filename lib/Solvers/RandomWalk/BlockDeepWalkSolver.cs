@@ -9,7 +9,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return $"block-deep-walk-{usePalka}-{depth}-{blockSize}";
+            return $"block-deep-walk-{depth}-{blockSize}-{usePalka}";
         }
 
         public int GetVersion()
