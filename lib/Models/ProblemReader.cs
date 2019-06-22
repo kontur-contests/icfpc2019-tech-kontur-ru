@@ -63,6 +63,8 @@ namespace lib.Models
                     return new Booster(BoosterType.MysteriousPoint, ReadPoint(s.Substring(1)));
                 case 'R':
                     return new Booster(BoosterType.Teleport, ReadPoint(s.Substring(1)));
+                case 'C':
+                    return new Booster(BoosterType.Cloning, ReadPoint(s.Substring(1)));
                 default:
                     throw new InvalidOperationException($"Unknown booster '{s}'");
             }

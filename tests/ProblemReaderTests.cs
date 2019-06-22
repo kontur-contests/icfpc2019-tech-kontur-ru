@@ -19,7 +19,7 @@ namespace tests
         }
 
         [Test]
-        public void ReadFromFile([Range(1, 150)] int problem)
+        public void ReadFromFile([Range(1, 300)] int problem)
         {
             var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{problem:000}.desc");
             ProblemReader.Read(problem).ToString().Should().Be(File.ReadAllText(fileName));

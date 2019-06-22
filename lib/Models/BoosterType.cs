@@ -6,6 +6,7 @@ namespace lib.Models
         Drill,
         FastWheels,
         MysteriousPoint,
-        Teleport
+        Teleport,
+        Cloning,
     }
 }

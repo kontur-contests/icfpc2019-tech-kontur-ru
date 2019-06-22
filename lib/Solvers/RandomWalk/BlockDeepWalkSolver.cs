@@ -9,7 +9,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return "deep-walk";
+            return $"block-deep-walk-{usePalka}-{depth}-{blockSize}";
         }
 
         public int GetVersion()
@@ -18,6 +18,7 @@ namespace lib.Solvers.RandomWalk
         }
 
         private readonly int blockSize;
+        private readonly int depth;
         private readonly IEstimator estimator;
         private readonly bool usePalka;
 
@@ -35,6 +36,7 @@ namespace lib.Solvers.RandomWalk
         public BlockDeepWalkSolver(int blockSize, int depth, IEstimator estimator, bool usePalka)
         {
             this.blockSize = blockSize;
+            this.depth = depth;
             this.estimator = estimator;
             this.usePalka = usePalka;
 
