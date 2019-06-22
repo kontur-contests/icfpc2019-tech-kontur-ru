@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Client;
-using JsonRpc.Http;
-using lib.Models.API;
+using lib.API;
 
 namespace lib.Models
 {

@@ -1,9 +1,11 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Client;
 using JsonRpc.Http;
+using lib.Models;
 
-namespace lib.Models.API
+namespace lib.API
 {
     public static class Api
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace lib.Models.API
+namespace lib.API
 {
     public class GetBlockInfoResponse
     {

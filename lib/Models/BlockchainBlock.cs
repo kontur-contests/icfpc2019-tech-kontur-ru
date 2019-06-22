@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using lib.Models.API;
+using lib.API;
 
 namespace lib.Models
 {
