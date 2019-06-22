@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
-const fs = require('fs')
+const fs = require('fs');
 
 const dbHost = "mongodb://icfpc19-mongo1:27017";
 const dbName = "icfpc";
@@ -19,47 +19,26 @@ var pipeline = [
             },
             "time": {
                 $min: "$OurTime"
+            },
+            "timestamp": {
+                $max: "$SavedAt"
             }
         }
     }
-]
+];
 
 MongoClient
     .connect(dbHost, { useNewUrlParser: true })
     .then(c => c.db(dbName))
     .then(db => db.collection(metaCollectionName).aggregate(pipeline).toArray())
     .then(data => {
-        var rows = {}
-        var algos = []
-
-        data.forEach(row => {
-            var info = row._id.split('_')
-
-            var id = info[0]
-            var algo = `${info[1]} v${info[2]}`
-
-            if (algos.indexOf(algo) === -1) {
-                algos.push(algo)
-            }
-
-            if (rows[id] === undefined) {
-                rows[id] = {}
-            }
-
-            rows[id][algo] = row.time
-        })
-
-        algos.sort();
-
-        // console.log(rows)
-
-        const styles = `<style>.min {background-color:#cfc} .no {background-color:#ccc}</style>`
+        const styles = '<link rel="stylesheet" href="styles.css">';
         const meta = `<META HTTP-EQUIV="REFRESH" CONTENT="10;URL=/">`
-        const headerHtml = `<th>${algos.map(x => "<th>" + x + "</th>").join("")}</tr>`
-        const rowsHtml = Object.keys(rows).map(i => `<tr><td>${i}</td>${algos.map(x => "<td " + (Object.values(rows[i]).every(z => z >= rows[i][x]) ? 'class="min"' : (!rows[i][x] ? 'class="no"' : "")) + ">" + (rows[i][x] || "") + "</td>").join("")}</tr>`).join("")
-        const tableHtml = `${styles}${meta}<table border='1' cellspacing='0' cellpadding='5'>${headerHtml}${rowsHtml}</table>`
+        const dataForScript = `<script type="text/javascript">const dataFromServer = ${JSON.stringify(data)}</script>`;
+        const scripts = '<script type="text/javascript" src="scripts.js"></script>';
+        const tableHtml = `<head>${styles}${meta}</head><body>${dataForScript}${scripts}</body>`;
 
         fs.writeFileSync("dashboard.html", tableHtml)
-    })
+    });
 
-setInterval(() => process.exit(0), 5000)
+setInterval(() => process.exit(0), 5000);

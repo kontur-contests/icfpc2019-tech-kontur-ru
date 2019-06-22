@@ -1,0 +1,24 @@
+.table {
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+.table td,
+.table th {
+    border: 1px solid;
+    padding: 5px;
+}
+
+.min {
+    background-color:#cfc;
+}
+
+.no {
+    background-color:#ccc;
+}
+
+.recent.recent {
+    border-color: blue;
+    border-width: 2px;
+    box-shadow: 0 0 7px rgba(0, 0, 255, 0.7);
+}
