@@ -74,9 +74,9 @@ namespace console_runner.Commands
 
                             var solvers = RunnableSolvers
                                 .PuzzleSolvers()
-                                .OrderBy(_ => Guid.NewGuid())
+                                //.OrderBy(_ => Guid.NewGuid())
                                 .Select(x => x.Invoke())
-                                .Take(3)
+                                .Take(4)
                                 .ToList();
 
                             var mapSize = block.Problem.ToState().Map;

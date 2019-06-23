@@ -22,6 +22,8 @@ namespace lib.Solvers
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
             };
 
+            result.Add(() => new MiningSolver());
+
             foreach (var use in new [] {true, false})
             {
                 foreach (var limit in new [] {3, 5, 10, 15, 20, 25, 30})
