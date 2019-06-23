@@ -81,7 +81,7 @@ namespace lib.Solvers
                 state.Apply(workerActions);
             }
 
-            return new Solved { Actions = result };
+            return new Solved {Actions = result};
         }
 
         private class PathBuilder

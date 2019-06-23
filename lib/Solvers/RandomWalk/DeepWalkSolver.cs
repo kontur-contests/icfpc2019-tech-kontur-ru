@@ -106,7 +106,7 @@ namespace lib.Solvers.RandomWalk
                         break;
                 }
 
-                if (!used.Contains((state.SingleWorker.Position, state.UnwrappedLeft)))
+                if (solution.Count > 0 && !used.Contains((state.SingleWorker.Position, state.UnwrappedLeft)))
                 {
                     var estimation = estimator.Estimate(state, state.SingleWorker);
                     //Console.Out.Write($"  {estimation} {solution.Format()}");

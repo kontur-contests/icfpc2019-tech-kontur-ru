@@ -101,6 +101,13 @@ function nextTick(e) {
         currentTick++;
     }
 
+    if (ticks[currentTick + 1]) {
+        const ctx = em(W());
+        const image = ticks[currentTick + 1];
+        ctx.putImageData(image, 0, 0);
+        return;
+    }
+
     const gameObj = W();
     gameObj.Hi = false;
     try {

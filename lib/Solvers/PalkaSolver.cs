@@ -57,7 +57,9 @@ namespace lib.Solvers
             while (state.UnwrappedLeft > 0)
             {
                 if (result.Count == 213)
+#pragma warning disable 1717
                     palkaDown = palkaDown;
+#pragma warning restore 1717
 
                 for (int check = 0; check < 2; check++)
                 {
