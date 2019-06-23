@@ -168,7 +168,7 @@ namespace lib.Solvers.Postprocess
         
         private static class PathBuilder
         {
-            public static List<V> Build (Map map, V start, V end)
+            public static List<V> Build(Map map, V start, V end)
             {
                 var queue = new Queue<V>();
                 queue.Enqueue(start);
