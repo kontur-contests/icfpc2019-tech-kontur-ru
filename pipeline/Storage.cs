@@ -121,7 +121,7 @@ namespace pipeline
                         var scoreWithCost = score - s._id;
 
                         // var limit = mapScore - mapScore / minDeltaCoeff;
-                        var delta = scoreWithCost - baseScore < 1000 ? -1 : baselineSolution.time / s.time;
+                        var delta = scoreWithCost - baseScore < 1000 ? -1 : (baselineSolution.time - s.time) / baselineSolution.time;
                         
                         return new {s, delta};
                     })
