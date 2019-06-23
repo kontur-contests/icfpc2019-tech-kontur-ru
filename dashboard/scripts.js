@@ -91,7 +91,7 @@ function renderState() {
 
     if (showTable === 'base') {
         data = formattedData;
-        needProgress = true;
+        bests = calcBaseBests(data.data)
     } else {
         data = formattedBlockchainData;
         bests = calcBests(data.data);
@@ -235,6 +235,65 @@ function calcBests(data) {
     return bests;
 }
 
+function calcBaseBests(data) {
+    const baseBests = {};
+
+    for (const num of Object.keys(data)) {
+        baseBests[num] = {};
+        const task = data[num];
+        for (const algName of Object.keys(task)) {
+            const algRes = task[algName];
+
+            if (algRes[0] && (!baseBests[num].time || algRes[0].time < baseBests[num].time)) {
+                baseBests[num] = {
+                    time: algRes[0].time,
+                    algName,
+                }
+            }
+        }
+    }
+
+
+    for (const num of Object.keys(data)) {
+        const task = data[num];
+        for (const algName of Object.keys(task)) {
+            const algRes = task[algName];
+            for (const cost of Object.keys(algRes)) {
+
+                const mapScore = Math.log2(100 * 100) * 1000;
+                const prevScore = Math.ceil(mapScore * algRes[cost].time / baseBests[num].time);
+                const nextScore = Math.ceil(mapScore);
+
+                const nextScoreWithCost = nextScore - cost;
+
+                algRes[cost].weightedRes = nextScoreWithCost - prevScore;
+            }
+        }
+    }
+
+    const bestWeighted = {};
+
+    for (const num of Object.keys(data)) {
+        bestWeighted[num] = {};
+        const task = data[num];
+        for (const algName of Object.keys(task)) {
+            const algRes = task[algName];
+            for (const cost of Object.keys(algRes)) {
+                if (bestWeighted[num].weightedRes === undefined  || algRes[cost].weightedRes > bestWeighted[num].weightedRes) {
+                    bestWeighted[num] = {
+                        ...algRes[cost],
+                        cost: cost,
+                        algName: algName,
+                    };
+                }
+            }
+        }
+    }
+
+
+    return bestWeighted;
+}
+
 function renderTable(data, algs, tasks, bests) {
     const table = document.createElement('table');
     table.classList.add('table');
@@ -262,11 +321,9 @@ function createTableHeader(algs) {
     const indexTh = document.createElement('th');
     tableHeaderRow.appendChild(indexTh);
 
-    if (showTable !== 'base') {
-        const bestTh = document.createElement('th');
-        bestTh.innerText = 'best score';
-        tableHeaderRow.appendChild(bestTh);
-    }
+    const bestTh = document.createElement('th');
+    bestTh.innerText = 'best score';
+    tableHeaderRow.appendChild(bestTh);
 
 
 
@@ -292,12 +349,10 @@ function createTableBody(data, algs, tasks, bests) {
         tr.appendChild(indexTd);
 
 
-        if (showTable !== 'base') {
-            const bestTd = document.createElement('td');
-            bestTd.classList.add('min');
-            bestTd.innerHTML = `<b>${bests[task].time}</b><br>${bests[task].algName}`;
-            tr.appendChild(bestTd);
-        }
+        const bestTd = document.createElement('td');
+        bestTd.classList.add('min');
+        bestTd.innerHTML = `<b>${bests[task].time}</b><br>${bests[task].algName}<br>Денег тратит: ${bests[task].cost}`;
+        tr.appendChild(bestTd);
 
         tableBody.appendChild(tr);
 
@@ -307,7 +362,7 @@ function createTableBody(data, algs, tasks, bests) {
             const data = rowData[alg];
             let td;
             if (showTable === 'base') {
-                td = createBaseCell(data, alg, task);
+                td = createBaseCell(data, alg, task, bests);
             } else {
                 td = createCell(data, alg, task, bests);
             }
@@ -337,7 +392,7 @@ function createCell(data, algName, taskNum, bests) {
     return td;
 }
 
-function createBaseCell(data, algName, taskNum) {
+function createBaseCell(data, algName, taskNum, bests) {
     const td = document.createElement('td');
 
     if (!data) {
@@ -359,9 +414,9 @@ function createBaseCell(data, algName, taskNum) {
     }, '');
 
 
-    // if (bests[taskNum].algName === algName) {
-    //     td.classList.add('min');
-    // }
+    if (bests[taskNum].algName === algName) {
+        td.classList.add('min');
+    }
     //
     // const now = Date.now();
     // if ( now - data.timestamp * 1000 < TEN_MINUTES) {
