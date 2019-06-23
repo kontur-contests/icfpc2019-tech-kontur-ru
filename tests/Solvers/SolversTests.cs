@@ -61,7 +61,7 @@ namespace tests.Solvers
 
             var modified = state.History.BuildSolved();
             Console.WriteLine($"Modified: {modified.CalculateTime()}");
-            Save(modified, id, "modified");
+            Save(modified, id);
         }
     }
 }
