@@ -23,6 +23,7 @@ namespace pipeline
         private const string metaCollectionName = "solution_metas";
         private const string blockMetaCollectionName = "block_solution_metas";
         private const string solutionInProgressCollectionName = "solution_inprogress";
+        private const string submissionSummaryCollectionName = "submission_summary";
 
         private static readonly MongoClient client = new MongoClient(dbHost);
         private static readonly IMongoDatabase database = client.GetDatabase(dbName);
@@ -30,6 +31,7 @@ namespace pipeline
         internal static readonly IMongoCollection<SolutionMeta> MetaCollection = database.GetCollection<SolutionMeta>(metaCollectionName);
         internal static readonly IMongoCollection<SolutionMeta> BlockMetaCollection = database.GetCollection<SolutionMeta>(blockMetaCollectionName);
         internal static readonly IMongoCollection<SolutionInProgress> SolutionInProgressCollection = database.GetCollection<SolutionInProgress>(solutionInProgressCollectionName);
+        internal static readonly IMongoCollection<SubmissionSummary> SubmissionSummaryCollection = database.GetCollection<SubmissionSummary>(submissionSummaryCollectionName);
 
         public static List<SolutionMeta> EnumerateUnchecked()
         {
@@ -160,6 +162,16 @@ namespace pipeline
             inProgress.StartedAt = DateTime.Now;
             inProgress.HostName = Environment.MachineName;
             Storage.SolutionInProgressCollection.InsertOne(inProgress);
+        }
+
+        public static void SaveToDb(this SubmissionSummary submissionSummary)
+        {
+            submissionSummary.GeneratedByHost = Environment.MachineName;
+            submissionSummary.GeneratedAt = DateTime.Now;
+            Storage.SubmissionSummaryCollection.ReplaceOne(
+                s => s.ProblemId == submissionSummary.ProblemId,
+                submissionSummary,
+                new UpdateOptions {IsUpsert = true});
         }
     }
 }

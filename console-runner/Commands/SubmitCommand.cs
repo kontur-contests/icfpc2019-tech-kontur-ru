@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using lib;
 using lib.API;
+using lib.Models;
 using Microsoft.Extensions.CommandLineUtils;
 using pipeline;
 
@@ -60,6 +61,8 @@ namespace console_runner.Commands
                                             var buyFileName = $"prob-{solution.ProblemId:000}.buy";
                                             File.WriteAllText(Path.Combine(solutionDirectory, buyFileName), solution.BuyBlob);
                                         }
+
+                                        new SubmissionSummary(solution.ProblemId, solution.MoneySpent, solution.OurTime).SaveToDb();
                                     });
 
                             var zipfileName = DateTimeOffset.Now.ToUnixTimeSeconds() + ".zip";
