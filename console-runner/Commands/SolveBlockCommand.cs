@@ -74,7 +74,6 @@ namespace console_runner.Commands
 
                             var solvers = RunnableSolvers
                                 .PuzzleSolvers()
-                                //.OrderBy(_ => Guid.NewGuid())
                                 .Select(x => x.Invoke())
                                 .Take(4)
                                 .ToList();
