@@ -17,6 +17,7 @@ namespace lib.Solvers
                 () => new StupidSolver(false),
                 () => new StupidSolver(true),
                 () => new ParallelDeepWalkSolver(2, new Estimator(false), usePalka: false, useWheels: false, new BoosterType[0]),
+                //() => new ParallelDeepWalkSolver(2, new Estimator(false, true), usePalka: false, useWheels: false, new BoosterType[0]),
                 //() => new PalkaSolver()
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
@@ -25,7 +26,7 @@ namespace lib.Solvers
             //result.Add(() => new MiningSolver(false, -1));
             //result.Add(() => new MiningSolver(true, -1));
 
-            foreach (var limit in new[] { 3, 5, 10, 15, 20, 25, 30 })
+            foreach (var limit in new[] { 5, 10, 15, 20, 25, 30 })
             {
                 foreach (var use in new [] {true, false})
                 {
