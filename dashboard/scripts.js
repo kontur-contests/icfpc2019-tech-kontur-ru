@@ -84,7 +84,9 @@ function renderControls() {
 }
 
 function renderShowAllButton() {
-    if (!hiddenAlgs || !hiddenAlgs.length || document.getElementsByClassName('show-all').length) {
+    if (!hiddenAlgs || !hiddenAlgs.length ||
+        document.getElementsByClassName('show-all').length ||
+        showTable !== 'base') {
         return;
     }
 
@@ -163,7 +165,7 @@ function renderTable(data, algs, tasks, bests, needProgress) {
     body.appendChild(table);
 
 
-    if (needProgress) {
+    if (showTable === 'base') {
         addListeners();
     }
 }
@@ -196,7 +198,7 @@ function createTableBody(data, algs, tasks, bests, needProgress) {
     const tableBody = document.createElement('tbody');
     const now = Date.now();
 
-    tasks.sort((a, b) => needProgress ? a - b : b - a).forEach(task => {
+    tasks.sort((a, b) => showTable === 'base' ? a - b : b - a).forEach(task => {
         const tr = document.createElement('tr');
         const indexTd = document.createElement('td');
         indexTd.textContent = task;
