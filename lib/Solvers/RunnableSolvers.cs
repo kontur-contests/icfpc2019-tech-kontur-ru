@@ -22,11 +22,12 @@ namespace lib.Solvers
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
             };
 
-            result.Add(() => new MiningSolver());
+            //result.Add(() => new MiningSolver(false, -1));
+            //result.Add(() => new MiningSolver(true, -1));
 
-            foreach (var use in new [] {true, false})
+            foreach (var limit in new[] { 3, 5, 10, 15, 20, 25, 30 })
             {
-                foreach (var limit in new [] {3, 5, 10, 15, 20, 25, 30})
+                foreach (var use in new [] {true, false})
                 {
                     result.Add(() => new MiningSolver(use,  limit));
                 }

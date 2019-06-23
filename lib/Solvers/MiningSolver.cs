@@ -37,7 +37,9 @@ namespace lib.Solvers
             if (palka)
                 BoosterMaster.CreatePalka2(state, result[0]);
 
-            BoosterMaster.CloneAttack(state, result);
+            if (limit != -1)
+                BoosterMaster.CloneAttack(state, result);
+
             var pathBuilder = new PathBuilder(state.Map, limit);
 
             while (state.UnwrappedLeft > 0)
