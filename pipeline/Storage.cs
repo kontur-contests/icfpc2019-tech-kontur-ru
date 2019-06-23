@@ -53,9 +53,9 @@ namespace pipeline
                 .ToList();
             foreach (var tuple in tuples)
             {
-                if (balance >= tuple.best.MoneySpent && tuple.delta >= minDelta)
-                    metas.Add(tuple.best);
-                else
+                // if (balance >= tuple.best.MoneySpent && tuple.delta >= minDelta)
+                //     metas.Add(tuple.best);
+                // else
                     metas.Add(tuple.@base);
 
                 balance -= metas.Last().MoneySpent;
