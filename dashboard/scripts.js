@@ -473,6 +473,20 @@ function createBaseCell(data, algName, taskNum, bests) {
         td.setAttribute('title', `Посчитан недавно`)
     }
 
+    const moneys = Object.keys(data).map(i => parseInt(i));
+    const times = Object.values(data).map(i => i.time);
+
+
+    if (moneys.includes(formattedSubmission[taskNum].moneySpent) && times.includes(formattedSubmission[taskNum].time)) {
+        td.classList.add('submitted');
+        let title = '';
+        if (td.getAttribute('title')) {
+            title += td.getAttribute('title') + ' '
+        }
+        title += 'Submitted';
+        td.setAttribute('title', title);
+    }
+
     return td;
 }
 
