@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using lib;
+using lib.API;
 using Microsoft.Extensions.CommandLineUtils;
 using pipeline;
 
@@ -21,6 +22,11 @@ namespace console_runner.Commands
                     var zipfileOption = command.Option(
                         "-z|--zipfile",
                         "Override zip file name",
+                        CommandOptionType.SingleValue);
+                    
+                    var minDeltaOption = command.Option(
+                        "-d|--min-delta",
+                        $"Override minimum delta (default {Common.defaultMinDelta})",
                         CommandOptionType.SingleValue);
 
                     command.OnExecute(
@@ -42,12 +48,18 @@ namespace console_runner.Commands
                             }
 
                             Storage
-                                .EnumerateBestSolutions()
+                                .EnumerateBestSolutions(Api.GetBalance().GetAwaiter().GetResult(), minDeltaOption.HasValue() ? int.Parse(minDeltaOption.Value()) : Common.defaultMinDelta)
                                 .ForEach(
                                     solution =>
                                     {
-                                        var fileName = $"prob-{solution.ProblemId:000}.sol";
-                                        File.WriteAllText(Path.Combine(solutionDirectory, fileName), solution.SolutionBlob);
+                                        var solFileName = $"prob-{solution.ProblemId:000}.sol";
+                                        File.WriteAllText(Path.Combine(solutionDirectory, solFileName), solution.SolutionBlob);
+                                        
+                                        if (!string.IsNullOrEmpty(solution.BuyBlob))
+                                        {
+                                            var buyFileName = $"prob-{solution.ProblemId:000}.buy";
+                                            File.WriteAllText(Path.Combine(solutionDirectory, buyFileName), solution.BuyBlob);
+                                        }
                                     });
 
                             var zipfileName = DateTimeOffset.Now.ToUnixTimeSeconds() + ".zip";

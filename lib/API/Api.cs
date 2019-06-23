@@ -39,5 +39,20 @@ namespace lib.API
                 .ReceiveJson<UniversalResponse<SubmitResponse>>();
             return response.Result;
         }
+        
+        public static async Task<int> GetBalance()
+        {
+            var response = await endpointUrl
+                .PostJsonAsync(
+                    new
+                    {
+                        jsonrpc = "2.0",
+                        id = "c#",
+                        method = "getbalance",
+                        @params = new List<string>()
+                    })
+                .ReceiveJson<UniversalResponse<int>>();
+            return response.Result;
+        }
     }
 }
