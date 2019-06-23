@@ -471,7 +471,7 @@ function createBaseCell(data, algName, taskNum, bests) {
         addTitle(td, 'Минимальный бесплатный')
     } else if (times.includes(bests[taskNum].time)) {
         td.classList.add('base-min');
-        addTitle(td, 'Минимальный по baseline')
+        addTitle(td, 'Минимальный вообще')
     }
 
 
