@@ -466,7 +466,7 @@ function createBaseCell(data, algName, taskNum, bests) {
     const times = Object.values(data).map(i => i.time);
 
     // best
-    if (times.includes(bests[taskNum].baseTime)) {
+    if (data[0] && bests[taskNum].baseTime === data[0].time) {
         td.classList.add('min');
         addTitle(td, 'Минимальный бесплатный')
     } else if (times.includes(bests[taskNum].time)) {
