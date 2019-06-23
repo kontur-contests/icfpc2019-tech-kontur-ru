@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
@@ -58,14 +59,16 @@ namespace lib.Solvers.Postprocess
                     var best = -1;
                     var bestLen = int.MaxValue;
                     
-                    for (int j = startIndex; j < ticks.Count && !moved; j++)
+                    for (int j = startIndex + 1; j < ticks.Count && !moved; j++)
                     {
                         if (!ticks[j].Wrapped)
                             continue;
                         if (filledStart <= j && j <= filledEnd)
                             continue;
                         
-                        var mLen = (ticks[j].Position - ticks[filledStart].Position).MLen();
+                        var mLen = Math.Min(
+                            (ticks[j - 1].Position - ticks[filledStart].Position).MLen(),
+                            (ticks[j].Position - ticks[filledEnd].Position).MLen());
                         if (mLen < bestLen)
                         {
                             best = j;
@@ -73,7 +76,7 @@ namespace lib.Solvers.Postprocess
                         }
                     }
                     
-                    if (bestLen <= 2)
+                    if (bestLen <= 5)
                         moved = Transfer(filledStart, filledEnd, best);
                 }
             }
