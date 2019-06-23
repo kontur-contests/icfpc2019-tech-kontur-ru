@@ -375,6 +375,7 @@ function createTableBody(data, algs, tasks, bests) {
                 <br>${bests[task].algName}
                 <br>Денег тратит: ${bests[task].cost}
                 `;
+            bestTd.setAttribute('title', `bestWeightedRes: ${bests[task].weightedRes}`)
         } else {
             bestTd.innerHTML = `<b>${bests[task].time}</b><br>${bests[task].algName}`;
         }
