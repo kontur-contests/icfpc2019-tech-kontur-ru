@@ -8,10 +8,6 @@ const formattedBlockchainData = mapData(blockchainDataForScript);
 const formattedDataProgress = mapData(progressDataForScript);
 renderState();
 
-// let bests = {};
-// calcBests(formattedData);
-// createTable();
-
 
 function getHiddenColumns() {
     return JSON.parse(localStorage.getItem('hiddenColumn')) || [];
@@ -153,9 +149,6 @@ function calcBests(data) {
     return bests;
 }
 
-
-
-
 function renderTable(data, algs, tasks, bests, needProgress) {
     const table = document.createElement('table');
     table.classList.add('table');
@@ -203,7 +196,7 @@ function createTableBody(data, algs, tasks, bests, needProgress) {
     const tableBody = document.createElement('tbody');
     const now = Date.now();
 
-    tasks.sort((a, b) => a - b).forEach(task => {
+    tasks.sort((a, b) => needProgress ? a - b : b - a).forEach(task => {
         const tr = document.createElement('tr');
         const indexTd = document.createElement('td');
         indexTd.textContent = task;
