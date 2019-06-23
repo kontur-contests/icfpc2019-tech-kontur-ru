@@ -5,6 +5,15 @@ using lib.Models.Actions;
 
 namespace lib.Models
 {
+    public class TickWorkerState
+    {
+        public V Position { get; set; }
+        public Direction Direction { get; set; }
+        public bool Wrapped { get; set; }
+
+        public override string ToString() => $"{nameof(Position)}: {Position}, {nameof(Direction)}: {Direction}, {nameof(Wrapped)}: {Wrapped}";
+    }
+
     public class State
     {
         public State(Worker worker, Map map, List<Booster> boosters)
@@ -22,6 +31,13 @@ namespace lib.Models
             CloningCount = 0;
             Wrap();
             UnwrappedLeft = Map.VoidCount();
+            History = new History();
+            History.Ticks.Add(new TickWorkerState
+            {
+                Position = worker.Position,
+                Direction = worker.Direction,
+                Wrapped = true
+            });
         }
 
         public CellCostCalculator CellCostCalculator = null;
@@ -42,6 +58,7 @@ namespace lib.Models
         public int CloningCount { get; set; }
 
         public ClustersState ClustersState { get; set; }
+        public History History { get; set; }
 
         public Action<V> OnWrap { get; set; }
 
@@ -94,11 +111,27 @@ namespace lib.Models
             var actions = Workers.Select(w => workerActions.Single(x => x.worker == w).action).ToList();
 
             var prevWorkers = Workers.Select(x => x.Clone()).ToList();
-            var undos = actions.Select((x, i) => x.Apply(this, Workers[i])).ToList();
+            var undos = actions.Select((x, i) =>
+            {
+                var prev = UnwrappedLeft;
+                var action = x.Apply(this, Workers[i]);
+                if (i == 0)
+                {
+                    History.Ticks.Add(
+                        new TickWorkerState
+                        {
+                            Position = Workers[i].Position,
+                            Direction = Workers[i].Direction,
+                            Wrapped = UnwrappedLeft != prev
+                        });
+                }
+                return action;
+            }).ToList();
             undos.Add(CollectBoosters());
             undos.Reverse();
             Workers.ForEach(x => x.NextTurn());
             Time++;
+
             return () =>
             {
                 Time--;

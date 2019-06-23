@@ -1,8 +1,7 @@
-﻿using System.IO;
+﻿using System;
 using System.Linq;
-using lib;
-using lib.Models;
 using lib.Solvers;
+using lib.Solvers.Postprocess;
 using NUnit.Framework;
 
 namespace tests.Solvers
@@ -44,6 +43,25 @@ namespace tests.Solvers
         {
             SolveSomeProblems(() => new StupidSolver(), 
                 Enumerable.Range(1, 150).Take(30).ToList());
+        }
+
+        [Test]
+        public void StupidOne1()
+        {
+            var id = 220;
+            
+            var solver = new StupidSolver(palka:false);
+            var state = ReadFromFile(id);
+            var result = solver.Solve(state);
+            Console.WriteLine($"Original: {result.CalculateTime()}");
+            Save(result, id, "original");
+
+            var postprocessor = new Postprocessor(state);
+            postprocessor.TransferSmall();
+
+            var modified = state.History.BuildSolved();
+            Console.WriteLine($"Modified: {modified.CalculateTime()}");
+            Save(modified, id, "modified");
         }
     }
 }
