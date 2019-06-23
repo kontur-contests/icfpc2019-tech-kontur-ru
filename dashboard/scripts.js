@@ -26,7 +26,8 @@ function mapBaseData(rawData) {
         if (!item._id) {
             return acc;
         }
-        const [id, alg, version, money] = item._id.split('_');
+        const [id, alg, version, ...rest] = item._id.split('_');
+        const money = rest[rest.length - 1];
         const algName = `${alg} v${version}`;
 
         tasks.add(parseInt(id));
