@@ -10,7 +10,7 @@ if __name__ == '__main__':
     if buildprocess.returncode != 0:
         exit(buildprocess.returncode)
 
-    cmd = "dotnet run -c Release --project=console-runner/console-runner.csproj -- solve -s %s -p %d"
+    cmd = "dotnet console-runner/bin/Release/netcoreapp2.2/console-runner.dll solve -s %s -p %d"
     processes = (Popen(cmd % (algo_prefix, task_num), shell=True) for task_num in range(start_task, end_task + 1))
     running_processes = list(islice(processes, parallelism))  # start new processes
     while running_processes:
