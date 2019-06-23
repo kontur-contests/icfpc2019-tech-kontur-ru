@@ -466,10 +466,12 @@ function createBaseCell(data, algName, taskNum, bests) {
     const times = Object.values(data).map(i => i.time);
 
     // best
-    if (bests[taskNum].algName === algName) {
+    if (bests[taskNum].baseAlg === algName) {
         td.classList.add('min');
+        addTitle(td, 'Минимальный бесплатный')
     } else if (times.includes(bests[taskNum].time)) {
         td.classList.add('base-min');
+        addTitle(td, 'Минимальный по baseline')
     }
 
 
@@ -478,7 +480,7 @@ function createBaseCell(data, algName, taskNum, bests) {
     const lastDate = Object.keys(data).reduce((max, money) => max > data[money].timestamp ? max : data[money].timestamp, 0);
     if ( now - lastDate * 1000 < TEN_MINUTES) {
         td.classList.add('recent');
-        td.setAttribute('title', `Посчитан недавно`)
+        addTitle(td, `Посчитан недавно`);
     }
 
 
@@ -486,15 +488,19 @@ function createBaseCell(data, algName, taskNum, bests) {
 
     if (moneys.includes(formattedSubmission[taskNum].moneySpent) && times.includes(formattedSubmission[taskNum].time)) {
         td.classList.add('submitted');
-        let title = '';
-        if (td.getAttribute('title')) {
-            title += td.getAttribute('title') + ' '
-        }
-        title += 'Submitted';
-        td.setAttribute('title', title);
+        addTitle(td, 'Submitted');
     }
 
     return td;
+}
+
+function addTitle(td, additionText) {
+    let title = '';
+    if (td.getAttribute('title')) {
+        title += td.getAttribute('title') + '. '
+    }
+    title += additionText;
+    td.setAttribute('title', title);
 }
 
 function addListeners() {
