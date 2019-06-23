@@ -111,12 +111,12 @@ namespace pipeline
                 var estimatedSolutions = minScoresForProblem.Select(
                     s =>
                     {
-                        var bestTime = s.time;
-                        var baseScore = (int) Math.Ceiling(mapScore * bestTime / baselineSolution.time);
-                        var score = (int) Math.Ceiling(mapScore * bestTime / s.time);
-                        var scoreWithCost = score - s._id;
-                        
-                        return new {s, delta = scoreWithCost - baseScore};
+                        // var bestTime = s.time;
+                        // var baseScore = (int) Math.Ceiling(mapScore * bestTime / baselineSolution.time);
+                        // var score = (int) Math.Ceiling(mapScore * bestTime / s.time);
+                        // var scoreWithCost = score - s._id;
+                        //
+                        return new {s, delta = baselineSolution.time - s.time}; //scoreWithCost - baseScore};
                     })
                     .ToList();
                 
