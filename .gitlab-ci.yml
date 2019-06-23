@@ -26,7 +26,7 @@ compare_csv:scheduled:
         - "cd lambda-client && python3 lambdad.py &"
         - "dotnet run -c Release --project console-runner/console-runner.csproj -- csv > our.csv"
         - "curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/$(curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/submissions.txt | tail -1 | cut -d ' ' -f 1)/score.csv > their.csv"
-        - "diff --ignore-trailing-space our.csv their.csv"
+        - "diff --unified=0 --ignore-trailing-space our.csv their.csv"
     allow_failure: false
     only:
         - schedules
