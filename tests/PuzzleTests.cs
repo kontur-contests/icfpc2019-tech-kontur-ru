@@ -24,7 +24,7 @@ namespace tests
         [Test]
         public void TestSolve()
         {
-            var id = 2;
+            var id = 3;
 
             var puzzle = PuzzleReader.ReadFromFile(id);
             //puzzle.MinVertices = 3000;

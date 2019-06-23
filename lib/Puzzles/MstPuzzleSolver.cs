@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using lib.Models;
 
@@ -36,7 +38,44 @@ namespace lib.Puzzles
 
             MarkCells(map, not, PuzzleCell.Outside);
 
+            Grow(map);
+
             return map;
+        }
+
+        private void Grow(Map<PuzzleCell> map)
+        {
+            var type = PuzzleCell.Inside;
+
+            var pathBuilder = new PathBuilder(map, type);
+
+            bool min = false;
+            for (int sum = 0; sum < map.SizeX + map.SizeY && !min; sum++)
+            for (int y = 0; y < map.SizeY && !min; y++)
+            {
+                int x = sum - y;
+                if (new V(x, y).Inside(map) && pathBuilder.Distance(new V(x, y)) != int.MaxValue)
+                {
+                    min = true;
+                    var path = pathBuilder.GetPath(new V(x, y));
+                    foreach (var p in path)
+                        map[p] = type;
+                }
+            }
+
+            bool max = false;
+            for (int sum = map.SizeX + map.SizeY; sum >= 0 && !max; sum--)
+            for (int y = map.SizeY; y >= 0 && !max; y--)
+            {
+                int x = sum - y;
+                if (new V(x, y).Inside(map) && pathBuilder.Distance(new V(x, y)) != int.MaxValue)
+                {
+                    max = true;
+                    var path = pathBuilder.GetPath(new V(x, y));
+                    foreach (var p in path)
+                        map[p] = type;
+                }
+            }
         }
 
         private void MarkCells(Map<PuzzleCell> map, List<V> points, PuzzleCell type)
