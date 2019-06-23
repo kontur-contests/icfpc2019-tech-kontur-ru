@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
@@ -7,94 +7,67 @@ namespace lib.Solvers.RandomWalk
 {
     public class Estimator : IEstimator
     {
-        public string GetName() => "simple";
-        public double Estimate(State state, State prevState)
+        private readonly bool collectFastWheels;
+        private Map<(int value, int version)> distance;
+        private Map<(V value, int version)> parent;
+        private int currentVersion;
+
+        public Estimator(bool collectFastWheels = false)
         {
-            if (state.UnwrappedLeft == 0)
-                return 1_000_000_000 - state.Time;
-
-            var distScore = DistanceToVoid(state.Map, state.SingleWorker.Position);
-            
-            if (state.UnwrappedLeft == prevState.UnwrappedLeft)
-                return -distScore;
-
-            //var components = GetComponents(state.Map);
-            //var minComponent = components.OrderBy(x => x.Count).First();
-            
-            // var distToMinComponent = minComponent
-            //     .Select(x => pathBuilder.Distance(x))
-            //     .Min();
-            
-            return 100_000_000 - /*components.Count * 100_000*/ distScore - (state.UnwrappedLeft - prevState.UnwrappedLeft) * 100_000;
+            this.collectFastWheels = collectFastWheels;
         }
 
-        private readonly V[] shifts = {"0,1", "1,0", "0,-1", "-1,0"};
+        public string Name => collectFastWheels ? "wheels" : "simple";
+
+        public double Estimate(State state, Worker worker)
+        {
+            if (state.UnwrappedLeft == 0)
+                return 1_000_000_000.0 - state.Time;
+
+            var distScore = DistanceToVoid(state.Map, worker.Position);
+
+            var fastWheelsBonus = collectFastWheels ? state.Workers.Sum(w => w.FastWheelsTimeLeft) + state.FastWheelsCount * Constants.FastWheelsTime * 1_000_000.0 : 0;
+            return 100_000_000.0 + fastWheelsBonus- distScore - state.UnwrappedLeft * 1_000_000.0;
+        }
 
         private int DistanceToVoid(Map map, V start)
         {
             var queue = new Queue<V>();
             queue.Enqueue(start);
 
-            var distance = new Map<int>(map.SizeX, map.SizeY);
-            var parent = new Map<V>(map.SizeX, map.SizeY);
+            Init(map);
 
-            while (queue.Any())
+            while (queue.Count > 0)
             {
                 var v = queue.Dequeue();
 
                 for (var direction = 0; direction < 4; direction++)
                 {
                     var u = v.Shift(direction);
-                    if (!u.Inside(map) || parent[u] != null || map[u] == CellState.Obstacle)
+                    if (!u.Inside(map) || parent[u].version == currentVersion || map[u] == CellState.Obstacle)
                         continue;
 
-                    parent[u] = v;
-                    distance[u] = distance[v] + 1;
+                    parent[u] = (v, currentVersion);
+                    var dv = distance[v];
+                    distance[u] = (dv.version == currentVersion ? dv.value + 1 : 1, currentVersion);
                     if (map[u] == CellState.Void)
-                        return distance[u];
-                    
+                        return distance[u].value;
+
                     queue.Enqueue(u);
                 }
             }
+
             throw new InvalidOperationException();
         }
 
-        private List<List<V>> GetComponents(Map map)
+        private void Init(Map map)
         {
-            var result = new List<List<V>>();
-            var used = new HashSet<V>();
-            for (int x = 0; x < map.SizeX; x++)
-            for (int y = 0; y < map.SizeY; y++)
+            currentVersion++;
+            if (distance == null || distance.SizeX != map.SizeX || distance.SizeY != map.SizeY)
             {
-                var start = new V(x, y);
-                if (map[start] == CellState.Void && !used.Contains(start))
-                {
-                    var component = new List<V>();
-                    result.Add(component);
-                    var queue = new Queue<V>();
-                    queue.Enqueue(start);
-                    used.Add(start);
-                    component.Add(start);
-                    while (queue.Any())
-                    {
-                        var cur = queue.Dequeue();
-                        foreach (var shift in shifts)
-                        {
-                            var next = cur + shift;
-                            if (next.Inside(map) && map[next] == CellState.Void)
-                            {
-                                if (used.Add(next))
-                                {
-                                    queue.Enqueue(next);
-                                    component.Add(next);
-                                }
-                            }
-                        }
-                    }
-                }
+                distance = new Map<(int, int)>(map.SizeX, map.SizeY);
+                parent = new Map<(V, int)>(map.SizeX, map.SizeY);
             }
-
-            return result;
         }
     }
 }

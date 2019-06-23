@@ -2,19 +2,15 @@
 using System.Linq;
 using lib.Models;
 using lib.Models.Actions;
+using lib.Solvers.RandomWalk;
 
 namespace lib.Solvers
 {
-    public interface ISingleStateEstimator
-    {
-        double Estimate(State state);
-    }
-
     public class GreedySolver : ISolver
     {
-        private readonly ISingleStateEstimator estimator;
+        private readonly IEstimator estimator;
 
-        public GreedySolver(ISingleStateEstimator estimator)
+        public GreedySolver(IEstimator estimator)
         {
             this.estimator = estimator;
         }
@@ -23,9 +19,9 @@ namespace lib.Solvers
 
         public int GetVersion() => 1;
 
-        private readonly V[] shifts = { "0,1", "1,0", "0,-1", "-1,0" };
+        private readonly V[] shifts = {"0,1", "1,0", "0,-1", "-1,0"};
 
-        public List<List<ActionBase>> Solve(State state)
+        public Solved Solve(State state)
         {
             var result = new List<ActionBase>();
 
@@ -40,13 +36,14 @@ namespace lib.Solvers
                 result.Add(best.action);
                 state.Apply(best.action);
             }
-            return new List<List<ActionBase>> {result};
+
+            return new Solved {Actions = new List<List<ActionBase>> {result}};
         }
 
         private (ActionBase action, double score) EstimateAction(ActionBase action, State state)
         {
             var undo = state.Apply(action);
-            var score = estimator.Estimate(state);
+            var score = estimator.Estimate(state, state.SingleWorker);
             undo();
             return (action, score);
         }

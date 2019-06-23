@@ -29,12 +29,12 @@ namespace lib.Solvers
             return 3;
         }
 
-        public List<List<ActionBase>> Solve(State state)
+        public Solved Solve(State state)
         {
             result = new List<List<ActionBase>> { new List<ActionBase>() };
 
             if (palka)
-                BoosterMaster.CreatePalka(state, result[0]);
+                BoosterMaster.CreatePalka(state, result[0], 1);
 
             BoosterMaster.CloneAttack(state, result);
 
@@ -77,7 +77,7 @@ namespace lib.Solvers
                 state.Apply(workerActions);
             }
 
-            return result;
+            return new Solved {Actions = result};
         }
 
         private class PathBuilder

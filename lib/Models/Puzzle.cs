@@ -12,8 +12,10 @@ namespace lib.Models
         public int MinVertices;
         public int MaxVertices;
         public int ManipulatorsCount;
+        // ReSharper disable once IdentifierTypo
         public int FastwheelsCount;
         public int DrillsCount;
+        // ReSharper disable once IdentifierTypo
         public int TeleportsCount;
         public int ClonesCount;
         public int SpawnsCount;

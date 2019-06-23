@@ -101,6 +101,36 @@ namespace lib.Solvers.RandomWalk
             }
         }
 
+        public static void CreatePalka2(State state, List<ActionBase> result)
+        {
+            var k = 1;
+            while (true)
+            {
+                var boosters = state.Boosters.Where(b => b.Type == BoosterType.Extension).ToList();
+
+                if (!boosters.Any())
+                    return;
+
+                var map = state.Map;
+                var me = state.SingleWorker;
+                var pathBuilder = new PathBuilder(map, me.Position, false);
+
+                var best = boosters.OrderBy(b => pathBuilder.Distance(b.Position)).First();
+
+                var actions = pathBuilder.GetActions(best.Position);
+
+                var y = k / 2 + 1;
+                y = k % 2 == 0 ? -y : y;
+                var add = new UseExtension(new V(0, y));
+                k += 2;
+
+                actions.Add(add);
+
+                state.ApplyRange(actions);
+                result.AddRange(actions);
+            }
+        }
+
         private class PathBuilder
         {
             private readonly V start;

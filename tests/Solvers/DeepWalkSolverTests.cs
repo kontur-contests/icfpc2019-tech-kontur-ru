@@ -9,15 +9,8 @@ namespace tests.Solvers
         [Test]
         public void SolveOne()
         {
-            var solver = new DeepWalkSolver(2, new Estimator());
-            SolveOneProblem(solver, 4);
-        }
-
-        [Test]
-        public void SolveOneZakoulochki()
-        {
-            var solver = new DeepWalkSolver(2, new EstimatorZakoulocki());
-            SolveOneProblem(solver, 4);
+            var solver = new DeepWalkSolver(2, new ClusterWorkerEstimator(), usePalka: true, useWheels:false);
+            SolveOneProblemWithCluster(solver, 1);
         }
     }
 }

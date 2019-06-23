@@ -9,10 +9,11 @@ namespace lib.Models.Actions
         public override Action Apply(State state, Worker worker)
         {
             if (state.FastWheelsCount <= 0)
-                throw new InvalidOperationException("No fast wheels");
+                throw new InvalidOperationException("No fast wheels at " + state.Time);
 
             state.FastWheelsCount--;
-            worker.FastWheelsTimeLeft = Constants.FastWheelsTime;
+
+            worker.FastWheelsTimeLeft = worker.FastWheelsTimeLeft == 0 ? Constants.FastWheelsTime + 1 : worker.FastWheelsTimeLeft + Constants.FastWheelsTime;
             return () => state.FastWheelsCount++;
         }
     }

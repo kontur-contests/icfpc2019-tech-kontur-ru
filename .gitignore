@@ -37,6 +37,7 @@ msbuild.wrn
 .vs/
 
 prob-*.sol
+prob-*.buy
 
 visualizer/dist/bundle.js
 visualizer/dist/puzzles.js
@@ -48,3 +49,4 @@ package-lock.json
 
 *.csv
 /dashboard/dashboard.html
+/problems/puzzles/*.sol

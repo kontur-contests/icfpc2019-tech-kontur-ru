@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using lib.Models;
-using lib.Models.Actions;
+﻿using lib.Models;
 
 namespace lib.Solvers
 {
@@ -8,6 +6,6 @@ namespace lib.Solvers
     {
         string GetName();
         int GetVersion();
-        List<List<ActionBase>> Solve(State state);
+        Solved Solve(State state);
     }
 }

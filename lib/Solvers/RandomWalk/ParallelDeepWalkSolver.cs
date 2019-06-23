@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
@@ -9,7 +10,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return $"parallel-deep-walk-{depth}-{usePalka}";
+            return $"fast-parallel-deep-walk-{depth}-{usePalka}";
         }
 
         public int GetVersion()
@@ -18,8 +19,9 @@ namespace lib.Solvers.RandomWalk
         }
 
         private readonly int depth;
-        private readonly IWorkerEstimator estimator;
+        private readonly IEstimator estimator;
         private readonly bool usePalka;
+        private readonly BoosterType[] buy;
 
         private readonly ActionBase[] availableActions =
         {
@@ -32,11 +34,12 @@ namespace lib.Solvers.RandomWalk
         };
         private readonly List<List<ActionBase>> chains;
 
-        public ParallelDeepWalkSolver(int depth, IWorkerEstimator estimator, bool usePalka)
+        public ParallelDeepWalkSolver(int depth, IEstimator estimator, bool usePalka, BoosterType[] buy)
         {
             this.depth = depth;
             this.estimator = estimator;
             this.usePalka = usePalka;
+            this.buy = buy;
 
             chains = availableActions.Select(x => new List<ActionBase> {x}).ToList();
             for (int i = 1; i < depth; i++)
@@ -45,18 +48,20 @@ namespace lib.Solvers.RandomWalk
             }
         }
 
-        public List<List<ActionBase>> Solve(State state)
+        public Solved Solve(State state)
         {
             var solution = new List<List<ActionBase>> {new List<ActionBase>()};
 
+            state.BuyBoosters(buy);
+            
             if (usePalka)
                 BoosterMaster.CreatePalka(state, solution[0]);
             BoosterMaster.CloneAttack(state, solution);
 
             while (state.UnwrappedLeft > 0)
             {
-                //Console.Out.WriteLine($"--BEFORE:\n{state.Print()}");
-
+                // Console.Out.WriteLine($"--BEFORE:\n{state.Print()}");
+                
                 var partialSolution = new List<List<ActionBase>>();
 
                 while (partialSolution.Count < solution.Count)
@@ -72,9 +77,12 @@ namespace lib.Solvers.RandomWalk
                         solution[j].Add(partialSolution[j][i]);
                     state.Apply(state.Workers.Select((w, wi) => (w, partialSolution[wi][i])).ToList());
                 }
+
+                // if (turn++ > 100)
+                //     break;
             }
 
-            return solution;
+            return new Solved {Actions = solution, Buy = buy.ToList()};
         }
 
         public List<ActionBase> SolvePart(State state, List<List<ActionBase>> partialSolution)
@@ -84,49 +92,56 @@ namespace lib.Solvers.RandomWalk
 
             foreach (var chain in chains)
             {
-                var clone = state.Clone();
-
                 var solution = new List<ActionBase>();
+                var undos = new List<Action>();
                 for (var c = 0; c < chain.Count; c++)
                 {
                     var action = chain[c];
                     if (action is Move moveAction)
                     {
-                        var nextPosition = clone.Workers[partialSolution.Count].Position + moveAction.Shift;
-                        if (!nextPosition.Inside(clone.Map) || clone.Map[nextPosition] == CellState.Obstacle)
+                        var nextPosition = state.Workers[partialSolution.Count].Position + moveAction.Shift;
+                        if (!nextPosition.Inside(state.Map) || state.Map[nextPosition] == CellState.Obstacle)
                             break;
                     }
 
-                    clone.Apply(
-                        clone
+                    undos.Add(state.Apply(
+                        state
                             .Workers
                             .Select(
                                 (w, i) => (w, i < partialSolution.Count ? partialSolution[i][c]
                                     : i == partialSolution.Count ? action
                                     : new Wait()))
-                            .ToList());
+                            .ToList()));
                     solution.Add(action);
-                    if (clone.UnwrappedLeft == 0)
+                    if (state.UnwrappedLeft == 0)
                         break;
                 }
 
                 while (solution.Count < depth)
                 {
                     var wait = new Wait();
-                    clone.Apply(
-                        clone
+                    undos.Add(state.Apply(
+                        state
                             .Workers
                             .Select((w, i) => (w, i < partialSolution.Count ? partialSolution[i][solution.Count] : wait))
-                            .ToList());
+                            .ToList()));
                     solution.Add(wait);
                 }
 
-                var estimation = estimator.Estimate(clone, state, clone.Workers[partialSolution.Count]);
+                var estimation = estimator.Estimate(state, state.Workers[partialSolution.Count]);
+                //Console.Out.Write($"  w{partialSolution.Count} {estimation} {solution.Format()}");
                 if (estimation > bestEstimation)
                 {
                     bestEstimation = estimation;
                     bestSolution = solution;
+                    //Console.Out.WriteLine(" -- better");
                 }
+                // else
+                //     Console.Out.WriteLine();
+
+                undos.Reverse();
+                foreach (var undo in undos)
+                    undo();
             }
 
             return bestSolution;
