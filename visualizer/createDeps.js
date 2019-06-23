@@ -26,9 +26,11 @@ files.forEach(function (file) {
         solutionsNumbers.push(num);
     }
 });
-
-for (let i = 1; i <= Math.max(tasksNumbers.length, solutionsNumbers.length); i++) {
-    const number = i.toString().padStart(3, '0');
+const count = Math.max(tasksNumbers.length, solutionsNumbers.length);
+const longerArr = tasksNumbers.length > solutionsNumbers.length ? tasksNumbers : solutionsNumbers;
+//console.log(count, longerArr)
+for (let i = 0; i < count; i++) {
+    const number = longerArr[i];
     const fileName = `prob-${number}`;
     const problemPath = `${dirUrl}/${fileName}.desc`;
     const solutionPath = `${dirUrl}/${fileName}.sol`;

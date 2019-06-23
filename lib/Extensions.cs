@@ -32,6 +32,11 @@ namespace lib
             return v + V.GetShift(direction);
         }
 
+        public static V Shift(this V v, Direction direction)
+        {
+            return v + V.GetShift((int)direction);
+        }
+
         public static Direction Rotate(this Direction direction, int delta)
         {
             var newDirection = (4 + ((int)direction + delta) % 4) % 4;

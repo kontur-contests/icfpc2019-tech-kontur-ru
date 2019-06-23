@@ -28,6 +28,7 @@ namespace lib.Models
         public static Problem ReadPuzzleTask(int blockId)
         {
             var fileName = GetPuzzlePath(blockId);
+            File.WriteAllText(GetProblemPath(500 + blockId), File.ReadAllText(fileName));
             return Read(File.ReadAllText(fileName));
         }
 

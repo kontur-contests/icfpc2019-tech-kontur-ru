@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using lib;
+using lib.Models;
 using lib.Solvers;
 using NUnit.Framework;
 
@@ -7,6 +10,12 @@ namespace tests.Solvers
     [TestFixture]
     internal class SolversTests : SolverTestsBase
     {
+        [Test]
+        public void MiningPuzzleOne()
+        {
+            SolvePuzzleProblem(new MiningSolver(), 33);
+        }
+
         [Test]
         public void PalkaOne()
         {
