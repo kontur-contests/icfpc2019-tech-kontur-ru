@@ -12,7 +12,7 @@ namespace lib.Solvers
     {
         public static List<Func<ISolver>> PuzzleSolvers()
         {
-            return new List<Func<ISolver>>
+            var result = new List<Func<ISolver>>
             {
                 () => new StupidSolver(false),
                 () => new StupidSolver(true),
@@ -21,6 +21,16 @@ namespace lib.Solvers
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
             };
+
+            foreach (var use in new [] {true, false})
+            {
+                foreach (var limit in new [] {3, 5, 10, 15, 20, 25, 30})
+                {
+                    result.Add(() => new MiningSolver(use,  limit));
+                }
+            }
+
+            return result;
         }
 
         // This and only this solvers would be periodically re-run

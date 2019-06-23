@@ -99,7 +99,7 @@ namespace console_runner.Commands
                                         var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_sol_{solver.GetName()}_v{solver.GetVersion()}_{time}.sol");
                                         File.WriteAllText(path, solutionBlob);
 
-                                        Console.WriteLine($"{solver.GetName()}_v{solver.GetVersion()} score = {time}");
+                                        Console.WriteLine($"{solver.GetName()}_v{solver.GetVersion()} score = {time} time = {stopwatch.Elapsed}");
 
                                         new SolutionMeta(
                                             block.BlockNumber,
