@@ -462,10 +462,13 @@ function createBaseCell(data, algName, taskNum, bests) {
     }, '');
 
 
+    const moneys = Object.keys(data).map(i => parseInt(i));
+    const times = Object.values(data).map(i => i.time);
+
     // best
     if (bests[taskNum].algName === algName) {
         td.classList.add('min');
-    } else if (bests[taskNum].baseAlg === algName) {
+    } else if (times.includes(bests[taskNum].time)) {
         td.classList.add('base-min');
     }
 
@@ -480,9 +483,6 @@ function createBaseCell(data, algName, taskNum, bests) {
 
 
     // submitted
-    const moneys = Object.keys(data).map(i => parseInt(i));
-    const times = Object.values(data).map(i => i.time);
-
 
     if (moneys.includes(formattedSubmission[taskNum].moneySpent) && times.includes(formattedSubmission[taskNum].time)) {
         td.classList.add('submitted');
