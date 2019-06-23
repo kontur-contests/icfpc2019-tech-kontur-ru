@@ -22,6 +22,7 @@ namespace lib.Solvers.RandomWalk
         private readonly IEstimator estimator;
         private readonly bool usePalka;
         private readonly BoosterType[] buy;
+        private readonly bool useWheels;
 
         private readonly ActionBase[] availableActions =
         {
@@ -34,12 +35,13 @@ namespace lib.Solvers.RandomWalk
         };
         private readonly List<List<ActionBase>> chains;
 
-        public ParallelDeepWalkSolver(int depth, IEstimator estimator, bool usePalka, BoosterType[] buy)
+        public ParallelDeepWalkSolver(int depth, IEstimator estimator, bool usePalka, bool useWheels, BoosterType[] buy)
         {
             this.depth = depth;
             this.estimator = estimator;
             this.usePalka = usePalka;
             this.buy = buy;
+            this.useWheels = useWheels;
 
             chains = availableActions.Select(x => new List<ActionBase> {x}).ToList();
             for (int i = 1; i < depth; i++)
@@ -90,8 +92,17 @@ namespace lib.Solvers.RandomWalk
             var bestEstimation = double.MinValue;
             List<ActionBase> bestSolution = null;
 
-            foreach (var chain in chains)
+            var usedWheels = partialSolution.Sum(x => x.Count(c => c is UseFastWheels));
+            
+            var useWheelsLocal = useWheels && (state.FastWheelsCount - usedWheels) > 0;
+            foreach (var chain2 in chains)
             {
+                var chain = chain2.ToList();
+                if (useWheelsLocal)
+                {
+                    chain.Insert(0, new UseFastWheels());
+                    chain.RemoveAt(chain.Count - 1);
+                }
                 var solution = new List<ActionBase>();
                 var undos = new List<Action>();
                 for (var c = 0; c < chain.Count; c++)

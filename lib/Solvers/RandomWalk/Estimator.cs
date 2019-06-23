@@ -47,19 +47,6 @@ namespace lib.Solvers.RandomWalk
             return 100_000_000.0 + fastWheelsBonus- distScore - (state.UnwrappedLeft + unwrappedCost) * 1_000_000.0;
         }
 
-        private static V[] dirs = new V[] { "1,0", "-1,0", "0,1", "0,-1" };//, "2,0", "-2,0", "0,2", "0,-2" };
-        private static double[] weights = new[] { 3, 2, 1, 0, 0.0 };
-        private double CellCost(V pos, Map map)
-        {
-            var freeNs = 0;
-            foreach (var dir in dirs)
-            {
-                var n = dir + pos;
-                if (n.Inside(map) && map[n] == CellState.Void) freeNs++;
-            }
-            return weights[freeNs];
-        }
-
         public int DistanceToVoid(Map map, V start)
         {
             var queue = new Queue<V>();

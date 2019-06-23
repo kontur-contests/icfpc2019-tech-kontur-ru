@@ -8,13 +8,23 @@ namespace tests.Solvers
     [TestFixture]
     internal class ParallelDeepWalkSolverTests : SolverTestsBase
     {
-        [TestCase(100, 2853, "C")]
-        [TestCase(214, 20066, "C")]
-        [TestCase(214, 20066, "CC")]
-        [TestCase(214, 20066, "CCC")]
-        public void SolveOne(int problemId, int prevBestTime, string buy)
+        [TestCase(2, 350, "", false)]
+        [TestCase(2, 350, "", true)]
+        [TestCase(2, 350, "C", false)]
+        [TestCase(2, 350, "C", true)]
+        [TestCase(2, 350, "CC", false)]
+        [TestCase(2, 350, "CC", true)]
+        [TestCase(2, 350, "F", true)]
+        [TestCase(2, 350, "FC", true)]
+        [TestCase(2, 350, "FFC", true)]
+        [TestCase(2, 350, "FCC", true)]
+        [TestCase(2, 350, "FFCC", true)]
+        [TestCase(214, 20066, "FC", true)]
+        // [TestCase(214, 20066, "CC")]
+        // [TestCase(214, 20066, "CCC")]
+        public void SolveOne(int problemId, int prevBestTime, string buy, bool useWheels)
         {
-            var solver = new ParallelDeepWalkSolver(2, new Estimator(false, false), usePalka: false, buy.ToBuyBoosters());
+            var solver = new ParallelDeepWalkSolver(2, new Estimator(useWheels, false), usePalka: false, useWheels: useWheels, buy.ToBuyBoosters());
 
             var solved = SolveOneProblem(solver, problemId);
             

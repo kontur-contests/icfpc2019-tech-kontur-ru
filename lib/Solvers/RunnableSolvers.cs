@@ -16,7 +16,7 @@ namespace lib.Solvers
             {
                 () => new StupidSolver(false),
                 () => new StupidSolver(true),
-                () => new ParallelDeepWalkSolver(2, new Estimator(false), usePalka: false, new BoosterType[0]),
+                () => new ParallelDeepWalkSolver(2, new Estimator(false), usePalka: false, useWheels: false, new BoosterType[0]),
                 //() => new PalkaSolver()
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
@@ -33,8 +33,8 @@ namespace lib.Solvers
                 //() => new StupidSolver(),
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
-                () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false), usePalka: false, new[]{BoosterType.Cloning, }),
-                () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false), usePalka: false, new[]{BoosterType.Cloning, BoosterType.Cloning, }),
+                () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false), usePalka: false, useWheels: false, new[]{BoosterType.Cloning, }),
+                () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false), usePalka: false, useWheels: false, new[]{BoosterType.Cloning, BoosterType.Cloning, }),
             };
         }
 
