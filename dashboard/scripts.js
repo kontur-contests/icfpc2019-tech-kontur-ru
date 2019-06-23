@@ -284,6 +284,8 @@ function calcBaseBests(data) {
                         ...algRes[cost],
                         cost: cost,
                         algName: algName,
+                        baseTime: baseBests[num].time,
+                        baseAlg: baseBests[num].algName,
                     };
                 }
             }
@@ -321,6 +323,12 @@ function createTableHeader(algs) {
     const indexTh = document.createElement('th');
     tableHeaderRow.appendChild(indexTh);
 
+    if (showTable === 'base') {
+        const bestBaseTh = document.createElement('th');
+        bestBaseTh.innerText = 'best free score';
+        tableHeaderRow.appendChild(bestBaseTh);
+    }
+
     const bestTh = document.createElement('th');
     bestTh.innerText = 'best score';
     tableHeaderRow.appendChild(bestTh);
@@ -352,7 +360,21 @@ function createTableBody(data, algs, tasks, bests) {
         const bestTd = document.createElement('td');
         bestTd.classList.add('min');
         if (showTable === 'base') {
-            bestTd.innerHTML = `<b>${bests[task].time}</b><br>${bests[task].algName}<br>Денег тратит: ${bests[task].cost}`;
+            const bestFreeTd = document.createElement('td');
+            bestFreeTd.classList.add('min');
+            bestFreeTd.classList.add('wider');
+            bestFreeTd.innerHTML = `       
+                <b>${bests[task].baseTime}</b>
+                <br>${bests[task].baseAlg}
+            `;
+            tr.appendChild(bestFreeTd);
+
+            bestTd.classList.add('wider');
+            bestTd.innerHTML = `
+                <b>${bests[task].time}</b>
+                <br>${bests[task].algName}
+                <br>Денег тратит: ${bests[task].cost}
+                `;
         } else {
             bestTd.innerHTML = `<b>${bests[task].time}</b><br>${bests[task].algName}`;
         }
