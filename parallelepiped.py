@@ -1,6 +1,7 @@
 import sys
 from subprocess import Popen
 from itertools import islice
+from time import sleep
 
 if __name__ == '__main__':
     algo_prefix, start_task, end_task, parallelism = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
@@ -20,3 +21,4 @@ if __name__ == '__main__':
                 if running_processes[i] is None:  # no new processes
                     del running_processes[i]
                     break
+        sleep(1)
