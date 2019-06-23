@@ -67,9 +67,9 @@ namespace pipeline
             return metas;
         }
 
-        private static List<(SolutionMeta @base, SolutionMeta best, int delta)> EnumerateBestSolutionTuples(double minDeltaCoeff)
+        private static List<(SolutionMeta @base, SolutionMeta best, double delta)> EnumerateBestSolutionTuples(double minDeltaCoeff)
         {
-            var metas = new List<(SolutionMeta @base, SolutionMeta best, int delta)>();
+            var metas = new List<(SolutionMeta @base, SolutionMeta best, double delta)>();
             var problemIds = MetaCollection.Distinct<int>("ProblemId", new BsonDocument()).ToList();
 
             foreach (var problemId in problemIds)
@@ -121,7 +121,7 @@ namespace pipeline
                         var scoreWithCost = score - s._id;
 
                         // var limit = mapScore - mapScore / minDeltaCoeff;
-                        var delta = scoreWithCost - baseScore < 1000 ? -1 : (baselineSolution.time - s.time) / baselineSolution.time;
+                        var delta = scoreWithCost - baseScore < 1000 ? -1 : (double)(baselineSolution.time - s.time) / baselineSolution.time;
                         
                         return new {s, delta};
                     })
