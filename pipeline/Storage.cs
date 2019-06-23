@@ -47,7 +47,10 @@ namespace pipeline
         {
             var metas = new List<SolutionMeta>();
 
-            var tuples = EnumerateBestSolutionTuples().OrderByDescending(t => t.delta).ToList();
+            var tuples = EnumerateBestSolutionTuples()
+                .OrderByDescending(t => t.delta / 
+                                        (t.best.MoneySpent == 0 ? int.MaxValue : t.best.MoneySpent))
+                .ToList();
             foreach (var tuple in tuples)
             {
                 if (balance >= tuple.best.MoneySpent && tuple.delta >= minDelta)
