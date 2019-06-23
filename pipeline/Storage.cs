@@ -117,8 +117,12 @@ namespace pipeline
 
                         var nextScoreWithCost = nextScore - s._id;
                         return new {s, delta = nextScoreWithCost - prevScore};
-                    }).ToList();
-                var optimalSolution = estimatedSolutions.OrderByDescending(s => s.delta).First();
+                    })
+                    .ToList();
+                
+                var optimalSolution = estimatedSolutions
+                    .OrderByDescending(s => s.delta / (s.s._id == 0 ? int.MaxValue : s.s._id))
+                    .First();
 
                 var best = MetaCollection.FindSync(
                         y => y.ProblemId == problemId &&
