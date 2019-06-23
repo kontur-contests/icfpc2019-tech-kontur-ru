@@ -29,7 +29,9 @@ namespace tests.Solvers
             var cost = solved.BuyCost();
             var nextScoreWithCost = nextScore - cost;
 
-            Console.Out.WriteLine($"{(nextScoreWithCost - prevScore > 0 ? "WIN" : "---")} Delta={nextScoreWithCost - prevScore}; PrevScore={prevScore}; NextScore={nextScore}; Cost: {cost}; NextScoreWithCost={nextScoreWithCost}");
+            Console.Out.WriteLine($"{(nextScoreWithCost - prevScore > 0 ? "WIN" : "---")} Delta={nextScoreWithCost - prevScore}; PrevScore={prevScore};" +
+                                  $"NextScore={nextScore}; Cost: {cost}; NextScoreWithCost={nextScoreWithCost}; " +
+                                  $"PrevBestTime={prevBestTime}; NextTime={nextTime}");
         }
     }
 }
