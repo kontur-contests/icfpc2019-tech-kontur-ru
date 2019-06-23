@@ -3,7 +3,6 @@ image: beevee/dotfox:latest
 stages:
     - compare_csv
     - submit
-    - compare_csv_delayed
 #    - solve_block
 
 #check_unchecked:scheduled:
@@ -41,20 +40,11 @@ submit:
         - "cd lambda-client && python3 lambdad.py &"
         - "dotnet run -c Release --project console-runner/console-runner.csproj -- submit -z solutions"
         - "curl -s -F \"private_id=5105068979550d027d0d93ba\" -F \"file=@console-runner/submissions/solutions.zip\" https://monadic-lab.org/submit"
-    when: on_failure
-
-compare_csv:delayed:
-    stage: compare_csv_delayed
-    before_script:
-        - "pip3 install -r lambda-client/requirements.txt"
-    script:
-        - "cd lambda-client && python3 lambdad.py &"
+        - "sleep 300"
         - "dotnet run -c Release --project console-runner/console-runner.csproj -- csv > our.csv"
         - "curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/$(curl -s https://monadic-lab.org/grades/5105068979550d027d0d93ba/submissions.txt | tail -1 | cut -d ' ' -f 1)/score.csv > their.csv"
         - "diff --unified=0 --ignore-trailing-space their.csv our.csv"
-    allow_failure: false
-    when: delayed
-    start_in: 5 minutes
+    when: on_failure
 
 #solve_block:
 #    stage: solve_block
