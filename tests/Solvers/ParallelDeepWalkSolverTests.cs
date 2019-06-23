@@ -43,5 +43,24 @@ namespace tests.Solvers
                                   $"NextScore={nextScore}; Cost: {cost}; NextScoreWithCost={nextScoreWithCost}; " +
                                   $"PrevBestTime={prevBestTime}; NextTime={nextTime}");
         }
+
+
+
+        [TestCase(5, false)]
+        [TestCase(5, true)]
+        [TestCase(22, false)]
+        [TestCase(22, true)]
+        [TestCase(100, false)]
+        [TestCase(100, true)]
+        public void Zakoulochki(int problemId, bool zakoulochki)
+        {
+            var solver = new ParallelDeepWalkSolver(2, new Estimator(false, zakoulochki), usePalka: false, useWheels: false, new []{BoosterType.Cloning});
+
+            var solved = SolveOneProblem(solver, problemId);
+
+            var nextTime = solved.CalculateTime();
+            Console.WriteLine(nextTime);
+        }
+
     }
 }
