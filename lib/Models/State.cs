@@ -111,13 +111,14 @@ namespace lib.Models
             var actions = Workers.Select(w => workerActions.Single(x => x.worker == w).action).ToList();
 
             var prevWorkers = Workers.Select(x => x.Clone()).ToList();
+            
             var undos = actions.Select((x, i) =>
             {
                 var prev = UnwrappedLeft;
                 var action = x.Apply(this, Workers[i]);
                 if (i == 0)
                 {
-                    History.Ticks.Add(
+                    History?.Ticks.Add(
                         new TickWorkerState
                         {
                             Position = Workers[i].Position,
@@ -125,7 +126,11 @@ namespace lib.Models
                             Wrapped = UnwrappedLeft != prev
                         });
                 }
-                return action;
+                return (Action)(() =>
+                {
+                    History?.Ticks.RemoveAt(History.Ticks.Count - 1);
+                    action();
+                });
             }).ToList();
             undos.Add(CollectBoosters());
             undos.Reverse();
@@ -195,6 +200,7 @@ namespace lib.Models
             clone.Map = clone.Map.Clone();
             clone.Workers = clone.Workers.Select(x => x.Clone()).ToList();
             clone.Boosters = clone.Boosters.ToList();
+            clone.History = null;
             return clone;
         }
 
