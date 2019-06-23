@@ -397,7 +397,7 @@ function createTableBody(data, algs, tasks, bests) {
         if (showTable === 'base') {
             const submissionTd = document.createElement('td');
             submissionTd.classList.add('submiss');
-            submissionTd.innerHTML = `<b>Время: </b> ${formattedSubmission[task].time} <br> <b>Деньги: </b>${formattedSubmission[task].moneySpent}`
+            submissionTd.innerHTML = `<b>Время: </b> ${formattedSubmission[task].time} <br> <b>Деньги: </b>${formattedSubmission[task].moneySpent}`;
             tr.appendChild(submissionTd);
         }
 
@@ -462,10 +462,15 @@ function createBaseCell(data, algName, taskNum, bests) {
     }, '');
 
 
+    // best
     if (bests[taskNum].algName === algName) {
         td.classList.add('min');
+    } else if (bests[taskNum].baseAlg === algName) {
+        td.classList.add('base-min');
     }
 
+
+    // recent
     const now = Date.now();
     const lastDate = Object.keys(data).reduce((max, money) => max > data[money].timestamp ? max : data[money].timestamp, 0);
     if ( now - lastDate * 1000 < TEN_MINUTES) {
@@ -473,6 +478,8 @@ function createBaseCell(data, algName, taskNum, bests) {
         td.setAttribute('title', `Посчитан недавно`)
     }
 
+
+    // submitted
     const moneys = Object.keys(data).map(i => parseInt(i));
     const times = Object.values(data).map(i => i.time);
 

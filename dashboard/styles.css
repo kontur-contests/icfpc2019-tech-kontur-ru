@@ -28,6 +28,16 @@
     background-color:#cfc;
 }
 
+.base-min {
+    background-color: white;
+    background-image: linear-gradient(135deg, #fcff7b 0, #fcff7b 5%, transparent 5%, transparent 10%,
+    #fcff7b 10%, #fcff7b 15%, transparent 15%, transparent 20%, #fcff7b 20%, #fcff7b 25%, transparent 25%, transparent 30%,
+    #fcff7b 30%, #fcff7b 35%, transparent 35%, transparent 40%, #fcff7b 40%, #fcff7b 45%, transparent 45%, transparent 50%,
+    #fcff7b 50%, #fcff7b 55%, transparent 55%, transparent 60%, #fcff7b 60%, #fcff7b 65%, transparent 65%, transparent 70%,
+    #fcff7b 70%, #fcff7b 75%, transparent 75%, transparent 80%, #fcff7b 80%, #fcff7b 85%, transparent 85%, transparent 90%,
+    #fcff7b 90%, #fcff7b 95%, transparent 95%, transparent 100%);
+}
+
 .no {
     background-color:#ccc;
 }
