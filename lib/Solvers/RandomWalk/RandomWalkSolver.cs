@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using lib.Models;
 using lib.Models.Actions;
 
@@ -76,9 +77,15 @@ namespace lib.Solvers.RandomWalk
 
             for (int i = 0; i < tryCount; i++)
             {
-                var clone = state.Clone();
-                var solution = SolveStep(clone);
+                var clone = state;//.Clone();
+                var undoes = new List<Action>();
+                var solution = SolveStep(clone, undoes);
                 var estimation = estimator.Estimate(clone, state);
+                undoes.Reverse();
+                foreach (var undo in undoes)
+                {
+                    undo();
+                }
                 //Console.Out.Write($"  {estimation} {solution.Format()}");
                 if (estimation > bestEstimation)
                 {
@@ -89,12 +96,13 @@ namespace lib.Solvers.RandomWalk
 
                 // else
                 //     Console.Out.WriteLine();
+
             }
 
             return bestSolution;
         }
 
-        private List<ActionBase> SolveStep(State state)
+        private List<ActionBase> SolveStep(State state, List<Action> undoes)
         {
             var actions = new List<ActionBase>();
             while (actions.Count < depth && state.UnwrappedLeft > 0)
@@ -107,7 +115,7 @@ namespace lib.Solvers.RandomWalk
                         continue;
                 }
 
-                state.Apply(action);
+                undoes.Add(state.Apply(action));
                 actions.Add(action);
             }
 

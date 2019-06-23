@@ -48,3 +48,4 @@ package-lock.json
 
 *.csv
 /dashboard/dashboard.html
+/problems/puzzles/*.sol

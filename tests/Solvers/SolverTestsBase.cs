@@ -22,6 +22,16 @@ namespace tests.Solvers
             return result.CalculateTime();
         }
 
+        public int SolvePuzzleProblem(ISolver solver, int blockId)
+        {
+            var state = ReadFromPuzzleFile(blockId);
+            var result = solver.Solve(state);
+            SavePuzzle(result, blockId);
+            Console.WriteLine($"Solved puzzle {blockId} problem in {result.CalculateTime()} steps.");
+            // LogSolution(id, result);
+            return result.CalculateTime();
+        }
+
         private void LogSolution(int id, List<List<ActionBase>> result)
         {
             var state1 = ReadFromFile(id);
@@ -77,10 +87,22 @@ namespace tests.Solvers
             return problem.ToState();
         }
 
+        public State ReadFromPuzzleFile(int id)
+        {
+            var problem = ProblemReader.ReadPuzzleTask(id);
+            return problem.ToState();
+        }
+
         public void Save(List<List<ActionBase>> actions, int id)
         {
             var text = actions.Format();
             var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}.sol");
+            File.WriteAllText(fileName, text);
+        }
+        public void SavePuzzle(List<List<ActionBase>> actions, int blockId)
+        {
+            var text = actions.Format();
+            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{blockId:000}.sol");
             File.WriteAllText(fileName, text);
         }
     }

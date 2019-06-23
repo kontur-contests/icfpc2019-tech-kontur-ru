@@ -4,7 +4,7 @@ using lib.Models;
 
 namespace lib.Solvers.RandomWalk
 {
-    public class SingleStateEstimator : ISingleStateEstimator
+    public class SingleStateEstimator : ISingleStateEstimator, IEstimator
     {
         public double Estimate(State state)
         {
@@ -13,11 +13,13 @@ namespace lib.Solvers.RandomWalk
 
             var distScore = GetDistanceToClosestVoid(state.Map, state.SingleWorker.Position);
 
-            return - state.UnwrappedLeft * 100_000 - distScore;
+            int fastWheelsBonus = state.Workers.Sum(w => w.FastWheelsTimeLeft) + state.FastWheelsCount * Constants.FastWheelsTime * 100_000;
+            return 100_000_000 - distScore - state.UnwrappedLeft * 100_000 + fastWheelsBonus;
         }
 
         private int GetDistanceToClosestVoid(Map map, V start)
         {
+            
             //Bfs
             var queue = new Queue<(V, int)>();
             queue.Enqueue((start, 0));
@@ -39,5 +41,9 @@ namespace lib.Solvers.RandomWalk
             }
             return int.MaxValue;
         }
+
+        public double Estimate(State state, State prevState) => Estimate(state);
+
+        public string GetName() => "simple";
     }
 }

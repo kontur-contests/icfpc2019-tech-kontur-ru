@@ -14,9 +14,20 @@ namespace lib.Models
             return Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{problem:000}.desc");
         }
 
+        public static string GetPuzzlePath(int blockId)
+        {
+            return Path.Combine(FileHelper.PatchDirectoryName("lambda-client"), "blocks", blockId.ToString(), "task.desc");
+        }
+
         public static Problem Read(int problem)
         {
             var fileName = GetProblemPath(problem);
+            return Read(File.ReadAllText(fileName));
+        }
+
+        public static Problem ReadPuzzleTask(int blockId)
+        {
+            var fileName = GetPuzzlePath(blockId);
             return Read(File.ReadAllText(fileName));
         }
 

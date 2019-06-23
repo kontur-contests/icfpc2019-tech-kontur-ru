@@ -7,9 +7,15 @@ namespace lib.Solvers.RandomWalk
 {
     public class FastWorkerEstimator : IFastWorkerEstimator
     {
+        private readonly bool collectFastWheels;
         private Map<(int value, int version)> distance;
         private Map<(V value, int version)> parent;
         private int currentVersion;
+
+        public FastWorkerEstimator(bool collectFastWheels = false)
+        {
+            this.collectFastWheels = collectFastWheels;
+        }
 
         public double Estimate(State state, Worker worker)
         {
@@ -18,7 +24,8 @@ namespace lib.Solvers.RandomWalk
 
             var distScore = DistanceToVoid(state.Map, worker.Position);
 
-            return 100_000_000.0 - distScore - state.UnwrappedLeft * 1_000_000.0;
+            var fastWheelsBonus = collectFastWheels ? state.Workers.Sum(w => w.FastWheelsTimeLeft) + state.FastWheelsCount * Constants.FastWheelsTime * 1_000_000.0 : 0;
+            return 100_000_000.0 + fastWheelsBonus- distScore - state.UnwrappedLeft * 1_000_000.0;
         }
 
         private int DistanceToVoid(Map map, V start)
