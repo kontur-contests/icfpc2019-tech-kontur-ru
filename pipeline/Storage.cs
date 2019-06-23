@@ -50,7 +50,7 @@ namespace pipeline
             var tuples = EnumerateBestSolutionTuples(minDeltaCoeff)
                 .OrderByDescending(t => t.delta)
                 .ToList();
-            var spendingLimit = 10;
+            var spendingLimit = 0;
             foreach (var tuple in tuples)
             {
                 if (balance >= tuple.best.MoneySpent && spendingLimit > 0)
