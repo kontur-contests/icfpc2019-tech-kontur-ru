@@ -279,7 +279,7 @@ namespace console_runner
                     {
                         Console.WriteLine("Submitting block ...");
                         var submissionResult = await Api.Submit(block.BlockNumber, solutionPath, ourProblemPath);
-                        if (submissionResult.Errors.Count > 0)
+                        if (submissionResult.Errors != null && submissionResult.Errors.Count > 0)
                             submissionResult.Errors.ToList().ForEach(
                                 e => { Console.WriteLine($"Error {e.Key}: {e.Value}"); });
                     }
