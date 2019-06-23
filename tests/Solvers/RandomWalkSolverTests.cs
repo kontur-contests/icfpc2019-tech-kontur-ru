@@ -15,8 +15,8 @@ namespace tests.Solvers
             //var seed = Guid.NewGuid().GetHashCode();
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
-            var solver = new RandomWalkSolver(2, new Estimator(), new Random(seed), 100, usePalka: true, false);
-            SolveOneProblem(solver, 5);
+            var solver = new RandomWalkSolver(2, new Estimator(false), new Random(seed), 100, usePalka: true, false);
+            SolveOneProblem(solver, 22);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace tests.Solvers
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
             var solver0 = new StupidSolver(true);
-            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(), usePalka: false, new BoosterType[0]);
+            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(false), usePalka: false, new BoosterType[0]);
             var solver = new RandomWalkSolver(2, new Estimator(true), new Random(seed), 100, usePalka: true, useWheels: true);
             SolvePuzzleProblem(solver, 2);
         }
@@ -59,8 +59,9 @@ namespace tests.Solvers
             //var seed = Guid.NewGuid().GetHashCode();
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
-            var solver = new RandomWalkSolver(2, new EstimatorZakoulocki(), new Random(seed), 100, usePalka: true, false);
-            SolveOneProblem(solver, 5);
+            var solver = new RandomWalkSolver(2, new Estimator(false, true), new Random(seed), 100, usePalka: true, false);
+            SolveOneProblem(solver, 22);
+            // Pr 5: 2.2 s -> 252
         }
     }
 }

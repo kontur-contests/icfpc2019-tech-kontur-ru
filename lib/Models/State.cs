@@ -22,6 +22,7 @@ namespace lib.Models
             UnwrappedLeft = Map.VoidCount();
         }
 
+        public CellCostCalculator CellCostCalculator = null;
         public Worker SingleWorker => Workers.Single();
 
         public List<Worker> Workers { get; set; }
@@ -139,6 +140,7 @@ namespace lib.Models
                 if (Map[pp] == CellState.Void)
                 {
                     UnwrappedLeft--;
+                    CellCostCalculator?.BeforeWrapCell(pp);
                     ClustersState?.Wrap(pp);
                     OnWrap?.Invoke(pp);
                 }
@@ -237,6 +239,7 @@ namespace lib.Models
                 {
                     UnwrappedLeft++;
                     ClustersState?.Unwrap(wrappedCell.pos);
+                    CellCostCalculator?.AfterUnwrapCell(wrappedCell.pos);
                 }
             }
         }

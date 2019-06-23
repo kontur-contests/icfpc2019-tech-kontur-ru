@@ -34,12 +34,18 @@ namespace pipeline
         {
             return MetaCollection.FindSync(meta => !meta.IsOnlineChecked).ToList();
         }
-        
+
         public static List<SolutionMeta> EnumerateSolved(ISolver solver)
         {
-            return MetaCollection.FindSync(x => x.AlgorithmId == solver.GetName() && x.AlgorithmVersion == solver.GetVersion()).ToList();            
+            return MetaCollection.FindSync(x => x.AlgorithmId == solver.GetName() && x.AlgorithmVersion == solver.GetVersion()).ToList();
         }
-        
+
+        public static void RemoveTrash()
+        {
+            //var deleteResult = MetaCollection.DeleteMany(x => x.AlgorithmId == "deep-fast-2-True-wheels" && (x.OurTime == 1000 || x.OurTime == 1001));
+            //Console.WriteLine(deleteResult.DeletedCount);
+        }
+
         public static List<SolutionMeta> EnumerateBestSolutions()
         {
             var metas = new List<SolutionMeta>();

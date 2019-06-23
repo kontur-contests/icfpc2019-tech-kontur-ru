@@ -16,7 +16,7 @@ namespace lib.Solvers
             {
                 () => new StupidSolver(false),
                 () => new StupidSolver(true),
-                () => new ParallelDeepWalkSolver(2, new Estimator(), usePalka: false, new BoosterType[0]),
+                () => new ParallelDeepWalkSolver(2, new Estimator(false), usePalka: false, new BoosterType[0]),
                 //() => new PalkaSolver()
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
@@ -28,8 +28,8 @@ namespace lib.Solvers
         {
             return new List<Func<ISolver>>
             {
-                () => new RandomWalkSolver(depth: 2, new Estimator(true), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true, true),
-                () => new DeepWalkSolver(depth: 2, new Estimator(true), true, true),
+                //() => new RandomWalkSolver(depth: 2, new Estimator(true), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true, true),
+                () => new DeepWalkSolver(depth: 2, new Estimator(true, true), true, true),
                 //() => new StupidSolver(),
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
