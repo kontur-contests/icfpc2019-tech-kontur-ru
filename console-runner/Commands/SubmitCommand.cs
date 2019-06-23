@@ -27,7 +27,7 @@ namespace console_runner.Commands
                     
                     var minDeltaOption = command.Option(
                         "-d|--min-delta",
-                        $"Override minimum delta (default {Common.defaultMinDelta})",
+                        $"Override minimum delta (default {Common.DefaultMinDelta})",
                         CommandOptionType.SingleValue);
 
                     command.OnExecute(
@@ -49,7 +49,7 @@ namespace console_runner.Commands
                             }
 
                             Storage
-                                .EnumerateBestSolutions(Api.GetBalance().GetAwaiter().GetResult(), minDeltaOption.HasValue() ? int.Parse(minDeltaOption.Value()) : Common.defaultMinDelta)
+                                .EnumerateBestSolutions(Api.GetBalance().GetAwaiter().GetResult(), minDeltaOption.HasValue() ? double.Parse(minDeltaOption.Value()) : Common.DefaultMinDelta)
                                 .ForEach(
                                     solution =>
                                     {

@@ -43,19 +43,19 @@ namespace pipeline
             return MetaCollection.FindSync(x => x.AlgorithmId == solver.GetName() && x.AlgorithmVersion == solver.GetVersion()).ToList();
         }
 
-        public static List<SolutionMeta> EnumerateBestSolutions(int balance, int minDelta)
+        public static List<SolutionMeta> EnumerateBestSolutions(int balance, double minDeltaCoeff)
         {
             var metas = new List<SolutionMeta>();
 
-            var tuples = EnumerateBestSolutionTuples()
+            var tuples = EnumerateBestSolutionTuples(minDeltaCoeff)
                 .OrderByDescending(t => t.delta / 
                                         (t.best.MoneySpent == 0 ? int.MaxValue : t.best.MoneySpent))
                 .ToList();
             foreach (var tuple in tuples)
             {
-                // if (balance >= tuple.best.MoneySpent && tuple.delta >= minDelta)
-                //     metas.Add(tuple.best);
-                // else
+                if (balance >= tuple.best.MoneySpent && tuple.delta > 0)
+                    metas.Add(tuple.best);
+                else
                     metas.Add(tuple.@base);
 
                 balance -= metas.Last().MoneySpent;
@@ -64,7 +64,7 @@ namespace pipeline
             return metas;
         }
 
-        private static List<(SolutionMeta @base, SolutionMeta best, int delta)> EnumerateBestSolutionTuples()
+        private static List<(SolutionMeta @base, SolutionMeta best, int delta)> EnumerateBestSolutionTuples(double minDeltaCoeff)
         {
             var metas = new List<(SolutionMeta @base, SolutionMeta best, int delta)>();
             var problemIds = MetaCollection.Distinct<int>("ProblemId", new BsonDocument()).ToList();
@@ -112,11 +112,12 @@ namespace pipeline
                 var estimatedSolutions = minScoresForProblem.Select(
                     s =>
                     {
-                        var prevScore = (int) Math.Ceiling(mapScore * s.time / baselineSolution.time);
-                        var nextScore = (int) Math.Ceiling(mapScore);
-
-                        var nextScoreWithCost = nextScore - s._id;
-                        return new {s, delta = nextScoreWithCost - prevScore};
+                        var bestTime = Math.Min(baselineSolution.time, s.time) / minDeltaCoeff;
+                        var baseScore = (int) Math.Ceiling(mapScore * bestTime / baselineSolution.time);
+                        var score = (int) Math.Ceiling(mapScore * bestTime / s.time);
+                        var scoreWithCost = score - s._id;
+                        
+                        return new {s, delta = scoreWithCost - baseScore};
                     })
                     .ToList();
                 

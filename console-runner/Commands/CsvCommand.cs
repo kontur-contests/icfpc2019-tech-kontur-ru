@@ -19,14 +19,14 @@ namespace console_runner.Commands
 
                     var minDeltaOption = command.Option(
                         "-d|--min-delta",
-                        $"Override minimum delta (default {Common.defaultMinDelta})",
+                        $"Override minimum delta (default {Common.DefaultMinDelta})",
                         CommandOptionType.SingleValue);
                     
                     command.OnExecute(
                         () =>
                         {
                             Storage
-                                .EnumerateBestSolutions(Api.GetBalance().GetAwaiter().GetResult(), minDeltaOption.HasValue() ? int.Parse(minDeltaOption.Value()) : Common.defaultMinDelta)
+                                .EnumerateBestSolutions(Api.GetBalance().GetAwaiter().GetResult(), minDeltaOption.HasValue() ? double.Parse(minDeltaOption.Value()) : Common.DefaultMinDelta)
                                 .OrderBy(s => s.ProblemId)
                                 .ToList()
                                 .ForEach(solution => { Console.WriteLine($"{solution.ProblemId}, {solution.OurTime}, Ok"); });
