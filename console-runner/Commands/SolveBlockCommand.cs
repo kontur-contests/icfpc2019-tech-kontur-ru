@@ -76,9 +76,11 @@ namespace console_runner.Commands
                                 .PuzzleSolvers()
                                 .OrderBy(_ => Guid.NewGuid())
                                 .Select(x => x.Invoke())
+                                .Take(3)
                                 .ToList();
 
-                            Console.WriteLine($"Solving problem with {solvers.Count} solvers ...");
+                            var mapSize = block.Problem.ToState().Map;
+                            Console.WriteLine($"Solving problem {mapSize.SizeX}x{mapSize.SizeY} with {solvers.Count} solvers ...");
 
                             var results = Enumerable
                                 .Range(0, solvers.Count)
