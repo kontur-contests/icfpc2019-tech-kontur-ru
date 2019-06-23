@@ -136,6 +136,7 @@ namespace console_runner.Commands
                                             e => { Console.WriteLine($"Error {e.Key}: {e.Value}"); });
                             }
 
+                            Console.WriteLine("Done.");
                             return 0;
                         });
                 });
