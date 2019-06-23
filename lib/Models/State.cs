@@ -10,7 +10,7 @@ namespace lib.Models
         public V Position { get; set; }
         public Direction Direction { get; set; }
         public bool Wrapped { get; set; }
-
+        
         public override string ToString() => $"{nameof(Position)}: {Position}, {nameof(Direction)}: {Direction}, {nameof(Wrapped)}: {Wrapped}";
     }
 

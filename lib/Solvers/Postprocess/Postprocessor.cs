@@ -14,12 +14,10 @@ namespace lib.Solvers.Postprocess
         public Postprocessor(State state, Solved solved)
         {
             this.state = state;
-            //var forbiddenRanges = new List<(int start, int end)>();
             for (int i = 0; i < solved.Actions[0].Count; i++)
             {
                 if (solved.Actions[0][i] is UseExtension)
                     startIndex = i + 2;
-                //if (solved.Actions[0][i] is UseDrill)
             }
         }
 
@@ -146,7 +144,7 @@ namespace lib.Solvers.Postprocess
                 segment.Add(new TickWorkerState()
                 {
                     Position = tiks[position + 1].Position,
-                    Direction = segment.Last().Direction
+                    Direction = (segment.LastOrDefault() ?? tiks[position]).Direction
                 });
             }
             else
@@ -154,12 +152,12 @@ namespace lib.Solvers.Postprocess
                 segment.Add(new TickWorkerState()
                 {
                     Position = tiks[position + 1].Position,
-                    Direction = segment.Last().Direction
+                    Direction = (segment.LastOrDefault() ?? tiks[position]).Direction
                 });
                 segment.Add(new TickWorkerState()
                 {
                     Position = tiks[position + 1].Position,
-                    Direction = segment.Last().Direction.Rotate(1)
+                    Direction = (segment.LastOrDefault() ?? tiks[position]).Direction.Rotate(1)
                 });
             }
             

@@ -13,7 +13,7 @@ namespace lib.Solvers.Postprocess
             return new Solved
             {
                 Actions = sol.Split('#').Select(ParseActions).ToList(),
-                Buy = buy.ToBuyBoosters().ToList()
+                Buy = string.IsNullOrEmpty(buy) ? null : buy.ToBuyBoosters().ToList()
             };
         }
 
