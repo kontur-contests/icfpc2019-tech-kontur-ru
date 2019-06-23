@@ -35,7 +35,7 @@ namespace lib.Solvers.RandomWalk
         private readonly bool usePalka;
         private readonly bool useWheels;
 
-        public RandomWalkSolver(int depth, IEstimator estimator, Random random, int tryCount, bool usePalka, bool useWheels = false)
+        public RandomWalkSolver(int depth, IEstimator estimator, Random random, int tryCount, bool usePalka, bool useWheels)
         {
             this.depth = depth;
             this.estimator = estimator;

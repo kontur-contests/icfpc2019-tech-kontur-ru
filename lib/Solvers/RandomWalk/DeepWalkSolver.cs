@@ -10,7 +10,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return $"deep-fast-{depth}-{usePalka}";
+            return $"deep-fast-{depth}-{usePalka}-{estimator.Name}";
         }
 
         public int GetVersion()

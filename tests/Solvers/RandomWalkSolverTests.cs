@@ -14,7 +14,7 @@ namespace tests.Solvers
             //var seed = Guid.NewGuid().GetHashCode();
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
-            var solver = new RandomWalkSolver(2, new Estimator(), new Random(seed), 100, usePalka: true);
+            var solver = new RandomWalkSolver(2, new Estimator(), new Random(seed), 100, usePalka: true, false);
             SolveOneProblem(solver, 5);
         }
 
@@ -58,7 +58,7 @@ namespace tests.Solvers
             //var seed = Guid.NewGuid().GetHashCode();
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
-            var solver = new RandomWalkSolver(2, new EstimatorZakoulocki(), new Random(seed), 100, usePalka: true);
+            var solver = new RandomWalkSolver(2, new EstimatorZakoulocki(), new Random(seed), 100, usePalka: true, false);
             SolveOneProblem(solver, 5);
         }
     }
