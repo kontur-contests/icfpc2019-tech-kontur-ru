@@ -12,7 +12,8 @@ namespace lib.Models.Actions
                 throw new InvalidOperationException("No drills");
 
             state.DrillCount--;
-            worker.DrillTimeLeft = Constants.DrillTime;
+            worker.DrillTimeLeft = worker.DrillTimeLeft == 0 ? Constants.DrillTime + 1 : worker.DrillTimeLeft + Constants.DrillTime;
+            
             return () => state.DrillCount++;
         }
     }

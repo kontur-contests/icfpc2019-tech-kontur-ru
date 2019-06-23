@@ -24,7 +24,7 @@ namespace tests.Solvers
         // [TestCase(214, 20066, "CCC")]
         public void SolveOne(int problemId, int prevBestTime, string buy, bool useWheels)
         {
-            var solver = new ParallelDeepWalkSolver(2, new Estimator(useWheels, false), usePalka: false, useWheels: useWheels, buy.ToBuyBoosters());
+            var solver = new ParallelDeepWalkSolver(2, new Estimator(useWheels, false, false), usePalka: false, useWheels: useWheels, buy.ToBuyBoosters());
 
             var solved = SolveOneProblem(solver, problemId);
             
@@ -54,7 +54,7 @@ namespace tests.Solvers
         [TestCase(100, true)]
         public void Zakoulochki(int problemId, bool zakoulochki)
         {
-            var solver = new ParallelDeepWalkSolver(2, new Estimator(false, zakoulochki), usePalka: false, useWheels: false, new []{BoosterType.Cloning});
+            var solver = new ParallelDeepWalkSolver(2, new Estimator(false, zakoulochki, false), usePalka: false, useWheels: false, new []{BoosterType.Cloning});
 
             var solved = SolveOneProblem(solver, problemId);
 

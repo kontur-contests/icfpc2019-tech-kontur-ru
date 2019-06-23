@@ -9,14 +9,16 @@ namespace lib.Solvers.RandomWalk
     {
         private readonly bool collectFastWheels;
         private readonly bool zakoulochki;
+        private readonly bool collectDrill;
         private Map<(int value, int version)> distance;
         private Map<(V value, int version)> parent;
         private int currentVersion;
 
-        public Estimator(bool collectFastWheels, bool zakoulochki = false)
+        public Estimator(bool collectFastWheels, bool zakoulochki, bool collectDrill)
         {
             this.collectFastWheels = collectFastWheels;
             this.zakoulochki = zakoulochki;
+            this.collectDrill = collectDrill;
         }
 
         public string Name
@@ -26,6 +28,7 @@ namespace lib.Solvers.RandomWalk
                 var name = new List<string>();
                 if (collectFastWheels) name.Add("wheels");
                 if (zakoulochki) name.Add("zako");
+                if (collectDrill) name.Add("drrr");
                 return string.Join("-", name);
             }
         }
@@ -43,8 +46,9 @@ namespace lib.Solvers.RandomWalk
             var unwrappedCost = zakoulochki ? state.CellCostCalculator.Cost : 0;
 
             var fastWheelsBonus = collectFastWheels ? state.Workers.Sum(w => w.FastWheelsTimeLeft) + state.FastWheelsCount * Constants.FastWheelsTime * 1_000_000.0 : 0;
+            var drillBonus = collectDrill ? state.Workers.Sum(w => w.DrillTimeLeft) + state.DrillCount * Constants.DrillTime * 1_000_000.0 : 0;
 
-            return 100_000_000.0 + fastWheelsBonus- distScore - (state.UnwrappedLeft + unwrappedCost) * 1_000_000.0;
+            return 100_000_000.0 + fastWheelsBonus + drillBonus - distScore - (state.UnwrappedLeft + unwrappedCost) * 1_000_000.0;
         }
 
         public int DistanceToVoid(Map map, V start)

@@ -9,8 +9,8 @@ namespace tests.Solvers
         [Test]
         public void SolveOne()
         {
-            var solver = new DeepWalkSolver(2, new Estimator(true, true), usePalka: true, useWheels:true);
-            SolveOneProblemWithCluster(solver, 22);
+            var solver = new DeepWalkSolver(2, new Estimator(true, true, collectDrill:true), usePalka: true, useWheels:true, useDrill:true);
+            SolveOneProblem(solver, 2);
         }
     }
 }

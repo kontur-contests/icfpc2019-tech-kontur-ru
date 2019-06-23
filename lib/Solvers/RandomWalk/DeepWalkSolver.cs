@@ -22,6 +22,7 @@ namespace lib.Solvers.RandomWalk
         private readonly IEstimator estimator;
         private readonly bool usePalka;
         private readonly bool useWheels;
+        private readonly bool useDrill;
 
         private readonly ActionBase[] availableActions =
         {
@@ -34,12 +35,13 @@ namespace lib.Solvers.RandomWalk
         };
         private readonly List<List<ActionBase>> chains;
 
-        public DeepWalkSolver(int depth, IEstimator estimator, bool usePalka, bool useWheels)
+        public DeepWalkSolver(int depth, IEstimator estimator, bool usePalka, bool useWheels, bool useDrill)
         {
             this.depth = depth;
             this.estimator = estimator;
             this.usePalka = usePalka;
             this.useWheels = useWheels;
+            this.useDrill = useDrill;
 
             chains = availableActions.Select(x => new List<ActionBase> {x}).ToList();
             for (int i = 1; i < depth; i++)
@@ -65,6 +67,12 @@ namespace lib.Solvers.RandomWalk
                     var useFastWheels = new UseFastWheels();
                     solution.Add(useFastWheels);
                     state.Apply(useFastWheels);
+                }
+                if (useDrill && state.DrillCount > 0)
+                {
+                    var drill = new UseDrill();
+                    solution.Add(drill);
+                    state.Apply(drill);
                 }
                 //Console.Out.WriteLine($"--BEFORE:\n{state.Print()}");
                 var part = SolvePart(state, used);
@@ -96,7 +104,7 @@ namespace lib.Solvers.RandomWalk
                     if (action is Move moveAction)
                     {
                         var nextPosition = state.SingleWorker.Position + moveAction.Shift;
-                        if (!nextPosition.Inside(state.Map) || state.Map[nextPosition] == CellState.Obstacle)
+                        if (!nextPosition.Inside(state.Map) || (state.Map[nextPosition] == CellState.Obstacle && state.SingleWorker.DrillTimeLeft <= 1))
                             continue;
                     }
 
