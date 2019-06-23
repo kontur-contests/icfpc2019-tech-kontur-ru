@@ -16,7 +16,7 @@ namespace lib.Solvers
             {
                 () => new StupidSolver(false),
                 () => new StupidSolver(true),
-                () => new ParallelDeepWalkSolver(2, new Estimator(false, false, false), usePalka: false, useWheels: false, new BoosterType[0]),
+                () => new ParallelDeepWalkSolver(2, new Estimator(false, false, false), usePalka: false, useWheels: false, useDrill: false, new BoosterType[0]),
                 //() => new PalkaSolver()
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
@@ -34,7 +34,7 @@ namespace lib.Solvers
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
                 //() => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false, false, false), usePalka: false, useWheels: false, new[]{BoosterType.Cloning, }),
-                //() => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false, false, false), usePalka: false, useWheels: false, new[]{BoosterType.Cloning, BoosterType.Cloning, }),
+                () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: true, true, true), usePalka: false, useWheels: true, useDrill: true, new BoosterType[] {}),
                 () => new DeepWalkSolver(depth: 2, new Estimator(true, true, true), false, true, true),
                 () => new DeepWalkSolver(depth: 2, new Estimator(true, true, true), true, true, true),
                 () => new DeepWalkSolver(depth: 2, new Estimator(true, false, true), false, true, true),

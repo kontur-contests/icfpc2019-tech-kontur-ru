@@ -36,7 +36,7 @@ namespace tests.Solvers
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
             var solver0 = new StupidSolver(true);
-            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(true, false, false), usePalka: true, useWheels: false, new BoosterType[0]);
+            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(true, false, false), usePalka: true, useWheels: false, useDrill: false, new BoosterType[0]);
             var solver = new RandomWalkSolver(2, new Estimator(true, false, false), new Random(seed), 100, usePalka: true, useWheels: true);
             SolvePuzzleProblem(solver1, 2);
         }
@@ -48,7 +48,7 @@ namespace tests.Solvers
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
             var solver0 = new StupidSolver(true);
-            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(false, false, false), usePalka: false, useWheels: false, new BoosterType[0]);
+            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(false, false, false), usePalka: false, useWheels: false, useDrill: false, new BoosterType[0]);
             var solver = new RandomWalkSolver(2, new Estimator(true, false, false), new Random(seed), 100, usePalka: true, useWheels: true);
             SolvePuzzleProblem(solver, 2);
         }

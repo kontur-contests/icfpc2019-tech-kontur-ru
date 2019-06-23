@@ -23,6 +23,7 @@ namespace lib.Solvers.RandomWalk
         private readonly bool usePalka;
         private readonly BoosterType[] buy;
         private readonly bool useWheels;
+        private readonly bool useDrill;
 
         private readonly ActionBase[] availableActions =
         {
@@ -35,13 +36,14 @@ namespace lib.Solvers.RandomWalk
         };
         private readonly List<List<ActionBase>> chains;
 
-        public ParallelDeepWalkSolver(int depth, IEstimator estimator, bool usePalka, bool useWheels, BoosterType[] buy)
+        public ParallelDeepWalkSolver(int depth, IEstimator estimator, bool usePalka, bool useWheels, bool useDrill, BoosterType[] buy)
         {
             this.depth = depth;
             this.estimator = estimator;
             this.usePalka = usePalka;
             this.buy = buy;
             this.useWheels = useWheels;
+            this.useDrill = useDrill;
 
             chains = availableActions.Select(x => new List<ActionBase> {x}).ToList();
             for (int i = 1; i < depth; i++)
@@ -93,14 +95,22 @@ namespace lib.Solvers.RandomWalk
             List<ActionBase> bestSolution = null;
 
             var usedWheels = partialSolution.Sum(x => x.Count(c => c is UseFastWheels));
-            
             var useWheelsLocal = useWheels && (state.FastWheelsCount - usedWheels) > 0;
+
+            var usedDrill = partialSolution.Sum(x => x.Count(c => c is UseDrill));
+            var useDrillLocal = useDrill && (state.DrillCount - usedDrill) > 0;
+            
             foreach (var chain2 in chains)
             {
                 var chain = chain2.ToList();
                 if (useWheelsLocal)
                 {
                     chain.Insert(0, new UseFastWheels());
+                    chain.RemoveAt(chain.Count - 1);
+                }
+                if (useDrillLocal)
+                {
+                    chain.Insert(0, new UseDrill());
                     chain.RemoveAt(chain.Count - 1);
                 }
                 var solution = new List<ActionBase>();
@@ -110,8 +120,9 @@ namespace lib.Solvers.RandomWalk
                     var action = chain[c];
                     if (action is Move moveAction)
                     {
-                        var nextPosition = state.Workers[partialSolution.Count].Position + moveAction.Shift;
-                        if (!nextPosition.Inside(state.Map) || state.Map[nextPosition] == CellState.Obstacle)
+                        var worker = state.Workers[partialSolution.Count];
+                        var nextPosition = worker.Position + moveAction.Shift;
+                        if (!nextPosition.Inside(state.Map) || (state.Map[nextPosition] == CellState.Obstacle && worker.DrillTimeLeft <= 1))
                             break;
                     }
 

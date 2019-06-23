@@ -8,23 +8,35 @@ namespace tests.Solvers
     [TestFixture]
     internal class ParallelDeepWalkSolverTests : SolverTestsBase
     {
-        [TestCase(2, 350, "", false)]
-        [TestCase(2, 350, "", true)]
-        [TestCase(2, 350, "C", false)]
-        [TestCase(2, 350, "C", true)]
-        [TestCase(2, 350, "CC", false)]
-        [TestCase(2, 350, "CC", true)]
-        [TestCase(2, 350, "F", true)]
-        [TestCase(2, 350, "FC", true)]
-        [TestCase(2, 350, "FFC", true)]
-        [TestCase(2, 350, "FCC", true)]
-        [TestCase(2, 350, "FFCC", true)]
-        [TestCase(214, 20066, "FC", true)]
+        [TestCase(2, 350, "", false, false)]
+        [TestCase(2, 350, "", false, true)]
+        [TestCase(2, 350, "", true, false)]
+        [TestCase(2, 350, "", true, true)]
+        [TestCase(2, 350, "C", false, false)]
+        [TestCase(2, 350, "C", false, true)]
+        [TestCase(2, 350, "C", true, false)]
+        [TestCase(2, 350, "C", true, true)]
+        [TestCase(2, 350, "CC", false, false)]
+        [TestCase(2, 350, "CC", false, true)]
+        [TestCase(2, 350, "CC", true, false)]
+        [TestCase(2, 350, "CC", true, true)]
+        [TestCase(2, 350, "F", true, false)]
+        [TestCase(2, 350, "F", true, true)]
+        [TestCase(2, 350, "FC", true, false)]
+        [TestCase(2, 350, "FC", true, true)]
+        [TestCase(2, 350, "FFC", true, false)]
+        [TestCase(2, 350, "FFC", true, true)]
+        [TestCase(2, 350, "FCC", true, false)]
+        [TestCase(2, 350, "FCC", true, true)]
+        [TestCase(2, 350, "FFCC", true, false)]
+        [TestCase(2, 350, "FFCC", true, true)]
+        [TestCase(214, 20066, "FC", true, false)]
+        [TestCase(214, 20066, "FC", true, true)]
         // [TestCase(214, 20066, "CC")]
         // [TestCase(214, 20066, "CCC")]
-        public void SolveOne(int problemId, int prevBestTime, string buy, bool useWheels)
+        public void SolveOne(int problemId, int prevBestTime, string buy, bool useWheels, bool useDrill)
         {
-            var solver = new ParallelDeepWalkSolver(2, new Estimator(useWheels, false, false), usePalka: false, useWheels: useWheels, buy.ToBuyBoosters());
+            var solver = new ParallelDeepWalkSolver(2, new Estimator(useWheels, false, false), usePalka: false, useWheels: useWheels, useDrill: useDrill, buy.ToBuyBoosters());
 
             var solved = SolveOneProblem(solver, problemId);
             
@@ -54,7 +66,7 @@ namespace tests.Solvers
         [TestCase(100, true)]
         public void Zakoulochki(int problemId, bool zakoulochki)
         {
-            var solver = new ParallelDeepWalkSolver(2, new Estimator(false, zakoulochki, false), usePalka: false, useWheels: false, new []{BoosterType.Cloning});
+            var solver = new ParallelDeepWalkSolver(2, new Estimator(false, zakoulochki, false), usePalka: false, useWheels: false, useDrill: true, new []{BoosterType.Cloning});
 
             var solved = SolveOneProblem(solver, problemId);
 
