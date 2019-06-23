@@ -31,6 +31,7 @@ compare_csv:scheduled:
     allow_failure: false
     only:
         - schedules
+        - web
 
 submit:
     stage: submit
