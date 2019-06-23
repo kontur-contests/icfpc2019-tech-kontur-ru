@@ -305,8 +305,9 @@ function calcBaseBests(data) {
 function renderTable(data, algs, tasks, bests) {
     const table = document.createElement('table');
     table.classList.add('table');
-
-    const algsOrder = algs.filter(alg => !hiddenAlgs.includes(alg));
+    
+    const legacyAlgs = ["greedy v1", "igorlukanin-manual v1", "parallel-deep-walk-2-False v1", "parallel-deep-walk-2-True v1", "deep-fast-3-True-wheels-zako v1", "deep-walk-wheels/wheels v1", "deep-walk-wheels/wheels v1"];
+    const algsOrder = algs.filter(alg => !alg.startsWith("block-deep-walk") && !hiddenAlgs.includes(alg) && !legacyAlgs.includes(alg));
 
     const tableHeader = createTableHeader(algsOrder);
 
