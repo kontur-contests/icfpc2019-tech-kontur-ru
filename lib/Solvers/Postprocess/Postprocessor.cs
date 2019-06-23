@@ -8,10 +8,18 @@ namespace lib.Solvers.Postprocess
     public class Postprocessor
     {
         private readonly State state;
+        private readonly int startIndex;
 
-        public Postprocessor(State state)
+        public Postprocessor(State state, Solved solved)
         {
             this.state = state;
+            //var forbiddenRanges = new List<(int start, int end)>();
+            for (int i = 0; i < solved.Actions[0].Count; i++)
+            {
+                if (solved.Actions[0][i] is UseExtension)
+                    startIndex = i + 2;
+                //if (solved.Actions[0][i] is UseDrill)
+            }
         }
 
         public void TransferSmall()
@@ -24,7 +32,7 @@ namespace lib.Solvers.Postprocess
                 var ticks = state.History.Ticks;
                 
                 var longSegments = new List<(int start, int end)>();
-                for (int i = 1; i < ticks.Count; i++)
+                for (int i = startIndex + 1; i < ticks.Count; i++)
                 {
                     if (!ticks[i - 1].Wrapped || ticks[i].Wrapped)
                         continue;
@@ -50,7 +58,7 @@ namespace lib.Solvers.Postprocess
                     var best = -1;
                     var bestLen = int.MaxValue;
                     
-                    for (int j = 0; j < ticks.Count && !moved; j++)
+                    for (int j = startIndex; j < ticks.Count && !moved; j++)
                     {
                         if (!ticks[j].Wrapped)
                             continue;
@@ -74,7 +82,7 @@ namespace lib.Solvers.Postprocess
         public bool Transfer(int segmentStart, int segmentEnd, int targetStart)
         {
             var newTicks = state.History.Ticks.Take(segmentStart).ToList();
-            while (newTicks.Count > 0 && !newTicks.Last().Wrapped)
+            while (newTicks.Count > startIndex - 1 && !newTicks.Last().Wrapped)
                 newTicks.RemoveAt(newTicks.Count - 1);
 
             var segment = state.History.Ticks.Skip(segmentStart).Take(segmentEnd - segmentStart + 1).ToList();
