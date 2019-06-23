@@ -107,7 +107,7 @@ namespace tests.Solvers
             var text = solved.FormatSolution();
             var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{blockId:000}.sol");
             File.WriteAllText(fileName, text);
-            Save(actions, 500 + blockId);
+            Save(solved, 500 + blockId);
         }
     }
 }
