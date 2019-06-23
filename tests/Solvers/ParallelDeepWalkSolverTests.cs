@@ -14,7 +14,7 @@ namespace tests.Solvers
         [TestCase(214, 20066, "CCC")]
         public void SolveOne(int problemId, int prevBestTime, string buy)
         {
-            var solver = new ParallelDeepWalkSolver(2, new Estimator(), usePalka: false, buy.ToBuyBoosters());
+            var solver = new ParallelDeepWalkSolver(2, new Estimator(false, false), usePalka: false, buy.ToBuyBoosters());
 
             var solved = SolveOneProblem(solver, problemId);
             
