@@ -21,7 +21,7 @@ namespace lib.Solvers
 
         public string GetName()
         {
-            return $"stupid_{palka}";
+            return $"stupid-{palka}";
         }
 
         public int GetVersion()

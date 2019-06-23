@@ -22,7 +22,7 @@ namespace lib.Solvers
 
         public string GetName()
         {
-            return $"mining_{palka}_{limit}";
+            return $"mining-{palka}-{limit}";
         }
 
         public int GetVersion()
