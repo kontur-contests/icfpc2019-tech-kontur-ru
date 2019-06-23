@@ -1,4 +1,4 @@
-const TEN_MINUTES = 10 * 60 * 1000;
+const TEN_MINUTES = 10* 60 * 1000;
 const body = document.getElementsByTagName('body')[0];
 
 let hiddenAlgs = getHiddenColumns();
@@ -8,6 +8,9 @@ let showTable = getState();
 const formattedData = mapBaseData(dataFromServer);
 const formattedBlockchainData = mapData(blockchainDataForScript);
 const formattedDataProgress = mapData(progressDataForScript);
+
+const times = [];
+
 renderState();
 
 
@@ -420,6 +423,7 @@ function createCell(data, algName, taskNum, bests) {
     return td;
 }
 
+
 function createBaseCell(data, algName, taskNum, bests) {
     const td = document.createElement('td');
 
@@ -445,12 +449,14 @@ function createBaseCell(data, algName, taskNum, bests) {
     if (bests[taskNum].algName === algName) {
         td.classList.add('min');
     }
-    //
-    // const now = Date.now();
-    // if ( now - data.timestamp * 1000 < TEN_MINUTES) {
-    //     td.classList.add('recent');
-    //     td.setAttribute('title', `Посчитан недавно`)
-    // }
+
+    const now = Date.now();
+    const lastDate = Object.keys(data).reduce((max, money) => max > data[money].timestamp ? max : data[money].timestamp, 0);
+    times.push(lastDate);
+    if ( now - lastDate * 1000 < TEN_MINUTES) {
+        td.classList.add('recent');
+        td.setAttribute('title', `Посчитан недавно`)
+    }
 
     return td;
 }

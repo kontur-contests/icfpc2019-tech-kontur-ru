@@ -45,7 +45,7 @@
     background-image: radial-gradient(transparent 0, transparent 40%, #ca12d0b3 40%, #ca12d0b3);
 }
 
-.in-progress.in-progress.in-progress {
+.in-progress.in-progress.in-progress.in-progress {
     background-color: #fcff7b;
     text-align: center;
 }
