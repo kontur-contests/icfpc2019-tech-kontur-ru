@@ -8,8 +8,10 @@ let showTable = getState();
 const formattedData = mapBaseData(dataFromServer);
 const formattedBlockchainData = mapData(blockchainDataForScript);
 const formattedDataProgress = mapData(progressDataForScript);
-
-const times = [];
+const formattedSubmission = submissionForScript.reduce((acc, item) => {
+    acc[item._id] = item;
+    return acc;
+},{});
 
 renderState();
 
@@ -337,7 +339,11 @@ function createTableHeader(algs) {
     bestTh.innerText = 'best score';
     tableHeaderRow.appendChild(bestTh);
 
-
+    if (showTable === 'base') {
+        const submissions = document.createElement('th');
+        submissions.innerText = 'submission';
+        tableHeaderRow.appendChild(submissions);
+    }
 
     algs.forEach(item => {
         const th = document.createElement('th');
@@ -382,8 +388,17 @@ function createTableBody(data, algs, tasks, bests) {
             bestTd.setAttribute('title', `bestWeightedRes: ${bests[task].weightedRes}`)
         } else {
             bestTd.innerHTML = `<b>${bests[task].time}</b><br>${bests[task].algName}`;
+            bestTd.classList.add('wider');
+
         }
         tr.appendChild(bestTd);
+
+        if (showTable === 'base') {
+            const submissionTd = document.createElement('td');
+            submissionTd.classList.add('submiss');
+            submissionTd.innerHTML = `<b>Время: </b> ${formattedSubmission[task].time} <br> <b>Деньги: </b>${formattedSubmission[task].moneySpent}`
+            tr.appendChild(submissionTd);
+        }
 
         tableBody.appendChild(tr);
 
@@ -452,7 +467,6 @@ function createBaseCell(data, algName, taskNum, bests) {
 
     const now = Date.now();
     const lastDate = Object.keys(data).reduce((max, money) => max > data[money].timestamp ? max : data[money].timestamp, 0);
-    times.push(lastDate);
     if ( now - lastDate * 1000 < TEN_MINUTES) {
         td.classList.add('recent');
         td.setAttribute('title', `Посчитан недавно`)
