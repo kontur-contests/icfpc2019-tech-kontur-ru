@@ -15,7 +15,9 @@ namespace lib.Models
             Time = 0;
             ExtensionCount = 0;
             FastWheelsCount = 0;
+            FastWheelsCountNext = 0;
             DrillCount = 0;
+            DrillCountNext = 0;
             TeleportCount = 0;
             CloningCount = 0;
             Wrap();
@@ -33,7 +35,9 @@ namespace lib.Models
 
         public int ExtensionCount { get; set; }
         public int FastWheelsCount { get; set; }
+        private int FastWheelsCountNext { get; set; }
         public int DrillCount { get; set; }
+        private int DrillCountNext { get; set; }
         public int TeleportCount { get; set; }
         public int CloningCount { get; set; }
 
@@ -91,6 +95,7 @@ namespace lib.Models
 
             var prevWorkers = Workers.Select(x => x.Clone()).ToList();
             var undos = actions.Select((x, i) => x.Apply(this, Workers[i])).ToList();
+            undos.Add(CollectBoosters());
             undos.Reverse();
             Workers.ForEach(x => x.NextTurn());
             Time++;
@@ -162,6 +167,30 @@ namespace lib.Models
 
         public Action CollectBoosters()
         {
+            Action undoNextDrill = null;
+            if (DrillCountNext > 0)
+            {
+                DrillCountNext--;
+                DrillCount++;
+                undoNextDrill = () =>
+                {
+                    DrillCountNext++;
+                    DrillCount--;
+                };
+            }
+
+            Action undoNextWheels = null;
+            if (FastWheelsCountNext > 0)
+            {
+                FastWheelsCountNext--;
+                FastWheelsCount++;
+                undoNextWheels = () =>
+                {
+                    FastWheelsCountNext++;
+                    FastWheelsCount--;
+                };
+            }
+
             var boostersToCollect = new List<Booster>();
             foreach (var b in Boosters)
             {
@@ -186,10 +215,10 @@ namespace lib.Models
                         ExtensionCount++;
                         break;
                     case BoosterType.FastWheels:
-                        FastWheelsCount++;
+                        FastWheelsCountNext++;
                         break;
                     case BoosterType.Drill:
-                        DrillCount++;
+                        DrillCountNext++;
                         break;
                     case BoosterType.Teleport:
                         TeleportCount++;
@@ -212,10 +241,10 @@ namespace lib.Models
                             ExtensionCount--;
                             break;
                         case BoosterType.FastWheels:
-                            FastWheelsCount--;
+                            FastWheelsCountNext--;
                             break;
                         case BoosterType.Drill:
-                            DrillCount--;
+                            DrillCountNext--;
                             break;
                         case BoosterType.Teleport:
                             TeleportCount--;
@@ -227,6 +256,9 @@ namespace lib.Models
                 }
 
                 Boosters.AddRange(boostersToCollect);
+
+                undoNextWheels?.Invoke();
+                undoNextDrill?.Invoke();
             };
         }
 
