@@ -53,12 +53,12 @@ namespace pipeline
             // var spendingLimit = 0;
             foreach (var tuple in tuples)
             {
-                if (balance >= tuple.best.MoneySpent && tuple.delta > 0)
-                {
-                    metas.Add(tuple.best);
-                    // spendingLimit--;
-                }
-                else
+                // if (balance >= tuple.best.MoneySpent && tuple.delta > 0)
+                // {
+                //     metas.Add(tuple.best);
+                //     // spendingLimit--;
+                // }
+                // else
                     metas.Add(tuple.@base);
 
                 balance -= metas.Last().MoneySpent;
