@@ -11,11 +11,13 @@ namespace lib.Models
     [BsonIgnoreExtraElements]
     public class SolutionMeta
     {
-        public SolutionMeta(int problemId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs)
+        public SolutionMeta(int problemId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs, string buyBlob, int moneySpent)
         {
             ProblemId = problemId;
             SolutionBlob = solutionBlob;
+            BuyBlob = buyBlob;
             OurTime = ourTime;
+            MoneySpent = moneySpent;
             AlgorithmId = algorithmId;
             AlgorithmVersion = algorithmVersion;
             CalculationTookMs = calculationTookMs;
@@ -24,7 +26,9 @@ namespace lib.Models
         public ObjectId Id;
         public int ProblemId;
         public string SolutionBlob;
+        public string BuyBlob;
         public int OurTime;
+        public int MoneySpent;
         public bool IsOnlineChecked;
         public int? OnlineTime;
         public bool? IsOnlineCorrect;

@@ -1,4 +1,5 @@
 using System;
+using lib.Models;
 using lib.Solvers;
 using lib.Solvers.RandomWalk;
 using NUnit.Framework;
@@ -35,7 +36,7 @@ namespace tests.Solvers
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
             var solver0 = new StupidSolver(true);
-            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(true), usePalka: true);
+            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(true), usePalka: true, new BoosterType[0]);
             var solver = new RandomWalkSolver(2, new Estimator(true), new Random(seed), 100, usePalka: true, useWheels: true);
             SolvePuzzleProblem(solver1, 2);
         }
@@ -47,7 +48,7 @@ namespace tests.Solvers
             var seed = -1635707027;
             Console.Out.WriteLine($"Seed: {seed}");
             var solver0 = new StupidSolver(true);
-            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(), usePalka: false);
+            var solver1 = new ParallelDeepWalkSolver(2, new Estimator(), usePalka: false, new BoosterType[0]);
             var solver = new RandomWalkSolver(2, new Estimator(true), new Random(seed), 100, usePalka: true, useWheels: true);
             SolvePuzzleProblem(solver, 2);
         }

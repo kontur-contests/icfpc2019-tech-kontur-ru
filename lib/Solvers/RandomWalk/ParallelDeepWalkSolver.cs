@@ -21,6 +21,7 @@ namespace lib.Solvers.RandomWalk
         private readonly int depth;
         private readonly IEstimator estimator;
         private readonly bool usePalka;
+        private readonly BoosterType[] buy;
 
         private readonly ActionBase[] availableActions =
         {
@@ -33,11 +34,12 @@ namespace lib.Solvers.RandomWalk
         };
         private readonly List<List<ActionBase>> chains;
 
-        public ParallelDeepWalkSolver(int depth, IEstimator estimator, bool usePalka)
+        public ParallelDeepWalkSolver(int depth, IEstimator estimator, bool usePalka, BoosterType[] buy)
         {
             this.depth = depth;
             this.estimator = estimator;
             this.usePalka = usePalka;
+            this.buy = buy;
 
             chains = availableActions.Select(x => new List<ActionBase> {x}).ToList();
             for (int i = 1; i < depth; i++)
@@ -46,10 +48,12 @@ namespace lib.Solvers.RandomWalk
             }
         }
 
-        public List<List<ActionBase>> Solve(State state)
+        public Solved Solve(State state)
         {
             var solution = new List<List<ActionBase>> {new List<ActionBase>()};
 
+            state.BuyBoosters(buy);
+            
             if (usePalka)
                 BoosterMaster.CreatePalka(state, solution[0]);
             BoosterMaster.CloneAttack(state, solution);
@@ -78,7 +82,7 @@ namespace lib.Solvers.RandomWalk
                 //     break;
             }
 
-            return solution;
+            return new Solved {Actions = solution, Buy = buy.ToList()};
         }
 
         public List<ActionBase> SolvePart(State state, List<List<ActionBase>> partialSolution)

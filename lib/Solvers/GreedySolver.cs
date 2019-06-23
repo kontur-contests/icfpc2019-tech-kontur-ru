@@ -19,9 +19,9 @@ namespace lib.Solvers
 
         public int GetVersion() => 1;
 
-        private readonly V[] shifts = { "0,1", "1,0", "0,-1", "-1,0" };
+        private readonly V[] shifts = {"0,1", "1,0", "0,-1", "-1,0"};
 
-        public List<List<ActionBase>> Solve(State state)
+        public Solved Solve(State state)
         {
             var result = new List<ActionBase>();
 
@@ -36,7 +36,8 @@ namespace lib.Solvers
                 result.Add(best.action);
                 state.Apply(best.action);
             }
-            return new List<List<ActionBase>> {result};
+
+            return new Solved {Actions = new List<List<ActionBase>> {result}};
         }
 
         private (ActionBase action, double score) EstimateAction(ActionBase action, State state)

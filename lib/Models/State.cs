@@ -240,5 +240,33 @@ namespace lib.Models
                 }
             }
         }
+        
+        public void BuyBoosters(params BoosterType[] buyBoosters)
+        {
+            foreach (var boosterType in buyBoosters)
+            {
+                switch (boosterType)
+                {
+                    case BoosterType.Extension:
+                        ExtensionCount++;
+                        break;
+                    case BoosterType.Drill:
+                        DrillCount++;
+                        break;
+                    case BoosterType.FastWheels:
+                        FastWheelsCount++;
+                        break;
+                    case BoosterType.Teleport:
+                        TeleportCount++;
+                        break;
+                    case BoosterType.Cloning:
+                        CloningCount++;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
     }
 }

@@ -45,7 +45,7 @@ namespace lib.Solvers.RandomWalk
             estimator = new PlanWorkerEstimator();
         }
 
-        public List<List<ActionBase>> Solve(State state)
+        public Solved Solve(State state)
         {
             var solution = new List<ActionBase>();
             foreach (var clusterId in state.ClustersState.Path)
@@ -58,7 +58,7 @@ namespace lib.Solvers.RandomWalk
                 }
             }
 
-            return new List<List<ActionBase>> {solution};
+            return new Solved {Actions = new List<List<ActionBase>> {solution}};
         }
 
         public List<ActionBase> SolvePart(State state, int clusterId)
