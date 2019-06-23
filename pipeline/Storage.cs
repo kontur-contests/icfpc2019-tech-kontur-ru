@@ -48,8 +48,7 @@ namespace pipeline
             var metas = new List<SolutionMeta>();
 
             var tuples = EnumerateBestSolutionTuples(minDeltaCoeff)
-                .OrderByDescending(t => t.delta / 
-                                        (t.best.MoneySpent == 0 ? int.MaxValue : t.best.MoneySpent))
+                .OrderByDescending(t => t.delta)
                 .ToList();
             foreach (var tuple in tuples)
             {
@@ -112,7 +111,7 @@ namespace pipeline
                 var estimatedSolutions = minScoresForProblem.Select(
                     s =>
                     {
-                        var bestTime = Math.Min(baselineSolution.time, s.time) / minDeltaCoeff;
+                        var bestTime = s.time;
                         var baseScore = (int) Math.Ceiling(mapScore * bestTime / baselineSolution.time);
                         var score = (int) Math.Ceiling(mapScore * bestTime / s.time);
                         var scoreWithCost = score - s._id;
@@ -122,7 +121,7 @@ namespace pipeline
                     .ToList();
                 
                 var optimalSolution = estimatedSolutions
-                    .OrderByDescending(s => s.delta / (s.s._id == 0 ? int.MaxValue : s.s._id))
+                    .OrderByDescending(s => s.delta)
                     .First();
 
                 var best = MetaCollection.FindSync(
