@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
@@ -9,7 +10,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return $"deep-walk-{estimator.GetName()}";
+            return $"deep-fast-{depth}-{usePalka}";
         }
 
         public int GetVersion()
@@ -17,7 +18,10 @@ namespace lib.Solvers.RandomWalk
             return 1;
         }
 
+        private readonly int depth;
         private readonly IEstimator estimator;
+        private readonly bool usePalka;
+        private readonly bool useWheels;
 
         private readonly ActionBase[] availableActions =
         {
@@ -29,13 +33,13 @@ namespace lib.Solvers.RandomWalk
             new Move("-1,0")
         };
         private readonly List<List<ActionBase>> chains;
-        private CyclingTracker cyclingTracker;
-        private readonly bool useWheels;
 
-        public DeepWalkSolver(int depth, IEstimator estimator, bool useWheels = false)
+        public DeepWalkSolver(int depth, IEstimator estimator, bool usePalka, bool useWheels)
         {
-            this.useWheels = useWheels;
+            this.depth = depth;
             this.estimator = estimator;
+            this.usePalka = usePalka;
+            this.useWheels = useWheels;
 
             chains = availableActions.Select(x => new List<ActionBase> {x}).ToList();
             for (int i = 1; i < depth; i++)
@@ -46,11 +50,14 @@ namespace lib.Solvers.RandomWalk
 
         public List<List<ActionBase>> Solve(State state)
         {
-            this.cyclingTracker = new CyclingTracker();
             var solution = new List<ActionBase>();
-            
-            BoosterMaster.CreatePalka(state, solution);
 
+            if (usePalka)
+                BoosterMaster.CreatePalka(state, solution);
+
+            //var tick = 0;
+
+            var used = new HashSet<(V position, int unwrappedLeft)>();
             while (state.UnwrappedLeft > 0)
             {
                 if (useWheels && state.FastWheelsCount > 0)
@@ -59,57 +66,63 @@ namespace lib.Solvers.RandomWalk
                     solution.Add(useFastWheels);
                     state.Apply(useFastWheels);
                 }
-                var part = SolvePart(state);
-                foreach (var action in part)
-                {
-                    state.Apply(action);
-                    cyclingTracker.AddState(state);
-                }
+                //Console.Out.WriteLine($"--BEFORE:\n{state.Print()}");
+                var part = SolvePart(state, used);
+                if (part == null)
+                    part = SolvePart(state, new HashSet<(V position, int unwrappedLeft)>());
+                used.Add((state.SingleWorker.Position, state.UnwrappedLeft));
                 solution.AddRange(part);
+                state.ApplyRange(part);
+                // Console.Out.WriteLine($"  PART:\n{part.Format()}");
+                //
+                // if (tick++ > 1000)
+                //     break;
             }
 
             return new List<List<ActionBase>> {solution};
         }
-        
-        public List<ActionBase> SolvePart(State state)
-        {
-            // Console.Out.WriteLine("START PART");
 
+        public List<ActionBase> SolvePart(State state, HashSet<(V position, int unwrappedLeft)> used)
+        {
             var bestEstimation = double.MinValue;
             List<ActionBase> bestSolution = null;
 
             foreach (var chain in chains)
             {
-                var clone = state.Clone();
-
+                var undos = new List<Action>();
                 var solution = new List<ActionBase>();
                 foreach (var action in chain)
                 {
                     if (action is Move moveAction)
                     {
-                        var nextPosition = clone.SingleWorker.Position + moveAction.Shift;
-                        if (!nextPosition.Inside(clone.Map) || clone.Map[nextPosition] == CellState.Obstacle)
+                        var nextPosition = state.SingleWorker.Position + moveAction.Shift;
+                        if (!nextPosition.Inside(state.Map) || state.Map[nextPosition] == CellState.Obstacle)
                             continue;
                     }
 
-                    clone.Apply(action);
+                    undos.Add(state.Apply(action));
                     solution.Add(action);
-                    if (clone.UnwrappedLeft == 0)
+                    if (state.UnwrappedLeft == 0)
                         break;
                 }
 
-                if (cyclingTracker.IsCycled(clone))
-                    continue;
-                var estimation = estimator.Estimate(clone, state);
-                // Console.Out.Write($"  {estimation} {solution.Format()}");
-                if (estimation > bestEstimation)
+                if (!used.Contains((state.SingleWorker.Position, state.UnwrappedLeft)))
                 {
-                    bestEstimation = estimation;
-                    bestSolution = solution;
-                    // Console.Out.WriteLine(" -- better");
+                    var estimation = estimator.Estimate(state, state.SingleWorker);
+                    //Console.Out.Write($"  {estimation} {solution.Format()}");
+                    if (estimation > bestEstimation)
+                    {
+                        bestEstimation = estimation;
+                        bestSolution = solution;
+                        //Console.Out.WriteLine(" -- better");
+                    }
+                    // else
+                    //     Console.Out.WriteLine();
                 }
-                // else
-                //     Console.Out.WriteLine();
+
+                undos.Reverse();
+                foreach (var undo in undos)
+                    undo();
             }
 
             return bestSolution;

@@ -5,11 +5,13 @@ using lib.Models;
 
 namespace lib.Solvers.RandomWalk
 {
-    public class ClusterWorkerEstimator : IFastWorkerEstimator
+    public class ClusterWorkerEstimator : IEstimator
     {
         private Map<(int value, int version)> distance;
         private Map<(V value, int version)> parent;
         private int currentVersion;
+
+        public string Name => "cluster";
 
         public double Estimate(State state, Worker worker)
         {

@@ -7,12 +7,12 @@ namespace lib.Solvers.RandomWalk
 {
     public class EstimatorZakoulocki : IEstimator
     {
-        public string GetName() => "zako";
-        public double Estimate(State state, State prevState)
+        public string Name => "zako";
+        public double Estimate(State state, Worker worker)
         {
             if (state.UnwrappedLeft == 0)
                 return 1_000_000_000 - state.Time;
-            var distScore = DistanceToVoid(state.Map, state.SingleWorker.Position);
+            var distScore = DistanceToVoid(state.Map, worker.Position);
 
             var unwrappedCost = state.Map.EnumerateCells().Where(c => c.state == CellState.Void).Sum(c => CellCost(c.pos, state.Map));
 

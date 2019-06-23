@@ -16,7 +16,7 @@ namespace lib.Solvers
             {
                 () => new StupidSolver(false),
                 () => new StupidSolver(true),
-                () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: false),
+                () => new ParallelDeepWalkSolver(2, new Estimator(), usePalka: false),
                 //() => new PalkaSolver()
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
@@ -28,6 +28,8 @@ namespace lib.Solvers
         {
             return new List<Func<ISolver>>
             {
+                () => new RandomWalkSolver(depth: 2, new Estimator(true), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true, true),
+                () => new DeepWalkSolver(depth: 2, new Estimator(true), true, true),
                 //() => new StupidSolver(),
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
@@ -36,7 +38,7 @@ namespace lib.Solvers
                 //() => new BlockDeepWalkSolver(blockSize: 50, depth: 3, new Estimator(), usePalka: true),
                 // () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: false),
                 // () => new FastParallelDeepWalkSolver(2, new FastWorkerEstimator(), usePalka: true),
-                () => new ParallelPlanSolver(2),
+                //() => new ParallelPlanSolver(2),
             };
         }
 

@@ -10,7 +10,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return $"random-walk-{depth}/{tryCount}/{usePalka}/{estimator.GetName()}";
+            return $"random-walk-{depth}/{tryCount}/{usePalka}/{estimator.Name}";
         }
 
         public int GetVersion()
@@ -80,7 +80,7 @@ namespace lib.Solvers.RandomWalk
                 var clone = state;//.Clone();
                 var undoes = new List<Action>();
                 var solution = SolveStep(clone, undoes);
-                var estimation = estimator.Estimate(clone, state);
+                var estimation = estimator.Estimate(clone, state.SingleWorker);
                 undoes.Reverse();
                 foreach (var undo in undoes)
                 {
