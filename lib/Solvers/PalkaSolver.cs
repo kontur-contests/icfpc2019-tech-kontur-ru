@@ -22,7 +22,7 @@ namespace lib.Solvers
             return 1;
         }
 
-        public List<List<ActionBase>> Solve(State state)
+        public Solved Solve(State state)
         {
             result = new List<ActionBase>();
 
@@ -104,7 +104,7 @@ namespace lib.Solvers
                 }
             }
 
-            return new List<List<ActionBase>> { result };
+            return new Solved {Actions = new List<List<ActionBase>> {result}};
         }
 
         private static class ComponentBuilder

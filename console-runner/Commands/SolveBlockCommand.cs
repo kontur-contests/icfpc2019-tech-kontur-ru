@@ -89,11 +89,12 @@ namespace console_runner.Commands
                                         var solver = solvers[thread];
 
                                         var stopwatch = Stopwatch.StartNew();
-                                        var actions = solver.Solve(block.Problem.ToState().Clone());
+                                        var solved = solver.Solve(block.Problem.ToState().Clone());
                                         var calculationTime = stopwatch.ElapsedMilliseconds;
 
-                                        var time = actions.CalculateTime();
-                                        var solutionBlob = actions.Format();
+                                        var actions = solved.Actions;
+                                        var time = solved.CalculateTime();
+                                        var solutionBlob = solved.FormatSolution();
 
                                         var path = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{block.BlockNumber:000}_sol_{solver.GetName()}_v{solver.GetVersion()}_{time}.sol");
                                         File.WriteAllText(path, solutionBlob);
@@ -106,7 +107,9 @@ namespace console_runner.Commands
                                             time,
                                             solver.GetName(),
                                             solver.GetVersion(),
-                                            calculationTime
+                                            calculationTime,
+                                            null,
+                                            0
                                         ).SaveToDb(isBlockSolution: true);
 
                                         return Tuple.Create(solver, actions);

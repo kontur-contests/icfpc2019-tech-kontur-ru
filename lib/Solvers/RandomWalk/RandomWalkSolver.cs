@@ -45,7 +45,7 @@ namespace lib.Solvers.RandomWalk
             this.useWheels = useWheels;
         }
 
-        public List<List<ActionBase>> Solve(State state)
+        public Solved Solve(State state)
         {
             var solution = new List<ActionBase>();
             
@@ -65,7 +65,7 @@ namespace lib.Solvers.RandomWalk
                 state.ApplyRange(part);
             }
 
-            return new List<List<ActionBase>> {solution};
+            return new Solved {Actions = new List<List<ActionBase>> {solution}};
         }
 
         public List<ActionBase> SolvePart(State state)

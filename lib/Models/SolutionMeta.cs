@@ -11,7 +11,7 @@ namespace lib.Models
     [BsonIgnoreExtraElements]
     public class SolutionMeta
     {
-        public SolutionMeta(int problemId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs, string buyBlob = null, int moneySpent = 0)
+        public SolutionMeta(int problemId, string solutionBlob, int ourTime, string algorithmId, int algorithmVersion, double calculationTookMs, string buyBlob, int moneySpent)
         {
             ProblemId = problemId;
             SolutionBlob = solutionBlob;

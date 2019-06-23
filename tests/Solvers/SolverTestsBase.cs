@@ -12,16 +12,16 @@ namespace tests.Solvers
 {
     internal class SolverTestsBase
     {
-        public int SolveOneProblem(ISolver solver, int id)
+        public Solved SolveOneProblem(ISolver solver, int id)
         {
             var state = ReadFromFile(id);
             var result = solver.Solve(state);
             Save(result, id);
             Console.WriteLine($"Solved {id} problem in {result.CalculateTime()} steps.");
             // LogSolution(id, result);
-            return result.CalculateTime();
+            return result;
         }
-
+        
         public int SolvePuzzleProblem(ISolver solver, int blockId)
         {
             var state = ReadFromPuzzleFile(blockId);
@@ -75,7 +75,7 @@ namespace tests.Solvers
 
                     lock (sync)
                     {
-                        total += result;
+                        total += result.CalculateTime();
                     }
                 });
             Console.WriteLine($"Total steps: {total}.");
@@ -93,15 +93,18 @@ namespace tests.Solvers
             return problem.ToState();
         }
 
-        public void Save(List<List<ActionBase>> actions, int id)
+        public void Save(Solved solved, int id)
         {
-            var text = actions.Format();
+            var text = solved.FormatSolution();
             var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}.sol");
+            var buyFileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}.buy");
             File.WriteAllText(fileName, text);
+            File.WriteAllText(buyFileName, solved.FormatBuy());
         }
-        public void SavePuzzle(List<List<ActionBase>> actions, int blockId)
+        
+        public void SavePuzzle(Solved solved, int blockId)
         {
-            var text = actions.Format();
+            var text = solved.FormatSolution();
             var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "puzzles", $"block{blockId:000}.sol");
             File.WriteAllText(fileName, text);
         }
