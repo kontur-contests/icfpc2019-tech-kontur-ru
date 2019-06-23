@@ -50,13 +50,13 @@ namespace pipeline
             var tuples = EnumerateBestSolutionTuples(minDeltaCoeff)
                 .OrderByDescending(t => t.delta)
                 .ToList();
-            var spendingLimit = 0;
+            // var spendingLimit = 0;
             foreach (var tuple in tuples)
             {
-                if (balance >= tuple.best.MoneySpent && spendingLimit > 0)
+                if (balance >= tuple.best.MoneySpent && tuple.delta > 0)
                 {
                     metas.Add(tuple.best);
-                    spendingLimit--;
+                    // spendingLimit--;
                 }
                 else
                     metas.Add(tuple.@base);
@@ -115,12 +115,15 @@ namespace pipeline
                 var estimatedSolutions = minScoresForProblem.Select(
                     s =>
                     {
-                        // var bestTime = s.time;
-                        // var baseScore = (int) Math.Ceiling(mapScore * bestTime / baselineSolution.time);
-                        // var score = (int) Math.Ceiling(mapScore * bestTime / s.time);
-                        // var scoreWithCost = score - s._id;
-                        //
-                        return new {s, delta = baselineSolution.time - s.time}; //scoreWithCost - baseScore};
+                        var bestTime = s.time;
+                        var baseScore = (int) Math.Ceiling(mapScore * bestTime / baselineSolution.time);
+                        var score = (int) Math.Ceiling(mapScore * bestTime / s.time);
+                        var scoreWithCost = score - s._id;
+
+                        // var limit = mapScore - mapScore / minDeltaCoeff;
+                        var delta = scoreWithCost - baseScore < 1000 ? -1 : baselineSolution.time - s.time;
+                        
+                        return new {s, delta};
                     })
                     .ToList();
                 

@@ -7,7 +7,7 @@ namespace console_runner.Commands
 {
     public static class Common
     {
-        public const double DefaultMinDelta = 2;
+        public const double DefaultMinDelta = 1.2;
         
         public static void Solve(ISolver solver, ProblemMeta problemMeta, int? thread = null)
         {
