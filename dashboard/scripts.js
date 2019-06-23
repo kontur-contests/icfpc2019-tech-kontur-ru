@@ -3,7 +3,9 @@ const body = document.getElementsByTagName('body')[0];
 
 let hiddenAlgs = getHiddenColumns();
 let showTable = getState();
-const formattedData = mapData(dataFromServer);
+// let filterStr = '';
+// let algsListOpen = false;
+const formattedData = mapBaseData(dataFromServer);
 const formattedBlockchainData = mapData(blockchainDataForScript);
 const formattedDataProgress = mapData(progressDataForScript);
 renderState();
@@ -15,6 +17,41 @@ function getHiddenColumns() {
 
 function getState() {
     return localStorage.getItem('showTable') || 'base';
+}
+
+function mapBaseData(rawData) {
+    const algs = new Set();
+    const tasks = new Set();
+    const formattedData = rawData.reduce((acc, item) => {
+        if (!item._id) {
+            return acc;
+        }
+        const [id, alg, version, money] = item._id.split('_');
+        const algName = `${alg} v${version}`;
+
+        tasks.add(parseInt(id));
+        algs.add(algName);
+
+        if (!acc[id]) {
+            acc[id] = {}
+        }
+
+        if (!acc[id][algName]) {
+            acc[id][algName] = {}
+        }
+
+        acc[id][algName][money] = {
+            ...item,
+        };
+
+        return acc;
+    }, {});
+
+    return {
+        algs: [...algs].sort(),
+        tasks: [...tasks].sort((a, b) => a - b),
+        data: formattedData,
+    }
 }
 
 function mapData(rawData) {
@@ -49,6 +86,7 @@ function renderState() {
     renderControls();
     let data;
     let needProgress = false;
+    let bests;
 
 
     if (showTable === 'base') {
@@ -56,10 +94,12 @@ function renderState() {
         needProgress = true;
     } else {
         data = formattedBlockchainData;
-    }
-    const bests = calcBests(data.data);
+        bests = calcBests(data.data);
 
-    renderTable(data.data, data.algs, data.tasks, bests, needProgress);
+    }
+
+
+    renderTable(data.data, data.algs, data.tasks, bests);
 
 }
 
@@ -76,11 +116,24 @@ function renderControls() {
 
     renderToggle(wrapper);
 
+    // renderFilter();
+
     if (showTable === 'base') {
         renderShowAllButton();
+        // renderOpenAlgsListButton();
+        // renderAlgsList();
     }
+}
 
+function renderFilter() {
+    const container = document.getElementsByClassName('controls')[0];
+    const form = document.createElement('form');
+    form.addEventListener('submit', handleFilterSubmit);
+    const filter = document.createElement('input');
+    filter.classList.add('filter');
 
+    form.appendChild(filter);
+    container.appendChild(form)
 }
 
 function renderShowAllButton() {
@@ -98,6 +151,20 @@ function renderShowAllButton() {
 
     container.appendChild(button);
 
+}
+
+function renderOpenAlgsListButton() {
+    if (document.getElementsByClassName('list-toggle').length || showTable !== 'base') {
+        return;
+    }
+
+    const container = document.getElementsByClassName('controls')[0];
+    const button = document.createElement('button');
+    button.textContent = `${algsListOpen ? 'Закрыть' : 'Открыть' } список алгоритмов`;
+    button.classList.add('list-toggle');
+    button.addEventListener('click', toggleAlgsList);
+
+    container.appendChild(button);
 }
 
 function renderToggle(container) {
@@ -121,6 +188,23 @@ function renderToggle(container) {
     toggle.appendChild(checkbox);
     toggle.appendChild(rightText);
     container.appendChild(toggle);
+
+}
+
+function renderAlgsList() {
+    if (document.getElementsByClassName('algs-wrapper').length) {
+        const deleting = document.getElementsByClassName('algs-wrapper')[0];
+        deleting.parentNode.removeChild(deleting);
+    }
+
+    if (!algsListOpen) {
+        return
+    }
+
+    const container = document.getElementsByClassName('controls')[0];
+    const list = document.createElement('div');
+    list.classList.add('algs-wrapper')
+
 
 }
 
@@ -151,14 +235,15 @@ function calcBests(data) {
     return bests;
 }
 
-function renderTable(data, algs, tasks, bests, needProgress) {
+function renderTable(data, algs, tasks, bests) {
     const table = document.createElement('table');
     table.classList.add('table');
 
     const algsOrder = algs.filter(alg => !hiddenAlgs.includes(alg));
+
     const tableHeader = createTableHeader(algsOrder);
 
-    const tableBody = createTableBody(data, algsOrder, tasks, bests, needProgress);
+    const tableBody = createTableBody(data, algsOrder, tasks, bests);
 
     table.appendChild(tableHeader);
     table.appendChild(tableBody);
@@ -177,9 +262,12 @@ function createTableHeader(algs) {
     const indexTh = document.createElement('th');
     tableHeaderRow.appendChild(indexTh);
 
-    const bestTh = document.createElement('th');
-    bestTh.innerText = 'best score';
-    tableHeaderRow.appendChild(bestTh);
+    if (showTable !== 'base') {
+        const bestTh = document.createElement('th');
+        bestTh.innerText = 'best score';
+        tableHeaderRow.appendChild(bestTh);
+    }
+
 
 
     algs.forEach(item => {
@@ -194,55 +282,94 @@ function createTableHeader(algs) {
     return tableHeader;
 }
 
-function createTableBody(data, algs, tasks, bests, needProgress) {
+function createTableBody(data, algs, tasks, bests) {
     const tableBody = document.createElement('tbody');
-    const now = Date.now();
 
     tasks.sort((a, b) => showTable === 'base' ? a - b : b - a).forEach(task => {
         const tr = document.createElement('tr');
         const indexTd = document.createElement('td');
         indexTd.textContent = task;
-
-        const bestTd = document.createElement('td');
-        bestTd.classList.add('min');
-        bestTd.innerHTML = `<b>${bests[task].time}</b><br>${bests[task].algName}`;
-
         tr.appendChild(indexTd);
-        tr.appendChild(bestTd);
+
+
+        if (showTable !== 'base') {
+            const bestTd = document.createElement('td');
+            bestTd.classList.add('min');
+            bestTd.innerHTML = `<b>${bests[task].time}</b><br>${bests[task].algName}`;
+            tr.appendChild(bestTd);
+        }
 
         tableBody.appendChild(tr);
 
         const rowData = data[task];
 
         algs.forEach(alg => {
-            const td = document.createElement('td');
-            td.textContent = (rowData[alg] && rowData[alg].time) || '';
-
-            if (!rowData[alg] || !rowData[alg].time) {
-                td.classList.add('no');
-            } else if (bests[task].algName === alg) {
-                td.classList.add('min');
+            const data = rowData[alg];
+            let td;
+            if (showTable === 'base') {
+                td = createBaseCell(data, alg, task);
+            } else {
+                td = createCell(data, alg, task, bests);
             }
-
-
-            if (rowData[alg] && now - rowData[alg].timestamp * 1000 < TEN_MINUTES) {
-                td.classList.add('recent');
-                td.setAttribute('title', `Посчитан недавно`)
-            }
-
-            if (needProgress && formattedDataProgress.data[task] && formattedDataProgress.data[task][alg]) {
-                if (!rowData[alg] || !rowData[alg].time) {
-                    td.classList.add('in-progress');
-                    td.textContent = '⏳';
-                    td.setAttribute('title', `Алгоритм выполняется на ${formattedDataProgress.data[task][alg].hostName}`)
-                }
-            }
-
             tr.appendChild(td);
         });
     });
 
     return tableBody;
+}
+
+function createCell(data, algName, taskNum, bests) {
+    const td = document.createElement('td');
+    td.textContent = (data && data.time) || '';
+
+    if (!data || !data.time) {
+        td.classList.add('no');
+    } else if (bests[taskNum].algName === algName) {
+        td.classList.add('min');
+    }
+
+    const now = Date.now();
+    if (data && now - data.timestamp * 1000 < TEN_MINUTES) {
+        td.classList.add('recent');
+        td.setAttribute('title', `Посчитан недавно`)
+    }
+
+    return td;
+}
+
+function createBaseCell(data, algName, taskNum) {
+    const td = document.createElement('td');
+
+    if (!data) {
+        td.textContent = '';
+        td.classList.add('no');
+
+        if (formattedDataProgress.data[taskNum] && formattedDataProgress.data[taskNum][algName]) {
+            td.classList.add('in-progress');
+            td.textContent = '⏳';
+            td.setAttribute('title', `Алгоритм выполняется на ${formattedDataProgress.data[taskNum][algName].hostName}`)
+        }
+
+        return td;
+    }
+
+    td.innerHTML =  Object.keys(data).reduce((acc, money) => {
+        const chunk =  `<span class="rowInCell"><b>${money}: </b> ${data[money].time}</span><br>`
+        return acc + chunk;
+    }, '');
+
+
+    // if (bests[taskNum].algName === algName) {
+    //     td.classList.add('min');
+    // }
+    //
+    // const now = Date.now();
+    // if ( now - data.timestamp * 1000 < TEN_MINUTES) {
+    //     td.classList.add('recent');
+    //     td.setAttribute('title', `Посчитан недавно`)
+    // }
+
+    return td;
 }
 
 function addListeners() {
@@ -257,7 +384,9 @@ function addListeners() {
 function deleteTable() {
     const table = document.getElementsByClassName('table')[0];
 
-    body.removeChild(table);
+    if (table) {
+        body.removeChild(table);
+    }
 }
 
 function hideColumn(e) {
@@ -288,8 +417,30 @@ function showAll() {
 
 }
 
+function handleFilterSubmit(e) {
+    const filter = document.getElementsByClassName('filter')[0];
+    filterStr = filter.value;
+
+}
+
+function toggleAlgsList() {
+    algsListOpen = !algsListOpen;
+
+    deleteToggleListButton();
+    renderState();
+
+}
+
 function deleteShowAllButton() {
     const button = document.getElementsByClassName('show-all')[0];
+
+    if (button) {
+        button.parentNode.removeChild(button);
+    }
+}
+
+function deleteToggleListButton() {
+    const button = document.getElementsByClassName('list-toggle')[0];
 
     if (button) {
         button.parentNode.removeChild(button);

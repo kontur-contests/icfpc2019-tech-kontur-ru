@@ -45,6 +45,10 @@
     text-align: center;
 }
 
+.rowInCell {
+    white-space: nowrap;
+}
+
 .show-all {
     margin: 15px 10px;
     font-size: 15px;
@@ -53,6 +57,20 @@
     background: white;
     box-shadow: none;
     border: 1px solid #666;
+    cursor: pointer;
+}
+
+.list-toggle {
+    background: none;
+    box-shadow: none;
+    border: none;
+    color: #2a7ae2;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    margin: 15px 10px;
+    font-size: 15px;
+    padding: 7px 10px;
+    cursor: pointer;
 }
 
 .toggle {

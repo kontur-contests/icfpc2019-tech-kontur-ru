@@ -17,6 +17,31 @@ const pipeline = [
                     "_",
                     "$AlgorithmId",
                     "_",
+                    { $toString: "$AlgorithmVersion" },
+                    "_",
+                    { $toString: "$MoneySpent" }
+                ]
+            },
+            "time": {
+                $min: "$OurTime"
+            },
+            "timestamp": {
+                $max: "$SavedAt"
+            }
+        }
+
+    }
+];
+
+const puzzlesPipeline = [
+    {
+        $group: {
+            "_id": {
+                $concat: [
+                    { $toString: "$ProblemId" },
+                    "_",
+                    "$AlgorithmId",
+                    "_",
                     { $toString: "$AlgorithmVersion" }
                 ]
             },
@@ -63,7 +88,7 @@ const algsRequest = MongoClient
 const blockchainRequest = MongoClient
     .connect(dbHost, { useNewUrlParser: true })
     .then(c => c.db(dbName))
-    .then(db => db.collection(blockchainCollectionName).aggregate(pipeline).toArray());
+    .then(db => db.collection(blockchainCollectionName).aggregate(puzzlesPipeline).toArray());
 
 const inProgressRequest = MongoClient
     .connect(dbHost, { useNewUrlParser: true })
