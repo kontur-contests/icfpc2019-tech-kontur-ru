@@ -10,7 +10,7 @@ using lib.Solvers;
 
 namespace tests.Solvers
 {
-    internal class SolverTestsBase
+    public class SolverTestsBase
     {
         public Solved SolveOneProblem(ISolver solver, int id)
         {
