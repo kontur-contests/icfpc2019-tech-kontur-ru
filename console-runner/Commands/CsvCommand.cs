@@ -20,7 +20,7 @@ namespace console_runner.Commands
                         () =>
                         {
                             Storage
-                                .EnumerateCheckedAndCorrect()
+                                .EnumerateBestSolutions()
                                 .OrderBy(s => s.ProblemId)
                                 .ToList()
                                 .ForEach(solution => { Console.WriteLine($"{solution.ProblemId}, {solution.OurTime}, Ok"); });

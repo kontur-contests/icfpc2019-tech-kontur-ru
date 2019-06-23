@@ -42,7 +42,7 @@ namespace console_runner.Commands
                             }
 
                             Storage
-                                .EnumerateCheckedAndCorrect()
+                                .EnumerateBestSolutions()
                                 .ForEach(
                                     solution =>
                                     {

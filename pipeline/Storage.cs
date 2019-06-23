@@ -40,17 +40,12 @@ namespace pipeline
             return MetaCollection.FindSync(x => x.AlgorithmId == solver.GetName() && x.AlgorithmVersion == solver.GetVersion()).ToList();            
         }
         
-        public static List<SolutionMeta> EnumerateCheckedAndCorrect()
+        public static List<SolutionMeta> EnumerateBestSolutions()
         {
             var metas = new List<SolutionMeta>();
             
             var pipeline = new[] 
             {
-                // new BsonDocument { { "$match", new BsonDocument(new Dictionary<string, object>
-                // {
-                //     { "IsOnlineChecked", true },
-                //     { "IsOnlineCorrect", true }
-                // }) } },
                 new BsonDocument { { "$group", new BsonDocument(new Dictionary<string, object>
                 {
                     { "_id", "$ProblemId" },
