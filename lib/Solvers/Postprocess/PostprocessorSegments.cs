@@ -38,7 +38,7 @@ namespace lib.Solvers.Postprocess
                     index++;
                 }
 
-                if (free > 10)
+                if (free > 5)
                     longSegments.Add((i, index - 1));
             }
             longSegments.Add((ticks.Count, ticks.Count));
@@ -57,30 +57,31 @@ namespace lib.Solvers.Postprocess
 
             while (filledSegments.Any())
             {
-                var best = new List<TickWorkerState>();
                 var besti = -1;
+                var bestj = -1;
                 var bestScore = int.MaxValue;
 
                 for (int i = 0; i < filledSegments.Count; i++)
                 {
                     for (int j = startIndex + 1; j < result.Count; j++)
                     {
-                        var newTicks = result.ToList();
 
-                        newTicks.InsertRange(j, filledSegments[i]);
-                        var before = newTicks.Count;
-
-                        FixStep(newTicks, j + filledSegments[i].Count - 1);
-                        FixStep(newTicks, j - 1);
-
-                        if (bestScore > newTicks.Count - before)
+                        var cur = (result[j - 1].Position - filledSegments[i].First().Position).MLen()
+                                  + (filledSegments[i].Last().Position - result[j].Position).MLen();
+                        if (bestScore > cur)
                         {
-                            bestScore = newTicks.Count - before;
-                            best = newTicks;
+                            bestScore = cur;
                             besti = i;
+                            bestj = j;
                         }
                     }
                 }
+
+                var best = result.ToList();
+
+                best.InsertRange(bestj, filledSegments[besti]);
+                FixStep(best, bestj + filledSegments[besti].Count - 1);
+                FixStep(best, bestj - 1);
 
                 filledSegments.RemoveAt(besti);
                 result = best;
