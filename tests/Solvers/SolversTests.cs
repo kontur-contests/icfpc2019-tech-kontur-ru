@@ -48,7 +48,11 @@ namespace tests.Solvers
         [Test]
         public void StupidOne1()
         {
-            var id = 220;
+            /*
+            Original: 3893
+            Modified: 3385
+             */
+            var id = 96;
             
             var solver = new StupidSolver(palka:false);
             var state = ReadFromFile(id);

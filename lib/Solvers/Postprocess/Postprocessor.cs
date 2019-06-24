@@ -25,61 +25,47 @@ namespace lib.Solvers.Postprocess
 
         public void TransferSmall()
         {
-            var moved = true;
-            while (moved)
+            var ticks = state.History.Ticks;
+
+            var longSegments = new List<(int start, int end)>();
+            for (int i = startIndex + 1; i < ticks.Count; i++)
             {
-                moved = false;
-                
-                var ticks = state.History.Ticks;
-                
-                var longSegments = new List<(int start, int end)>();
-                for (int i = startIndex + 1; i < ticks.Count; i++)
+                if (!ticks[i - 1].Wrapped || ticks[i].Wrapped)
+                    continue;
+                int free = 0;
+                int index = i;
+                while (index < ticks.Count && !ticks[index].Wrapped)
                 {
-                    if (!ticks[i - 1].Wrapped || ticks[i].Wrapped)
-                        continue;
-                    int free = 0;
-                    int index = i;
-                    while (index < ticks.Count && !ticks[index].Wrapped)
-                    {
-                        free++;
-                        index++;
-                    }
-                    
-                    if (free > 10)
-                        longSegments.Add((i, index - 1));
+                    free++;
+                    index++;
                 }
 
-                for (int i = 0; i < longSegments.Count; i++)
-                {
-                    var filledStart = longSegments[i].end + 1;
-                    var filledEnd = i == longSegments.Count - 1 ? ticks.Count - 1 : longSegments[i + 1].start - 1;
-                    
-                    //move [filledStart, filledEnd]
-
-                    var best = -1;
-                    var bestLen = int.MaxValue;
-                    
-                    for (int j = startIndex + 1; j < ticks.Count && !moved; j++)
-                    {
-                        if (!ticks[j].Wrapped)
-                            continue;
-                        if (filledStart <= j && j <= filledEnd)
-                            continue;
-                        
-                        var mLen = Math.Min(
-                            (ticks[j - 1].Position - ticks[filledStart].Position).MLen(),
-                            (ticks[j].Position - ticks[filledEnd].Position).MLen());
-                        if (mLen < bestLen)
-                        {
-                            best = j;
-                            bestLen = mLen;
-                        }
-                    }
-                    
-                    if (bestLen <= 5)
-                        moved = Transfer(filledStart, filledEnd, best);
-                }
+                if (free > 10)
+                    longSegments.Add((i, index - 1));
             }
+
+            var filledSegments = new List<List<TickWorkerState>>();
+            var l = 0;
+            for (int i = 0; i < longSegments.Count; i++)
+            {
+                var r = longSegments[i].start - 1;
+                filledSegments.Add(ticks.Skip(l).Take(r - l + 1).ToList());
+                l = longSegments[i].end + 1;
+            }
+
+            var result = new List<TickWorkerState>();
+            foreach (var filledSegment in filledSegments)
+            {
+                var size = result.Count;
+                result.AddRange(filledSegment);
+                if (size != 0)
+                    FixStep(result, size - 1);
+            }
+
+            state.History = new History()
+            {
+                Ticks = result
+            };
         }
         
         public bool Transfer(int segmentStart, int segmentEnd, int targetStart)
