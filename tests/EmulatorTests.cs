@@ -43,7 +43,7 @@ namespace tests
         [Test]
         public void METHOD()
         {
-            var list = Storage.GetSingleMeta(224).Select(
+            var list = Storage.GetSingleMeta(236).Select(
                     solutionMeta =>
                     {
                         if (!string.IsNullOrEmpty(solutionMeta.BuyBlob))
@@ -59,7 +59,7 @@ namespace tests
 
             var selected = list.OrderBy(x => x.solutionMeta.OurTime).DistinctBy(x => x.solutionMeta.OurTime).Take(10).ToList();
 
-            foreach (var sss in selected)
+            foreach (var sss in selected.Where(x => x.solutionMeta.OurTime == 1629))
             {
                 Save(sss.solved, sss.solutionMeta.ProblemId, "-original" + sss.solved.CalculateTime());
                 
@@ -74,6 +74,8 @@ namespace tests
                 
                 state = ProblemReader.Read(sss.solutionMeta.ProblemId).ToState();
                 Emulator.Emulate(state, buildSolved);
+                if (state.UnwrappedLeft > 0)
+                    throw new InvalidOperationException("Bad mother fucker!");
             }
         }
 

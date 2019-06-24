@@ -147,16 +147,47 @@ namespace lib.Solvers.Postprocess
                 if (state.History.Workers[worker].Ticks.Count <= newTicks.Count && state.History.Workers[targetWorker].Ticks.Count <= newTargetTicks.Count)
                     return false;
 
-                if (state.History.Workers[worker].Ticks.Count <= newTicks.Count || state.History.Workers[targetWorker].Ticks.Count <= newTargetTicks.Count)
+                if (state.History.Workers[worker].Ticks.Count > newTicks.Count && state.History.Workers[targetWorker].Ticks.Count > newTargetTicks.Count)
                 {
-                    var prevTime = state.History.CalculateTime();
-                    var newTime1 = state.History.Workers[worker].StartTick + newTicks.Count - 1;
-                    var newTime2 = state.History.Workers[targetWorker].StartTick + newTargetTicks.Count - 1;
-                    var newTime = Math.Max(newTime1, newTime2);
-                    if (prevTime <= newTime)
-                        return false;    
+                }
+                else if (state.History.Workers[worker].Ticks.Count > newTicks.Count || state.History.Workers[targetWorker].Ticks.Count > newTargetTicks.Count)
+                {
+                    if (state.History.Workers[worker].Ticks.Count == newTicks.Count || state.History.Workers[targetWorker].Ticks.Count == newTargetTicks.Count)
+                    {
+                    }
+                    else
+                    {
+                        var www = state.History.Workers.ToList();
+                        www[worker] = new WorkerHistory{StartTick = www[worker].StartTick, Ticks = newTicks};
+                        www[targetWorker] = new WorkerHistory{StartTick = www[targetWorker].StartTick, Ticks = newTargetTicks};
+
+                        var newHistory = new History
+                        {
+                            Workers = www
+                        };
+
+                        if (state.History.CalculateTime() <= newHistory.CalculateTime())
+                            return false;
+                    }
                 }
             }
+
+            // Console.Out.WriteLine($"{worker}: [{segmentStart}-{segmentEnd}] ==> {targetWorker}: {targetStart}");
+            // for (int i = 0; i < state.History.Workers.Count; i++)
+            // {
+            //     if (i == worker)
+            //         Console.Out.WriteLine(
+            //             $"  F {state.History.Workers[i].StartTick} + {state.History.Workers[i].Ticks.Count} = {state.History.Workers[i].StartTick + state.History.Workers[i].Ticks.Count}" +
+            //             $" => {state.History.Workers[i].StartTick} + {newTicks.Count} = {state.History.Workers[i].StartTick + newTicks.Count}");
+            //     else if (i == targetWorker)
+            //         Console.Out.WriteLine(
+            //             $"  F {state.History.Workers[i].StartTick} + {state.History.Workers[i].Ticks.Count} = {state.History.Workers[i].StartTick + state.History.Workers[i].Ticks.Count}" +
+            //             $" => {state.History.Workers[i].StartTick} + {newTargetTicks.Count} = {state.History.Workers[i].StartTick + newTargetTicks.Count}");
+            //     else
+            //         Console.Out.WriteLine($"  - {state.History.Workers[i].StartTick} + {state.History.Workers[i].Ticks.Count} = {state.History.Workers[i].StartTick + state.History.Workers[i].Ticks.Count}");
+            // }
+            //
+            // Console.Out.WriteLine();
 
             state.History.Workers[worker].Ticks = newTicks;
             state.History.Workers[targetWorker].Ticks = newTargetTicks;
