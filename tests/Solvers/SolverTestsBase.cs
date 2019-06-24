@@ -10,7 +10,7 @@ using lib.Solvers;
 
 namespace tests.Solvers
 {
-    internal class SolverTestsBase
+    public class SolverTestsBase
     {
         public Solved SolveOneProblem(ISolver solver, int id)
         {
@@ -93,11 +93,11 @@ namespace tests.Solvers
             return problem.ToState();
         }
 
-        public void Save(Solved solved, int id)
+        public void Save(Solved solved, int id, string suffix = null)
         {
             var text = solved.FormatSolution();
-            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}.sol");
-            var buyFileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}.buy");
+            var fileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}{suffix}.sol");
+            var buyFileName = Path.Combine(FileHelper.PatchDirectoryName("problems"), "all", $"prob-{id:000}{suffix}.buy");
             File.WriteAllText(fileName, text);
             File.WriteAllText(buyFileName, solved.FormatBuy());
         }

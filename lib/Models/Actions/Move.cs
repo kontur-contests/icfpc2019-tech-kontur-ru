@@ -53,13 +53,7 @@ namespace lib.Models.Actions
             }
 
             worker.Position += Shift;
-            var unwrap = state.Wrap();
-            var returnBoosters = state.CollectBoosters();
-            return () =>
-            {
-                returnBoosters();
-                unwrap();
-            };
+            return state.Wrap();
         }
     }
 }

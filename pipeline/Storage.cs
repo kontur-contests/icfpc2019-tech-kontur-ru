@@ -147,6 +147,14 @@ namespace pipeline
 
             return metas;
         }
+
+        public static void Remove(int problemId, string solverId, int ourTime)
+        {
+            MetaCollection.DeleteOne(
+                y => y.ProblemId == problemId &&
+                     y.OurTime == ourTime &&
+                     y.AlgorithmId == solverId);
+        }
     }
 
     internal class MinTimeResult

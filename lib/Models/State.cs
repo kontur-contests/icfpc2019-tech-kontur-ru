@@ -7,19 +7,37 @@ namespace lib.Models
 {
     public class State
     {
-        public State(Worker worker, Map map, List<Booster> boosters)
+        public State(Worker worker, Map map, List<Booster> boosters, int problemId)
         {
             Workers = new List<Worker> {worker};
             Map = map;
             Boosters = boosters;
+            ProblemId = problemId;
             Time = 0;
             ExtensionCount = 0;
             FastWheelsCount = 0;
+            FastWheelsCountNext = 0;
             DrillCount = 0;
+            DrillCountNext = 0;
             TeleportCount = 0;
             CloningCount = 0;
             Wrap();
             UnwrappedLeft = Map.VoidCount();
+            History = new History();
+            History.Workers.Add(
+                new WorkerHistory
+                {
+                    StartTick = 0,
+                    Ticks = new List<TickWorkerState>
+                    {
+                        new TickWorkerState
+                        {
+                            Position = worker.Position,
+                            Direction = worker.Direction,
+                            Wrapped = true
+                        }
+                    }
+                });
         }
 
         public CellCostCalculator CellCostCalculator = null;
@@ -30,14 +48,18 @@ namespace lib.Models
         public int UnwrappedLeft { get; set; }
         public List<Booster> Boosters { get; private set; }
         public int Time { get; private set; }
+        public int ProblemId { get; private set; }
 
         public int ExtensionCount { get; set; }
         public int FastWheelsCount { get; set; }
+        private int FastWheelsCountNext { get; set; }
         public int DrillCount { get; set; }
+        private int DrillCountNext { get; set; }
         public int TeleportCount { get; set; }
         public int CloningCount { get; set; }
 
         public ClustersState ClustersState { get; set; }
+        public History History { get; set; }
 
         public Action<V> OnWrap { get; set; }
 
@@ -56,24 +78,24 @@ namespace lib.Models
                                     var p = new V(x, Map.SizeY - y - 1);
                                     if (Map[p] == CellState.Obstacle)
                                         return "#";
-                                    
+
                                     var wCount = Workers.Count(w => w.Position == p);
                                     if (wCount != 0)
                                         return wCount.ToString();
 
                                     if (Workers.Any(w => w.Manipulators.Any(m => w.Position + m == p && Map.IsReachable(w.Position, w.Position + m))))
                                         return "-";
-                                    
+
                                     if (Workers.Any(w => w.Manipulators.Any(m => w.Position + m == p)))
                                         return "!";
 
                                     var booster = Boosters.FirstOrDefault(b => b.Position == p);
                                     if (booster != null)
                                         return booster.ToString()[0].ToString();
-                                    
+
                                     if (Map[p] == CellState.Void)
                                         return ".";
-                                    
+
                                     return "*";
                                 })
                             .ToArray();
@@ -90,10 +112,54 @@ namespace lib.Models
             var actions = Workers.Select(w => workerActions.Single(x => x.worker == w).action).ToList();
 
             var prevWorkers = Workers.Select(x => x.Clone()).ToList();
-            var undos = actions.Select((x, i) => x.Apply(this, Workers[i])).ToList();
+
+            var undos = actions.Select(
+                    (x, i) =>
+                    {
+                        var prev = UnwrappedLeft;
+                        var action = x.Apply(this, Workers[i]);
+                        History?.Workers[i]
+                            .Ticks.Add(
+                                new TickWorkerState
+                                {
+                                    Position = Workers[i].Position,
+                                    Direction = Workers[i].Direction,
+                                    Wrapped = UnwrappedLeft != prev,
+                                    Action = x
+                                });
+
+                        if (x is UseCloning)
+                        {
+                            History?.Workers.Add(
+                                new WorkerHistory
+                                {
+                                    StartTick = Time,
+                                    Ticks = new List<TickWorkerState>
+                                    {
+                                        new TickWorkerState
+                                        {
+                                            Position = Workers[i].Position,
+                                            Wrapped = true
+                                        }
+                                    }
+                                });
+                        }
+
+                        return (Action)(() =>
+                        {
+                            if (x is UseCloning)
+                                History?.Workers.RemoveAt(History.Workers.Count - 1);
+
+                            History?.Workers[i].Ticks.RemoveAt(History.Workers[i].Ticks.Count - 1);
+                            action();
+                        });
+                    })
+                .ToList();
+            undos.Add(CollectBoosters());
             undos.Reverse();
             Workers.ForEach(x => x.NextTurn());
             Time++;
+
             return () =>
             {
                 Time--;
@@ -157,11 +223,36 @@ namespace lib.Models
             clone.Map = clone.Map.Clone();
             clone.Workers = clone.Workers.Select(x => x.Clone()).ToList();
             clone.Boosters = clone.Boosters.ToList();
+            clone.History = null;
             return clone;
         }
 
         public Action CollectBoosters()
         {
+            Action undoNextDrill = null;
+            if (DrillCountNext > 0)
+            {
+                DrillCountNext--;
+                DrillCount++;
+                undoNextDrill = () =>
+                {
+                    DrillCountNext++;
+                    DrillCount--;
+                };
+            }
+
+            Action undoNextWheels = null;
+            if (FastWheelsCountNext > 0)
+            {
+                FastWheelsCountNext--;
+                FastWheelsCount++;
+                undoNextWheels = () =>
+                {
+                    FastWheelsCountNext++;
+                    FastWheelsCount--;
+                };
+            }
+
             var boostersToCollect = new List<Booster>();
             foreach (var b in Boosters)
             {
@@ -186,10 +277,10 @@ namespace lib.Models
                         ExtensionCount++;
                         break;
                     case BoosterType.FastWheels:
-                        FastWheelsCount++;
+                        FastWheelsCountNext++;
                         break;
                     case BoosterType.Drill:
-                        DrillCount++;
+                        DrillCountNext++;
                         break;
                     case BoosterType.Teleport:
                         TeleportCount++;
@@ -212,10 +303,10 @@ namespace lib.Models
                             ExtensionCount--;
                             break;
                         case BoosterType.FastWheels:
-                            FastWheelsCount--;
+                            FastWheelsCountNext--;
                             break;
                         case BoosterType.Drill:
-                            DrillCount--;
+                            DrillCountNext--;
                             break;
                         case BoosterType.Teleport:
                             TeleportCount--;
@@ -227,6 +318,9 @@ namespace lib.Models
                 }
 
                 Boosters.AddRange(boostersToCollect);
+
+                undoNextWheels?.Invoke();
+                undoNextDrill?.Invoke();
             };
         }
 
@@ -243,7 +337,7 @@ namespace lib.Models
                 }
             }
         }
-        
+
         public void BuyBoosters(params BoosterType[] buyBoosters)
         {
             foreach (var boosterType in buyBoosters)
@@ -270,6 +364,5 @@ namespace lib.Models
                 }
             }
         }
-
     }
 }
