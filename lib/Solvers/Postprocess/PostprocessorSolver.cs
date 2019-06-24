@@ -1,48 +1,20 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using lib.Models;
 using lib.Models.Actions;
-using lib.Solvers;
-using lib.Solvers.Postprocess;
-using lib.Solvers.RandomWalk;
-using MongoDB.Bson;
 using MongoDB.Driver;
-using NUnit.Framework;
-using tests.Solvers;
 
-namespace tests
+namespace lib.Solvers.Postprocess
 {
-    [TestFixture]
-    public class EmulatorTests : SolverTestsBase
+    public class PostprocessorSolver : ISolver
     {
-        [TestCase("WSADZEQB(10,20)B(-10,-20)FL", "FL")]
-        public void ParseSolved(string sol, string buy)
+        public string GetName() => "postprocess";
+
+        public int GetVersion() => 1;
+
+        public Solved Solve(State state2)
         {
-            var solved = Emulator.ParseSolved(sol, buy);
-            solved.FormatSolution().Should().Be(sol);
-            solved.FormatBuy().Should().Be(buy);
-        }
-
-        [Test]
-        public void Emulate()
-        {
-            var solver = new DeepWalkSolver(2, new Estimator(true, true, collectDrill: true), usePalka: true, useWheels: true, useDrill: true);
-
-            var state = ReadFromFile(2);
-            var result = solver.Solve(state);
-
-            var readFromFile = ReadFromFile(2);
-            Emulator.Emulate(readFromFile, result);
-
-            readFromFile.History.Should().BeEquivalentTo(state.History);
-        }
-
-        [Test]
-        public void METHOD()
-        {
-            var list = Storage.GetSingleMeta(50).Select(
+            var list = Storage.GetSingleMeta(state2.ProblemId).Select(
                     solutionMeta =>
                     {
                         if (!string.IsNullOrEmpty(solutionMeta.BuyBlob))
@@ -58,21 +30,29 @@ namespace tests
 
             var selected = list.OrderBy(x => x.solutionMeta.OurTime).Take(10).ToList();
 
+            var bestTime = int.MaxValue;
+            Solved bestSolved = null;
             foreach (var sss in selected)
             {
-                Save(sss.solved, sss.solutionMeta.ProblemId, "-original" + sss.solved.CalculateTime());
-                
                 var state = ProblemReader.Read(sss.solutionMeta.ProblemId).ToState();
                 Emulator.Emulate(state, sss.solved);
                 var postprocessor = new Postprocessor(state, sss.solved);
                 postprocessor.TransferSmall();
 
                 var buildSolved = state.History.BuildSolved();
-                Console.Out.WriteLine($"current: {sss.solved.CalculateTime()}, processed: {buildSolved.CalculateTime()}");
-                Save(buildSolved, sss.solutionMeta.ProblemId, "-fixed" + buildSolved.CalculateTime());
+                var time = buildSolved.CalculateTime();
+                if (time < bestTime)
+                {
+                    bestTime = time;
+                    bestSolved = buildSolved;
+                }
             }
-        }
 
+            var bestState = ProblemReader.Read(state2.ProblemId).ToState();
+            Emulator.Emulate(bestState, bestSolved);
+            return bestSolved;
+        }
+        
         public static class Storage
         {
             private const string dbHost = "mongodb://icfpc19-mongo1:27017";
@@ -95,5 +75,6 @@ namespace tests
                 return MetaCollection.FindSync(meta => meta.ProblemId == problemId).ToList();
             }
         }
+
     }
 }
