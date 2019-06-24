@@ -13,7 +13,7 @@ namespace console_runner.Commands
         {
             var prefix = thread.HasValue ? $"#{thread.Value}: " : string.Empty;
 
-            Console.WriteLine($"{prefix}Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
+            Console.WriteLine($"{prefix}{DateTime.Now}: Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
     
             new SolutionInProgress(problemMeta.ProblemId, solver.GetName(), solver.GetVersion()).SaveToDb();
             try

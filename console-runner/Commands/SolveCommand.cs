@@ -44,7 +44,7 @@ namespace console_runner.Commands
                                     problemIds.Add(problemId);
                                 else
                                 {
-                                    var parts = problemsOption.Value().Split("..", StringSplitOptions.RemoveEmptyEntries);
+                                    var parts = problemsOption.Value().Split(new []{".."}, StringSplitOptions.RemoveEmptyEntries);
                                     var pStart = int.Parse(parts[0]);
                                     var pEnd = int.Parse(parts[1]);
                                     problemIds.AddRange(Enumerable.Range(pStart, pEnd - pStart + 1));
