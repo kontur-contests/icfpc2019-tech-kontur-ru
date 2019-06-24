@@ -36,7 +36,7 @@ namespace lib.Solvers.Postprocess
             {
                 var state = ProblemReader.Read(sss.solutionMeta.ProblemId).ToState();
                 Emulator.Emulate(state, sss.solved);
-                var postprocessor = new Postprocessor(state, sss.solved);
+                var postprocessor = new PostprocessorSimple(state, sss.solved);
                 postprocessor.TransferSmall();
 
                 var buildSolved = state.History.BuildSolved();
@@ -47,9 +47,7 @@ namespace lib.Solvers.Postprocess
                     bestSolved = buildSolved;
                 }
             }
-
-            var bestState = ProblemReader.Read(state2.ProblemId).ToState();
-            Emulator.Emulate(bestState, bestSolved);
+            
             return bestSolved;
         }
         

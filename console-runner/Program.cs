@@ -1,21 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
-using System.Xml;
 using console_runner.Commands;
-using lib;
-using lib.API;
-using lib.Models;
-using lib.Puzzles;
-using lib.Solvers;
 using Microsoft.Extensions.CommandLineUtils;
-using pipeline;
 
 namespace console_runner
 {

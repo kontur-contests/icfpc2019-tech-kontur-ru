@@ -56,10 +56,16 @@ namespace lib.Solvers
             var pathFileName = Path.Combine(FileHelper.PatchDirectoryName("clusters.v2"), $"prob-{problemMeta.ProblemId:000}.path");
             state.ClustersState.Path = File.ReadAllLines(pathFileName).Select(int.Parse).ToList();
             
-            var actions = solver.Solve(state);
-            var solutionBlob = actions.FormatSolution();
-            var buyBlob = actions.FormatBuy();
-            var moneyCost = actions.BuyCost();
+            var solved = solver.Solve(state);
+            
+            state = problem.ToState();
+            Emulator.Emulate(state, solved);
+            if (state.UnwrappedLeft > 0)
+                throw new InvalidOperationException("Bad mother fucker!");
+            
+            var solutionBlob = solved.FormatSolution();
+            var buyBlob = solved.FormatBuy();
+            var moneyCost = solved.BuyCost();
 
             stopwatch.Stop();
             var calculationTime = stopwatch.ElapsedMilliseconds;
@@ -67,7 +73,7 @@ namespace lib.Solvers
             return new SolutionMeta(
                 problemMeta.ProblemId,
                 solutionBlob,
-                actions.CalculateTime(),
+                solved.CalculateTime(),
                 solver.GetName(),
                 solver.GetVersion(),
                 calculationTime,
