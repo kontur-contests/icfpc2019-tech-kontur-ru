@@ -10,7 +10,7 @@ namespace lib.Solvers.RandomWalk
     {
         public string GetName()
         {
-            return $"fast-parallel-deep-walk-{depth}-{usePalka}-{buy.Format()}-{estimator.Name}";
+            return $"parallel-deep-{depth}-{usePalka}-{useWheels}-{useDrill}-{estimator.Name}-{buy.Format()}";
         }
 
         public int GetVersion()
@@ -60,11 +60,11 @@ namespace lib.Solvers.RandomWalk
             
             if (usePalka)
                 BoosterMaster.CreatePalka(state, solution[0]);
-            BoosterMaster.CloneAttack(state, solution);
+            //BoosterMaster.CloneAttack(state, solution);
 
             while (state.UnwrappedLeft > 0)
             {
-                // Console.Out.WriteLine($"--BEFORE:\n{state.Print()}");
+                //Console.Out.WriteLine($"--BEFORE {state.Time}:\n{state.Print()}");
                 
                 var partialSolution = new List<List<ActionBase>>();
 
@@ -77,13 +77,24 @@ namespace lib.Solvers.RandomWalk
 
                 for (int i = 0; i < partialSolution[0].Count; i++)
                 {
+                    var l = new List<(Worker, ActionBase)>();
                     for (int j = 0; j < partialSolution.Count; j++)
+                    {
                         solution[j].Add(partialSolution[j][i]);
-                    state.Apply(state.Workers.Select((w, wi) => (w, partialSolution[wi][i])).ToList());
+                        l.Add((state.Workers[j], partialSolution[j][i]));
+                    }
+
+                    while (l.Count < state.Workers.Count)
+                    {
+                        var wait = new Wait();
+                        solution.Add(new List<ActionBase> {wait});
+                        l.Add((state.Workers[l.Count], wait));
+                    }
+                    state.Apply(l);
                 }
 
-                // if (turn++ > 100)
-                //     break;
+                /*if (state.Time > 1000)
+                    break;*/
             }
 
             return new Solved {Actions = solution, Buy = buy.ToList()};
@@ -94,6 +105,11 @@ namespace lib.Solvers.RandomWalk
             var bestEstimation = double.MinValue;
             List<ActionBase> bestSolution = null;
 
+            var usedClonings = partialSolution.Sum(x => x.Count(c => c is UseCloning));
+            var useCloningsLocal = partialSolution.Count == 0 &&
+                                   state.CloningCount - usedClonings > 0 &&
+                                   state.Boosters.Any(b => b.Type == BoosterType.MysteriousPoint && b.Position == state.Workers[0].Position); //only first worker can use cloning
+
             var usedWheels = partialSolution.Sum(x => x.Count(c => c is UseFastWheels));
             var useWheelsLocal = useWheels && (state.FastWheelsCount - usedWheels) > 0;
 
@@ -103,6 +119,11 @@ namespace lib.Solvers.RandomWalk
             foreach (var chain2 in chains)
             {
                 var chain = chain2.ToList();
+                if (useCloningsLocal)
+                {
+                    chain.Insert(0, new UseCloning());
+                    chain.RemoveAt(chain.Count - 1);
+                }
                 if (useWheelsLocal)
                 {
                     chain.Insert(0, new UseFastWheels());
@@ -158,8 +179,8 @@ namespace lib.Solvers.RandomWalk
                     bestSolution = solution;
                     //Console.Out.WriteLine(" -- better");
                 }
-                // else
-                //     Console.Out.WriteLine();
+                /*else
+                    Console.Out.WriteLine();*/
 
                 undos.Reverse();
                 foreach (var undo in undos)

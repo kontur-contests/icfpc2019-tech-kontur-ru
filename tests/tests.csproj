@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\lib\lib.csproj" />
+      <ProjectReference Include="..\pipeline\pipeline.csproj" />
     </ItemGroup>
 
     

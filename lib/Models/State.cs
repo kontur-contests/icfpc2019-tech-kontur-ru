@@ -132,7 +132,8 @@ namespace lib.Models
                 }
                 return (Action)(() =>
                 {
-                    History?.Ticks.RemoveAt(History.Ticks.Count - 1);
+                    if (i == 0)
+                        History?.Ticks.RemoveAt(History.Ticks.Count - 1);
                     action();
                 });
             }).ToList();

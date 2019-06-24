@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using lib.Models;
 using lib.Solvers.RandomWalk;
 using NUnit.Framework;
+using pipeline;
 
 namespace tests.Solvers
 {
@@ -74,5 +76,66 @@ namespace tests.Solvers
             Console.WriteLine(nextTime);
         }
 
+
+        [TestCase("22,47,50,70,130")]
+        [TestCase("22,100,150")]
+        [TestCase("30,60,90")]
+        //[TestCase("218")]
+        public void Compare(string problemIds)
+        {
+            var parallelSolver = new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: true, zakoulochki: true, collectDrill: false), usePalka: false, useWheels: true, useDrill: false, new BoosterType[0]);
+            var solver = new DeepWalkSolver(2, new Estimator(collectFastWheels: true, zakoulochki: true, collectDrill: true), usePalka: true, useWheels: true, useDrill: true);
+
+            foreach (var problemId in problemIds.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse))
+            {
+                var solved = SolveOneProblem(solver, problemId);
+                var parallelSolved = SolveOneProblem(parallelSolver, problemId);
+                var win = parallelSolved.CalculateTime() < solved.CalculateTime() ? "P" : "S";
+                Console.Out.WriteLine($"{problemId:000}: {win} - solvedTime: {solved.CalculateTime()}; parallelSolvedTime: {parallelSolved.CalculateTime()};");
+            }
+        }
+
+
+        [TestCase("22,47,50,70,130")]
+        [TestCase("22,100,150")]
+        [TestCase("30,60,90")]
+        //[TestCase("218")]
+        public void Sequential(string problemIds)
+        {
+            var solver = new DeepWalkSolver(2, new Estimator(collectFastWheels: true, zakoulochki: true, collectDrill: true), usePalka: true, useWheels: true, useDrill: true);
+            
+            foreach (var problemId in problemIds.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse))
+            {
+                var solved = SolveOneProblem(solver, problemId);
+                Console.Out.WriteLine($"{problemId:000}: solvedTime: {solved.CalculateTime()}");
+            }
+        }
+
+
+        [TestCase("221")]
+        [TestCase("230,241")]
+        [TestCase("270")]
+        [TestCase("243")]
+        [TestCase("255")]
+        [TestCase("299")]
+        public void CompareParallel(string problemIds)
+        {
+            var parallelSolver = new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false, zakoulochki: true, collectDrill: false), usePalka: false, useWheels: false, useDrill: false, new BoosterType[0]);
+            
+            foreach (var problemId in problemIds.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse))
+            {
+                var parallelSolved = SolveOneProblem(parallelSolver, problemId);
+                Console.Out.WriteLine($"{problemId:000}: parallelSolvedTime: {parallelSolved.CalculateTime()};");
+            }
+        }
+
+        [TestCase(250, 2575)]
+        [TestCase(251, 3397)]
+        [TestCase(265, 3397)]
+        [TestCase(266, 3397)]
+        public void RemoveTrash(int problemId, int ourTime)
+        {
+            Storage.Remove(problemId, "parallel-deep-2-False-True-True-wheels-zako-drrr-", ourTime);
+        }
     }
 }

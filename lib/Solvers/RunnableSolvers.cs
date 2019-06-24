@@ -30,17 +30,13 @@ namespace lib.Solvers
             return new List<Func<ISolver>>
             {
                 //() => new RandomWalkSolver(depth: 2, new Estimator(true), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true, true),
-                //() => new DeepWalkSolver(depth: 2, new Estimator(true, true, false), true, true, false),
+                () => new DeepWalkSolver(2, new Estimator(collectFastWheels: true, zakoulochki: true, collectDrill: true), usePalka: true, useWheels: true, useDrill: true),
                 //() => new StupidSolver(),
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
-                //() => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false, false, false), usePalka: false, useWheels: false, new[]{BoosterType.Cloning, }),
-                // () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: true, true, true), usePalka: false, useWheels: true, useDrill: true, new BoosterType[] {}),
-                // () => new DeepWalkSolver(depth: 2, new Estimator(true, true, true), false, true, true),
-                // () => new DeepWalkSolver(depth: 2, new Estimator(true, true, true), true, true, true),
-                // () => new DeepWalkSolver(depth: 2, new Estimator(true, false, true), false, true, true),
-                // () => new DeepWalkSolver(depth: 2, new Estimator(true, false, true), true, true, true),
-                () => new PostprocessorSolver(),
+                //() => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false), usePalka: false, useWheels: false, new[]{BoosterType.Cloning, }),
+                //() => new ParallelDeepWalkSolver(2, new Estimator(true, zakoulochki: true, false), usePalka: false, useWheels: true, useDrill: false, new BoosterType[0]),
+                () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: true, zakoulochki: true, false), usePalka: false, useWheels: true, useDrill: false, new BoosterType[0]),
             };
         }
 
