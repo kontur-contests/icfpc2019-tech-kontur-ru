@@ -5,16 +5,6 @@ using lib.Models.Actions;
 
 namespace lib.Models
 {
-    public class TickWorkerState
-    {
-        public V Position { get; set; }
-        public Direction Direction { get; set; }
-        public bool Wrapped { get; set; }
-        public ActionBase Action { get; set; }
-        
-        public override string ToString() => $"{nameof(Position)}: {Position}, {nameof(Direction)}: {Direction}, {nameof(Wrapped)}: {Wrapped}";
-    }
-
     public class State
     {
         public State(Worker worker, Map map, List<Booster> boosters, int problemId)
@@ -34,12 +24,20 @@ namespace lib.Models
             Wrap();
             UnwrappedLeft = Map.VoidCount();
             History = new History();
-            History.Ticks.Add(new TickWorkerState
-            {
-                Position = worker.Position,
-                Direction = worker.Direction,
-                Wrapped = true
-            });
+            History.Workers.Add(
+                new WorkerHistory
+                {
+                    StartTick = 0,
+                    Ticks = new List<TickWorkerState>
+                    {
+                        new TickWorkerState
+                        {
+                            Position = worker.Position,
+                            Direction = worker.Direction,
+                            Wrapped = true
+                        }
+                    }
+                });
         }
 
         public CellCostCalculator CellCostCalculator = null;
@@ -80,24 +78,24 @@ namespace lib.Models
                                     var p = new V(x, Map.SizeY - y - 1);
                                     if (Map[p] == CellState.Obstacle)
                                         return "#";
-                                    
+
                                     var wCount = Workers.Count(w => w.Position == p);
                                     if (wCount != 0)
                                         return wCount.ToString();
 
                                     if (Workers.Any(w => w.Manipulators.Any(m => w.Position + m == p && Map.IsReachable(w.Position, w.Position + m))))
                                         return "-";
-                                    
+
                                     if (Workers.Any(w => w.Manipulators.Any(m => w.Position + m == p)))
                                         return "!";
 
                                     var booster = Boosters.FirstOrDefault(b => b.Position == p);
                                     if (booster != null)
                                         return booster.ToString()[0].ToString();
-                                    
+
                                     if (Map[p] == CellState.Void)
                                         return ".";
-                                    
+
                                     return "*";
                                 })
                             .ToArray();
@@ -114,28 +112,51 @@ namespace lib.Models
             var actions = Workers.Select(w => workerActions.Single(x => x.worker == w).action).ToList();
 
             var prevWorkers = Workers.Select(x => x.Clone()).ToList();
-            
-            var undos = actions.Select((x, i) =>
-            {
-                var prev = UnwrappedLeft;
-                var action = x.Apply(this, Workers[i]);
-                if (i == 0)
-                {
-                    History?.Ticks.Add(
-                        new TickWorkerState
+
+            var undos = actions.Select(
+                    (x, i) =>
+                    {
+                        var prev = UnwrappedLeft;
+                        var action = x.Apply(this, Workers[i]);
+                        History?.Workers[i]
+                            .Ticks.Add(
+                                new TickWorkerState
+                                {
+                                    Position = Workers[i].Position,
+                                    Direction = Workers[i].Direction,
+                                    Wrapped = UnwrappedLeft != prev,
+                                    Action = x
+                                });
+
+                        if (x is UseCloning)
                         {
-                            Position = Workers[i].Position,
-                            Direction = Workers[i].Direction,
-                            Wrapped = UnwrappedLeft != prev,
-                            Action = x
+                            History?.Workers.Add(
+                                new WorkerHistory
+                                {
+                                    StartTick = Time,
+                                    Ticks = new List<TickWorkerState>
+                                    {
+                                        new TickWorkerState
+                                        {
+                                            Position = Workers[i].Position,
+                                            Direction = Workers[i].Direction,
+                                            Wrapped = true,
+                                            Action = x
+                                        }
+                                    }
+                                });
+                        }
+
+                        return (Action)(() =>
+                        {
+                            if (x is UseCloning)
+                                History?.Workers.RemoveAt(History.Workers.Count - 1);
+
+                            History?.Workers[i].Ticks.RemoveAt(History.Workers[i].Ticks.Count - 1);
+                            action();
                         });
-                }
-                return (Action)(() =>
-                {
-                    History?.Ticks.RemoveAt(History.Ticks.Count - 1);
-                    action();
-                });
-            }).ToList();
+                    })
+                .ToList();
             undos.Add(CollectBoosters());
             undos.Reverse();
             Workers.ForEach(x => x.NextTurn());
@@ -318,7 +339,7 @@ namespace lib.Models
                 }
             }
         }
-        
+
         public void BuyBoosters(params BoosterType[] buyBoosters)
         {
             foreach (var boosterType in buyBoosters)
@@ -345,6 +366,5 @@ namespace lib.Models
                 }
             }
         }
-
     }
 }

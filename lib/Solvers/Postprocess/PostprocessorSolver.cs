@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
 using lib.Models.Actions;
 using MongoDB.Driver;
+using MoreLinq;
 
 namespace lib.Solvers.Postprocess
 {
@@ -10,7 +12,7 @@ namespace lib.Solvers.Postprocess
     {
         public string GetName() => "postprocess";
 
-        public int GetVersion() => 1;
+        public int GetVersion() => 2;
 
         public Solved Solve(State state2)
         {
@@ -20,7 +22,7 @@ namespace lib.Solvers.Postprocess
                         if (!string.IsNullOrEmpty(solutionMeta.BuyBlob))
                             return null;
                         var solved = Emulator.ParseSolved(solutionMeta.SolutionBlob, solutionMeta.BuyBlob);
-                        if (solved.Actions.Any(aa => aa.Any(a => a is UseDrill || a is UseFastWheels || a is UseCloning)))
+                        if (solved.Actions.Any(aa => aa.Any(a => a is UseDrill || a is UseFastWheels)))
                             return null;
 
                         return new {solutionMeta, solved};
@@ -28,7 +30,7 @@ namespace lib.Solvers.Postprocess
                 .Where(x => x != null)
                 .ToList();
 
-            var selected = list.OrderBy(x => x.solutionMeta.OurTime).Take(10).ToList();
+            var selected = list.OrderBy(x => x.solutionMeta.OurTime).DistinctBy(x => x.solutionMeta.OurTime).Take(10).ToList();
 
             var bestTime = int.MaxValue;
             Solved bestSolved = null;
@@ -40,6 +42,20 @@ namespace lib.Solvers.Postprocess
                 postprocessor.TransferSmall();
 
                 var buildSolved = state.History.BuildSolved();
+
+                try
+                {
+                    state = ProblemReader.Read(sss.solutionMeta.ProblemId).ToState();
+                    Emulator.Emulate(state, buildSolved);
+                    if (state.UnwrappedLeft > 0)
+                        throw new InvalidOperationException("Bad mother fucker!");
+                }
+                catch (Exception e)
+                {
+                    Console.Out.WriteLine(e);
+                    continue;
+                }
+
                 var time = buildSolved.CalculateTime();
                 if (time < bestTime)
                 {

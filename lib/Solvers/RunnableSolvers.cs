@@ -57,7 +57,7 @@ namespace lib.Solvers
             state.ClustersState.Path = File.ReadAllLines(pathFileName).Select(int.Parse).ToList();
             
             var solved = solver.Solve(state);
-            
+
             state = problem.ToState();
             Emulator.Emulate(state, solved);
             if (state.UnwrappedLeft > 0)

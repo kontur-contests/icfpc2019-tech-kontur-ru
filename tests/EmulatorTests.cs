@@ -9,6 +9,7 @@ using lib.Solvers.Postprocess;
 using lib.Solvers.RandomWalk;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MoreLinq;
 using NUnit.Framework;
 using tests.Solvers;
 
@@ -42,13 +43,13 @@ namespace tests
         [Test]
         public void METHOD()
         {
-            var list = Storage.GetSingleMeta(50).Select(
+            var list = Storage.GetSingleMeta(224).Select(
                     solutionMeta =>
                     {
                         if (!string.IsNullOrEmpty(solutionMeta.BuyBlob))
                             return null;
                         var solved = Emulator.ParseSolved(solutionMeta.SolutionBlob, solutionMeta.BuyBlob);
-                        if (solved.Actions.Any(aa => aa.Any(a => a is UseDrill || a is UseFastWheels || a is UseCloning)))
+                        if (solved.Actions.Any(aa => aa.Any(a => a is UseDrill || a is UseFastWheels)))
                             return null;
 
                         return new {solutionMeta, solved};
@@ -56,7 +57,7 @@ namespace tests
                 .Where(x => x != null)
                 .ToList();
 
-            var selected = list.OrderBy(x => x.solutionMeta.OurTime).Take(10).ToList();
+            var selected = list.OrderBy(x => x.solutionMeta.OurTime).DistinctBy(x => x.solutionMeta.OurTime).Take(10).ToList();
 
             foreach (var sss in selected)
             {
@@ -64,12 +65,15 @@ namespace tests
                 
                 var state = ProblemReader.Read(sss.solutionMeta.ProblemId).ToState();
                 Emulator.Emulate(state, sss.solved);
-                var postprocessor = new Postprocessor(state, sss.solved);
+                var postprocessor = new PostprocessorSimple(state, sss.solved);
                 postprocessor.TransferSmall();
 
                 var buildSolved = state.History.BuildSolved();
                 Console.Out.WriteLine($"current: {sss.solved.CalculateTime()}, processed: {buildSolved.CalculateTime()}");
                 Save(buildSolved, sss.solutionMeta.ProblemId, "-fixed" + buildSolved.CalculateTime());
+                
+                state = ProblemReader.Read(sss.solutionMeta.ProblemId).ToState();
+                Emulator.Emulate(state, buildSolved);
             }
         }
 

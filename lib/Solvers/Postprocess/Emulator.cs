@@ -68,7 +68,11 @@ namespace lib.Solvers.Postprocess
                 {
                     var actionIndex = ix[workerIndex];
                     if (actionIndex >= solved.Actions[workerIndex].Count)
+                    {
+                        actions.Add(new Wait());
+                        ix[workerIndex]++;
                         continue;
+                    }
                     actions.Add(solved.Actions[workerIndex][actionIndex]);
                     ix[workerIndex]++;
                     anyActed = true;

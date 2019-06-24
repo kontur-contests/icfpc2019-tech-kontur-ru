@@ -60,7 +60,7 @@ namespace tests.Solvers
             Console.WriteLine($"Original: {result.CalculateTime()}");
             Save(result, id, "original");
 
-            var postprocessor = new Postprocessor(state, result);
+            var postprocessor = new PostprocessorSimple(state, result);
             postprocessor.TransferSmall();
 
             var modified = state.History.BuildSolved();
