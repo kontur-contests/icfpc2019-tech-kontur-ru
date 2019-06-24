@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using lib.Models;
+using lib.Solvers.Postprocess;
 using lib.Solvers.RandomWalk;
 
 namespace lib.Solvers
@@ -34,11 +35,12 @@ namespace lib.Solvers
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
                 //() => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: false, false, false), usePalka: false, useWheels: false, new[]{BoosterType.Cloning, }),
-                () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: true, true, true), usePalka: false, useWheels: true, useDrill: true, new BoosterType[] {}),
-                () => new DeepWalkSolver(depth: 2, new Estimator(true, true, true), false, true, true),
-                () => new DeepWalkSolver(depth: 2, new Estimator(true, true, true), true, true, true),
-                () => new DeepWalkSolver(depth: 2, new Estimator(true, false, true), false, true, true),
-                () => new DeepWalkSolver(depth: 2, new Estimator(true, false, true), true, true, true),
+                // () => new ParallelDeepWalkSolver(2, new Estimator(collectFastWheels: true, true, true), usePalka: false, useWheels: true, useDrill: true, new BoosterType[] {}),
+                // () => new DeepWalkSolver(depth: 2, new Estimator(true, true, true), false, true, true),
+                // () => new DeepWalkSolver(depth: 2, new Estimator(true, true, true), true, true, true),
+                // () => new DeepWalkSolver(depth: 2, new Estimator(true, false, true), false, true, true),
+                // () => new DeepWalkSolver(depth: 2, new Estimator(true, false, true), true, true, true),
+                () => new PostprocessorSolver(),
             };
         }
 
@@ -46,7 +48,9 @@ namespace lib.Solvers
         {
             var stopwatch = Stopwatch.StartNew();
 
-            var state = problemMeta.Problem.ToState();
+            var problem = problemMeta.Problem;
+            problem.ProblemId = problemMeta.ProblemId;
+            var state = problem.ToState();
             state.ClustersState = new ClustersState(ClustersStateReader.Read(problemMeta.ProblemId), state);
             
             var pathFileName = Path.Combine(FileHelper.PatchDirectoryName("clusters.v2"), $"prob-{problemMeta.ProblemId:000}.path");

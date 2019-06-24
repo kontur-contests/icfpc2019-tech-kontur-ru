@@ -31,17 +31,22 @@ namespace lib.Models
                     if (tick.Position != prev.Position)
                         throw new InvalidOperationException("tick.Position != prev.Position");
 
-                    if (tick.Direction.Rotate(1) == prev.Direction)
+                    if (prev.Direction.Rotate(1) == tick.Direction)
                     {
                         actions[0].Add(new Rotate(true));
                     }
-                    else if (tick.Direction.Rotate(-1) == prev.Direction)
+                    else if (prev.Direction.Rotate(-1) == tick.Direction)
                     {
                         actions[0].Add(new Rotate(false));
                     }
                     else
                         throw new InvalidOperationException("tick.Direction == prev.Direction + 2");
                 }
+                else if (tick.Action is UseExtension)
+                {
+                    actions[0].Add(tick.Action);
+                }
+
             }
 
             return new Solved

@@ -10,17 +10,19 @@ namespace lib.Models
         public V Position { get; set; }
         public Direction Direction { get; set; }
         public bool Wrapped { get; set; }
-
+        public ActionBase Action { get; set; }
+        
         public override string ToString() => $"{nameof(Position)}: {Position}, {nameof(Direction)}: {Direction}, {nameof(Wrapped)}: {Wrapped}";
     }
 
     public class State
     {
-        public State(Worker worker, Map map, List<Booster> boosters)
+        public State(Worker worker, Map map, List<Booster> boosters, int problemId)
         {
             Workers = new List<Worker> {worker};
             Map = map;
             Boosters = boosters;
+            ProblemId = problemId;
             Time = 0;
             ExtensionCount = 0;
             FastWheelsCount = 0;
@@ -48,6 +50,7 @@ namespace lib.Models
         public int UnwrappedLeft { get; set; }
         public List<Booster> Boosters { get; private set; }
         public int Time { get; private set; }
+        public int ProblemId { get; private set; }
 
         public int ExtensionCount { get; set; }
         public int FastWheelsCount { get; set; }
@@ -123,7 +126,8 @@ namespace lib.Models
                         {
                             Position = Workers[i].Position,
                             Direction = Workers[i].Direction,
-                            Wrapped = UnwrappedLeft != prev
+                            Wrapped = UnwrappedLeft != prev,
+                            Action = x
                         });
                 }
                 return (Action)(() =>

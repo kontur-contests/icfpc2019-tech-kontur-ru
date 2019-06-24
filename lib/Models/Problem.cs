@@ -7,6 +7,7 @@ namespace lib.Models
 {
     public class Problem
     {
+        public int ProblemId { get; set; }
         public List<V> Map { get; set; }
         public V Point { get; set; }
         public List<List<V>> Obstacles { get; set; }
