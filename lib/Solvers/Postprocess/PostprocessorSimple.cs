@@ -33,6 +33,7 @@ namespace lib.Solvers.Postprocess
                 }
             }
 
+            // var movedCount = 0;
             var moved = true;
             while (moved)
             {
@@ -98,7 +99,13 @@ namespace lib.Solvers.Postprocess
                         }
 
                         if (bestLen <= 5)
+                        {
                             moved = Transfer(w, filledStart, filledEnd, bestww, best);
+                            // if (moved)
+                            //     movedCount++;
+                            // if (movedCount == 1)
+                            //     return;
+                        }
                     }
                 }
             }

@@ -139,9 +139,7 @@ namespace lib.Models
                                         new TickWorkerState
                                         {
                                             Position = Workers[i].Position,
-                                            Direction = Workers[i].Direction,
-                                            Wrapped = true,
-                                            Action = x
+                                            Wrapped = true
                                         }
                                     }
                                 });

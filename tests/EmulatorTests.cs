@@ -43,7 +43,7 @@ namespace tests
         [Test]
         public void METHOD()
         {
-            var list = Storage.GetSingleMeta(236).Select(
+            var list = Storage.GetSingleMeta(255).Select(
                     solutionMeta =>
                     {
                         if (!string.IsNullOrEmpty(solutionMeta.BuyBlob))
@@ -57,9 +57,16 @@ namespace tests
                 .Where(x => x != null)
                 .ToList();
 
-            var selected = list.OrderBy(x => x.solutionMeta.OurTime).DistinctBy(x => x.solutionMeta.OurTime).Take(10).ToList();
+            var selected = list
+                .OrderBy(x => x.solutionMeta.OurTime)
+                .DistinctBy(x => x.solutionMeta.OurTime)
+                .Where(x => x.solutionMeta.AlgorithmId.Contains("spread-clone"))
+                .Take(10)
+                .ToList();
 
-            foreach (var sss in selected.Where(x => x.solutionMeta.OurTime == 1629))
+            foreach (var sss in selected
+            //    .Where(x => x.solutionMeta.OurTime == 2217)
+            )
             {
                 Save(sss.solved, sss.solutionMeta.ProblemId, "-original" + sss.solved.CalculateTime());
                 
