@@ -11,7 +11,7 @@ namespace console_runner.Commands
                 "check-unchecked",
                 (command) =>
                 {
-                    command.Description = "Check all unchecked solution with official checker";
+                    command.Description = "Check all unchecked solutions with official checker";
                     command.HelpOption("-?|-h|--help");
 
                     var geckodriverOption = command.Option(
