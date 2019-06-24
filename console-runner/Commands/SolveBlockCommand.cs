@@ -110,7 +110,7 @@ namespace console_runner.Commands
 
             foreach (var solver in solvers)
             {
-                if (stopwatch.Elapsed > TimeSpan.FromMinutes(10))
+                if (stopwatch.Elapsed > TimeSpan.FromMinutes(7))
                     break;
 
                 var solved = solver.Solve(block.Problem.ToState().Clone());
