@@ -16,10 +16,16 @@ namespace console_runner.Commands
             Console.WriteLine($"{prefix}Solving {problemMeta.ProblemId} with {solver.GetName()} v{solver.GetVersion()}... ");
     
             new SolutionInProgress(problemMeta.ProblemId, solver.GetName(), solver.GetVersion()).SaveToDb();
-            var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
-            solutionMeta.SaveToDb();
-                        
-            Console.WriteLine($"{prefix}Done in {solutionMeta.CalculationTookMs} ms, {solutionMeta.OurTime} time units");
+            try
+            {
+                var solutionMeta = RunnableSolvers.Solve(solver, problemMeta);
+                solutionMeta.SaveToDb();
+                Console.WriteLine($"{prefix}Done in {solutionMeta.CalculationTookMs} ms, {solutionMeta.OurTime} time units");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }
