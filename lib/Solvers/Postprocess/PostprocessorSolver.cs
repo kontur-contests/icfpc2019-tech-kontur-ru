@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using lib.Models;
@@ -50,6 +51,9 @@ namespace lib.Solvers.Postprocess
 
             var bestState = ProblemReader.Read(state2.ProblemId).ToState();
             Emulator.Emulate(bestState, bestSolved);
+            if (bestState.UnwrappedLeft > 0)
+                throw new InvalidOperationException("Bad mother fucker!");
+            
             return bestSolved;
         }
         
