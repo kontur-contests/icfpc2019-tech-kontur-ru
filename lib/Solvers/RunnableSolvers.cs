@@ -12,15 +12,30 @@ namespace lib.Solvers
     {
         public static List<Func<ISolver>> PuzzleSolvers()
         {
-            return new List<Func<ISolver>>
+            var result = new List<Func<ISolver>>
             {
                 () => new StupidSolver(false),
                 () => new StupidSolver(true),
                 () => new ParallelDeepWalkSolver(2, new Estimator(false, false, false), usePalka: false, useWheels: false, useDrill: false, new BoosterType[0]),
+                () => new ParallelDeepWalkSolver(2, new Estimator(false, false, false), usePalka: false, useWheels: false, useDrill: false, new BoosterType[0]),
+                //() => new ParallelDeepWalkSolver(2, new Estimator(false, true), usePalka: false, useWheels: false, new BoosterType[0]),
                 //() => new PalkaSolver()
                 //() => new RandomWalkSolver(depth: 2, new Estimator(), new Random(Guid.NewGuid().GetHashCode()), 100, usePalka: true),
                 //() => new DeepWalkSolver(depth: 2, new Estimator()),
             };
+
+            //result.Add(() => new MiningSolver(false, -1));
+            //result.Add(() => new MiningSolver(true, -1));
+
+            foreach (var limit in new[] { 5, 10, 15, 20, 25, 30 })
+            {
+                foreach (var use in new [] {true, false})
+                {
+                    result.Add(() => new MiningSolver(use,  limit));
+                }
+            }
+
+            return result;
         }
 
         // This and only this solvers would be periodically re-run
