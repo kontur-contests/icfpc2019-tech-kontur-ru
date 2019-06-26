@@ -120,7 +120,7 @@ const submissionRequest = MongoClient
 Promise.all([algsRequest, inProgressRequest, blockchainRequest, submissionRequest]).then(([data, inProg, blockchain, submission]) => {
     const styles = '<link rel="stylesheet" href="styles.css">';
     const metaGeneral = '<meta charset="utf-8"><title>ICFPC 2019. Дашборд</title>';
-    const meta = `<META HTTP-EQUIV="REFRESH" CONTENT="60;URL=/">`;
+    const meta = ''; //`<META HTTP-EQUIV="REFRESH" CONTENT="60;URL=/">`;
     const dataForScript = `<script type="text/javascript">const dataFromServer = ${JSON.stringify(data)}</script>`;
     const progressDataForScript = `<script type="text/javascript">const progressDataForScript = ${JSON.stringify(inProg)}</script>`;
     const blockchainDataForScript = `<script type="text/javascript">const blockchainDataForScript = ${JSON.stringify(blockchain)}</script>`;
