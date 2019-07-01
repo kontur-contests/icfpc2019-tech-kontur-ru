@@ -1,0 +1,4 @@
+Task ID: cd161288-b207-4dfc-aacb-775c4fd170a0
+Queue waiting time: 7.358804
+Checker time: 66.11334
+Total waiting time: 73.472144

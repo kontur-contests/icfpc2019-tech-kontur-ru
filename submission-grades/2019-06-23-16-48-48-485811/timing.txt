@@ -1,0 +1,4 @@
+Task ID: 706049f6-93ed-4b5f-b71f-a1867ffd9843
+Queue waiting time: 9.129015
+Checker time: 30.782484
+Total waiting time: 39.911499
