@@ -17,7 +17,7 @@ namespace tests.Solvers
             var state = ReadFromFile(id);
             var result = solver.Solve(state);
             Save(result, id);
-            Console.WriteLine($"Solved {id} problem in {result.CalculateTime()} steps.");
+            //Console.WriteLine($"Solved {id} problem in {result.CalculateTime()} steps.");
             // LogSolution(id, result);
             return result;
         }
