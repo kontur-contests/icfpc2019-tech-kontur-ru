@@ -1,0 +1,4 @@
+Task ID: 424c80b8-39be-4742-838c-48be84ead915
+Queue waiting time: 8.522658
+Checker time: 33.274824
+Total waiting time: 41.797482

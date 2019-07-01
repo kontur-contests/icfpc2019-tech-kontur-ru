@@ -1,0 +1,4 @@
+Task ID: bda8860c-30cb-449a-8174-07aa43378d3c
+Queue waiting time: 7.594153
+Checker time: 56.899458
+Total waiting time: 64.493611

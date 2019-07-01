@@ -22,7 +22,7 @@ namespace lib.Solvers
 
         public string GetName()
         {
-            return $"mining_{palka}_{limit}";
+            return $"mining-{palka}-{limit}";
         }
 
         public int GetVersion()
@@ -37,7 +37,10 @@ namespace lib.Solvers
             if (palka)
                 BoosterMaster.CreatePalka2(state, result[0]);
 
-            BoosterMaster.CloneAttack(state, result);
+            if (limit != -1)
+                BoosterMaster.CloneAttack(state, result);
+
+            var pathBuilder = new PathBuilder(state.Map, limit);
 
             while (state.UnwrappedLeft > 0)
             {
@@ -48,7 +51,7 @@ namespace lib.Solvers
                     var map = state.Map;
                     var me = state.Workers[i];
 
-                    var pathBuilder = new PathBuilder(map, me.Position, state.Workers.Take(i).Select(w => w.Position).ToList(), limit);
+                    pathBuilder.Build(map, me.Position, state.Workers.Take(i).Select(w => w.Position).ToList());
 
                     V best = null;
                     var bestDist = int.MaxValue;
@@ -83,23 +86,33 @@ namespace lib.Solvers
 
         private class PathBuilder
         {
-            private readonly V start;
-            private readonly List<V> other;
-            private readonly int limit;
+            private V start;
+            private List<V> other;
             private Queue<V> queue;
             private Map<int> distance;
-            private Map<V> parent;
+            private Map<(V, int)> parent;
+            private int timer;
+            private int limit;
 
-            public PathBuilder(Map map, V start, List<V> other, int limit)
+            public PathBuilder(Map map, int limit)
+            {
+                distance = new Map<int>(map.SizeX, map.SizeY);
+                parent = new Map<(V, int)>(map.SizeX, map.SizeY);
+                this.limit = limit;
+            }
+
+            private V Parent(V v)
+            {
+                return parent[v].Item2 == timer ? parent[v].Item1 : null;
+            }
+
+            public void Build(Map map, V start, List<V> other)
             {
                 this.start = start;
                 this.other = other;
-                this.limit = limit;
                 queue = new Queue<V>();
                 queue.Enqueue(start);
-
-                distance = new Map<int>(map.SizeX, map.SizeY);
-                parent = new Map<V>(map.SizeX, map.SizeY);
+                timer++;
 
                 while (queue.Any())
                 {
@@ -107,20 +120,20 @@ namespace lib.Solvers
                     if (map[v] == CellState.Void && !TooClose(v))
                         break;
 
-                    foreach (var direction in new[] {Direction.Up, Direction.Left, Direction.Right, Direction.Down})
+                    for (var direction = 0; direction < 4; direction++)
                     {
                         var u = v.Shift(direction);
-                        if (!u.Inside(map) || parent[u] != null || map[u] == CellState.Obstacle)
+                        if (!u.Inside(map) || Parent(u) != null || map[u] == CellState.Obstacle)
                             continue;
 
-                        parent[u] = v;
+                        parent[u] = (v, timer);
                         distance[u] = distance[v] + 1;
                         queue.Enqueue(u);
                     }
                 }
             }
 
-            public int Distance(V v) => parent[v] == null || TooClose(v) ? int.MaxValue : distance[v];
+            public int Distance(V v) => Parent(v) == null || TooClose(v) ? int.MaxValue : distance[v];
 
             public List<ActionBase> GetActions(V to)
             {
@@ -128,7 +141,7 @@ namespace lib.Solvers
 
                 while (to != start)
                 {
-                    var from = parent[to];
+                    var from = Parent(to);
 
                     result.Add(new Move(to - from));
 

@@ -1,0 +1,4 @@
+Task ID: a72afb82-255f-4290-ab90-04175c307878
+Queue waiting time: 10.208896
+Checker time: 53.955614
+Total waiting time: 64.16450999999999

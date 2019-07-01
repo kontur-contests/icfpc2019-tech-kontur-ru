@@ -1,0 +1,4 @@
+Task ID: dcb54466-ea7a-4818-bac6-b1771a63a733
+Queue waiting time: 7.333964
+Checker time: 58.433983
+Total waiting time: 65.76794699999999
