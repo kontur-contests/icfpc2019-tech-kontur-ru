@@ -4,7 +4,7 @@ There were 8 members in team [tech.kontur.ru](https://tech.kontur.ru) at ICFP Co
 
 ## Code breakdown
 
-In this 72-hour contest, we had to solve tasks by creating an AI for robots which wrap (i.e., paint) 2-dimensional maps. After 24-hours, we also could solve tasks in a team-contributed "blockchain". 
+In this 72-hour contest, we had to solve tasks by creating an AI for robots which wrap (i.e., paint) 2-dimensional maps. After 24-hours, we also could solve puzzles in a team-contributed "blockchain". 
 
 **Shared domain code.** [lib/Models](./lib/Models) contains the code used by task solvers to represent tasks and AI state as well as some utility code. [tests](./tests/) helped to chase bugs in this code.
 
@@ -15,6 +15,8 @@ In this 72-hour contest, we had to solve tasks by creating an AI for robots whic
 * **[RandomWalk](./lib/Solvers/RandomWalk/RandomWalkSolver.cs), [DeepWalk](./lib/Solvers/RandomWalk/DeepWalkSolver.cs), [ParallelDeepWalk](./lib/Solvers/RandomWalk/ParallelDeepWalkSolver.cs).** Single- and multi-robot ("parallel") solvers which construct solutions by computing a number of suboptimal random moves and selecting the best ones. They use B/F/C-boosters and estimate moves in such way that a robot sequentially wraps partially unwrapped closely connected parts of a map. These solvers enabled us to take the lead in the Lightning Round
 * **[Plan](./lib/Solvers/RandomWalk/PlanSolver.cs) & [Paraplan](./lib/Solvers/RandomWalk/ParallelPlanSolver.cs).** Single- and multi-robot solvers which wrap the map according to an optimal plan suggested by a clusterization algorithm. See clusterization code in [MishaResearch](./MishaResearch/), results in [clusters.v1](./clusters.v1/) and [clusters.v2](./clusters.v2/)
 * **[Postprocessor](./lib/Solvers/Postprocess/).** The ultimate solver which significantly improves the quality of other solvers' solutions via the rearrangement of AI moves. We've completed this solver during the last hours of the Full Round
+
+**Puzzle solver.** [lib/Puzzles](./lib/Puzzles/) contains the code which solves puzzles in the "blockchain".
 
 **Computing infrastructure.** [console-runner](./console-runner/) was used to run the following tasks on our laptops and workstations, on multi-core virtual machines, and on a CI server:
 
@@ -54,7 +56,7 @@ An even better way to run the solvers is to use the `StupidOne1` test in `tests/
 
 ## Members
 
-* [Alexey Kungurtsev](https://github.com/KungA) — algorithms, task solvers
+* [Alexey Kungurtsev](https://github.com/KungA) — algorithms, task solvers, puzzle solver
 * [Andrew Kostousov](https://github.com/AndrewKostousov), [Ivan Dashkevich](https://github.com/spaceorc) — algorithms, task solvers, shared domain code
 * [Pavel Egorov](https://github.com/xoposhiy) — algorithms, task solvers, visualisation
 * [Michael Khrushchev](https://github.com/MichaelEk) — data science for task solvers
