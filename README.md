@@ -16,9 +16,15 @@ In this 72-hour contest, we had to solve tasks by creating an AI for robots whic
 * **[Plan](./lib/Solvers/RandomWalk/PlanSolver.cs) & [Paraplan](./lib/Solvers/RandomWalk/ParallelPlanSolver.cs).** Single- and multi-robot solvers which wrap the map according to an optimal plan suggested by a clusterization algorithm. See clusterization code in [MishaResearch](./MishaResearch/), results in [clusters.v1](./clusters.v1/) and [clusters.v2](./clusters.v2/)
 * **[Postprocessor](./lib/Solvers/Postprocess/).** The ultimate solver which significantly improves the quality of other solvers' solutions via the rearrangement of AI moves. We've completed this solver during the last hours of the Full Round
 
+Compare results of a second-best algorithm and the postprocessor: 
+
+| Task 42 | Task 139 |
+| - | - |
+| [![](https://img.youtube.com/vi/QA7gXWPJs-A/0.jpg)](https://www.youtube.com/watch?v=QA7gXWPJs-A) | [![](https://img.youtube.com/vi/jNoROzNjouI/0.jpg)](https://www.youtube.com/watch?v=jNoROzNjouI) |
+
 **Puzzle solver.** [lib/Puzzles](./lib/Puzzles/) contains the code which solves puzzles in the "blockchain".
 
-**Computing infrastructure.** [console-runner](./console-runner/) was used to run the following tasks on our laptops and workstations, on multi-core virtual machines, and on a CI server:
+**Computing infrastructure.** [console-runner](./console-runner/) was used to run the following tasks on our laptops and workstations, on multi-core virtual machines, and on a GitLab CI server:
 
 * compute a solution for a particular task (or tasks) using a particular solver (or solvers)
 * compute solutions for all task-solver combinations (if not computed before)
@@ -27,13 +33,21 @@ In this 72-hour contest, we had to solve tasks by creating an AI for robots whic
 * pack and submit best solutions to organizers
 * verify that submitted solutions are accepted by organizers, show quality improvements
 
+Here's a screenshot of CI jobs during the contest:
+
+![](https://raw.githubusercontent.com/kontur-contests/icfpc2019-tech-kontur-ru/master/gitlab-ci.png)
+
 [pipeline](./pipeline/) code was used to store/retrieve solutions from MongoDB and use an "online checker" provided by organizers via Selenium WebDriver.
 
 **Visualisation.** [visualizer](./visualizer/) contains a modified version of the "online visualizer" provided by organizers. Its obfuscated ScalaJS code was reverse-engineered and altered to implement features required to efficiently debug our solutions: loading tasks and solutions by their ids (bypassing the file selection dialog), step-by-step execution, time travel, etc.
 
-A web [dashboard](./dashboard/) was used to monitor the progress of solution computation and compare the performance of different task solvers.
+A web [dashboard](./dashboard/) was used to monitor the progress of solution computation and compare the performance of different task solvers. (See the [last snapshot](./dashboard/dashboard.html) of the dashboard.)
+
+![](https://raw.githubusercontent.com/kontur-contests/icfpc2019-tech-kontur-ru/master/dashboard.png)
 
 We've also generated [bitmap images](./problems/all/images/) for all maps to efficiently explore them bypassing the "online visualizer".
+
+There also was a Grafana dashboard to track the blockhain mining process.
 
 | Task 59 | Task 101 | Task 134 | Task 190 |
 | - | - | - | - |
@@ -60,7 +74,7 @@ An even better way to run the solvers is to use the `StupidOne1` test in `tests/
 * [Andrew Kostousov](https://github.com/AndrewKostousov), [Ivan Dashkevich](https://github.com/spaceorc) — algorithms, task solvers, shared domain code
 * [Pavel Egorov](https://github.com/xoposhiy) — algorithms, task solvers, visualisation
 * [Michael Khrushchev](https://github.com/MichaelEk) — data science for task solvers
-* [Alexey Kirpichnikov](https://github.com/beevee) — computing infrastructure, submission quality assurance
+* [Alexey Kirpichnikov](https://github.com/beevee) — computing infrastructure, submission quality assurance, visualisation
 * [Veronika Samokhina](https://github.com/aminopyridin) — visualisation, photography
 * [Igor Lukanin](https://github.com/igorlukanin) — computing infrastructure, visualisation, catering, gonzo journalism
 
