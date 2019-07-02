@@ -35,7 +35,7 @@ We've also generated [bitmap images](./problems/all/images/) for all maps to eff
 
 | Task 59 | Task 101 | Task 134 | Task 190 |
 | - | - | - | - |
-| ![](./raw/master/problems/all/images/59.png) | ![](./raw/master/problems/all/images/101.png) | ![](./raw/master/problems/all/images/134.png) | ![](./raw/master/problems/all/images/190.png) |
+| ![](https://raw.githubusercontent.com/kontur-contests/icfpc2019-tech-kontur-ru/master/problems/all/images/59.png) | ![](https://raw.githubusercontent.com/kontur-contests/icfpc2019-tech-kontur-ru/master/problems/all/images/101.png) | ![](https://raw.githubusercontent.com/kontur-contests/icfpc2019-tech-kontur-ru/master/problems/all/images/134.png) | ![](https://raw.githubusercontent.com/kontur-contests/icfpc2019-tech-kontur-ru/master/problems/all/images/190.png) |
 
 **Submissions.** [submission-grades](./submission-grades/) contains the results of every submission we've made during the contest.
 
