@@ -29,6 +29,8 @@ In this 72-hour contest, we had to solve tasks by creating an AI for robots whic
 
 [pipeline](./pipeline/) code was used to store/retrieve solutions from MongoDB and use an "online checker" provided by organizers via Selenium WebDriver.
 
+[parallelepiped](./parallelepiped.py) is a dirty CLI tool that runs many solvers in parallel on a multicore machine.
+
 **Visualisation.** [visualizer](./visualizer/) contains a modified version of the "online visualizer" provided by organizers. Its obfuscated ScalaJS code was reverse-engineered and altered to implement features required to efficiently debug our solutions: loading tasks and solutions by their ids (bypassing the file selection dialog), step-by-step execution, time travel, etc.
 
 A web [dashboard](./dashboard/) was used to monitor the progress of solution computation and compare the performance of different task solvers.
@@ -60,7 +62,7 @@ An even better way to run the solvers is to use the `StupidOne1` test in `tests/
 * [Andrew Kostousov](https://github.com/AndrewKostousov), [Ivan Dashkevich](https://github.com/spaceorc) — algorithms, task solvers, shared domain code
 * [Pavel Egorov](https://github.com/xoposhiy) — algorithms, task solvers, visualisation
 * [Michael Khrushchev](https://github.com/MichaelEk) — data science for task solvers
-* [Alexey Kirpichnikov](https://github.com/beevee) — computing infrastructure, submission quality assurance
+* [Alexey Kirpichnikov](https://github.com/beevee) — computing infrastructure, mining automation, submission quality assurance
 * [Veronika Samokhina](https://github.com/aminopyridin) — visualisation, photography
 * [Igor Lukanin](https://github.com/igorlukanin) — computing infrastructure, visualisation, catering, gonzo journalism
 
